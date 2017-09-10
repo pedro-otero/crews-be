@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var albums = require('./routes/album');
 
 var app = express();
 
@@ -21,11 +22,36 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/* App locals setup */
+const Discogify = require('discogify');
+app.locals.discogify = new Discogify(require('./disconnect-config.json'));
+const SpotifyWebApi = require('spotify-web-api-node');
+const spotifyConfig = require('./spotify-config.json');
+const spotifyApi = new SpotifyWebApi({
+    clientId: spotifyConfig.keys.consumer,
+    clientSecret: spotifyConfig.keys.secret,
+    redirectUri: spotifyConfig.urls.redirect
+});
+app.locals.spotifyApi = new Promise(function (resolve, reject) {
+    spotifyApi.clientCredentialsGrant().then(response => {
+        if (response.statusCode == 200) {
+            const token = response.body.access_token;
+            spotifyApi.setAccessToken(token);
+            console.log('Spotify client authenticated succesfully');
+            resolve(spotifyApi)
+        } else {
+            console.log('ERRROR AUTHENTICATING ' + JSON.stringify(response));
+            reject(response);
+        }
+    });
+});
+
 app.use('/', routes);
 app.use('/users', users);
+app.use('/data/album', albums);
 
 /// catch 404 and forwarding to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -36,7 +62,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -47,7 +73,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
