@@ -23,8 +23,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* App locals setup */
-const Discogify = require('discogify');
-app.locals.discogify = new Discogify(require('./disconnect-config.json'));
+const disconnectConfig = require('./disconnect-config.json');
+const disconnect = new require('disconnect').Client(disconnectConfig.agent, disconnectConfig.keys);
+const Search = require('./routes/album/search');
+const Throxy = require('throxy');
+const throxy = new Throxy(disconnect.database(), 1100);
+app.locals.discogify = new Search(throxy
+);
 const SpotifyWebApi = require('spotify-web-api-node');
 const spotifyConfig = require('./spotify-config.json');
 const spotifyApi = new SpotifyWebApi({
@@ -80,6 +85,5 @@ app.use(function (err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
