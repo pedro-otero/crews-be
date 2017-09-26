@@ -9,6 +9,11 @@ router.get('/:spotifyAlbumId', function (req, res) {
     const discogify = req.app.locals.discogify;
     const spotifyApi = req.app.locals.spotifyApi;
 
+    const doCatch = e => {
+        require('debug')('main')(e);
+        res.status(500).send(e.stack)
+    }
+
     spotifyApi
         .then(api => api.getAlbum(req.params.spotifyAlbumId))
         .then(response => response.body)
@@ -17,8 +22,8 @@ router.get('/:spotifyAlbumId', function (req, res) {
                 const release = matchAlbum(album, releases);
                 const builtAlbum = buildAlbum(album, release);
                 res.json(builtAlbum);
-            });
-        }).catch(e => res.status(500).send(e.stack));
+            }).catch(doCatch);
+        }).catch(doCatch);
 });
 
 module.exports = router;
