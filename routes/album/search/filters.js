@@ -1,6 +1,6 @@
 const similarity = require('string-similarity').compareTwoStrings;
 
-module.exports = album => {
+module.exports = (album, collection) => {
 
     const {
         name,
@@ -35,7 +35,7 @@ module.exports = album => {
     }
 
     return {
-        by: currentFilter => collection => {
+        by: currentFilter => {
             const postResults = collection.filter(result => {
                 const converted = {
                     id: result.id,
