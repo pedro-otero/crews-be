@@ -35,8 +35,8 @@ module.exports = album => {
     }
 
     return {
-        by: (...matcherNames) => collection => matcherNames.reduce((results, currentFilter, i) => {
-            const postResults = results.filter(result => {
+        by: currentFilter => collection => {
+            const postResults = collection.filter(result => {
                 const converted = {
                     id: result.id,
                     title: (result.title || '').toUpperCase(),
@@ -47,7 +47,7 @@ module.exports = album => {
                 };
                 return filters[currentFilter](converted);
             });
-            return (i === 0 || postResults.length) ? postResults : results;
-        }, collection)
+            return postResults;
+        }
     }
 }
