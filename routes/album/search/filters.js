@@ -1,16 +1,5 @@
 const similarity = require('string-similarity').compareTwoStrings;
 
-function convert(result) {
-    return {
-        id: result.id,
-        title: (result.title || '').toUpperCase(),
-        format: ((typeof result.format === 'string') ? result.format.split(', ') : (result.format || [])).map(format => format.toUpperCase()),
-        tracklist: (result.tracklist || []).map(track => track.title.toUpperCase()),
-        released: result.released,
-        year: result.year
-    }
-}
-
 module.exports = album => {
 
     const {
@@ -45,11 +34,19 @@ module.exports = album => {
 
     }
 
-    const filterProxy = filterFunc => result => filters[filterFunc](convert(result));
-
     return {
         by: (...matcherNames) => collection => matcherNames.reduce((results, currentFilter, i) => {
-            const postResults = results.filter(filterProxy(currentFilter));
+            const postResults = results.filter(result => {
+                const converted = {
+                    id: result.id,
+                    title: (result.title || '').toUpperCase(),
+                    format: ((typeof result.format === 'string') ? result.format.split(', ') : (result.format || [])).map(format => format.toUpperCase()),
+                    tracklist: (result.tracklist || []).map(track => track.title.toUpperCase()),
+                    released: result.released,
+                    year: result.year
+                };
+                return filters[currentFilter](converted);
+            });
             return (i === 0 || postResults.length) ? postResults : results;
         }, collection)
     }
