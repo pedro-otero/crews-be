@@ -1,3 +1,5 @@
+const similarity = require('string-similarity').compareTwoStrings;
+
 function convert(result) {
     return {
         id: result.id,
@@ -26,7 +28,7 @@ module.exports = album => {
                 const titles = [track, result.tracklist[i]]
                     .map(title => title.replace(/(.+) \((.+)\)/, '$1 - $2'))
                     .map(title => title.split(' - ')[0]);
-                return titles[0] === titles[1];
+                return similarity(titles[0], titles[1]) === 1;
             }),
 
         'release date': result => result.released == album.release_date
