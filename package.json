@@ -17,6 +17,7 @@
     "redux": "^3.7.2",
     "spotify-web-api-node": "^2.5.0",
     "static-favicon": "~1.0.0",
+    "string-similarity": "^1.2.0",
     "throxy": "^1.0.0"
   },
   "devDependencies": {
