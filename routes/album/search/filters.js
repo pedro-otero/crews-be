@@ -17,7 +17,9 @@ module.exports = album => {
 
         'title': result => result.title.match(`.+ - ${album.name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
 
-        'exact title': result => result.title === (`${album.artists[0].name.toUpperCase()} - ${album.name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
+        'exact title': result => similarity(
+            result.title,
+            (`${album.artists[0].name.toUpperCase()} - ${album.name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) === 1,
 
         'format': result => result.format.includes(album.album_type.toUpperCase()),
 
