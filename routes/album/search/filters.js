@@ -13,27 +13,35 @@ function convert(result) {
 
 module.exports = album => {
 
+    const {
+        name,
+        artists,
+        album_type,
+        release_date,
+        tracks
+    } = album;
+
     const filters = {
 
-        'title': result => result.title.match(`.+ - ${album.name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
+        'title': result => result.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
 
         'exact title': result => similarity(
             result.title,
-            (`${album.artists[0].name.toUpperCase()} - ${album.name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) === 1,
+            (`${artists[0].name.toUpperCase()} - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) === 1,
 
-        'format': result => result.format.includes(album.album_type.toUpperCase()),
+        'format': result => result.format.includes(album_type.toUpperCase()),
 
-        'year': result => result.year == album.release_date.substr(0, 4),
+        'year': result => result.year == release_date.substr(0, 4),
 
-        'tracklist': result => result.tracklist.length == album.tracks.items.length &&
-            album.tracks.items.map(track => track.name.toUpperCase()).every((track, i) => {
+        'tracklist': result => result.tracklist.length == tracks.items.length &&
+            tracks.items.map(track => track.name.toUpperCase()).every((track, i) => {
                 const titles = [track, result.tracklist[i]]
                     .map(title => title.replace(/(.+) \((.+)\)/, '$1 - $2'))
                     .map(title => title.split(' - ')[0]);
                 return similarity(titles[0], titles[1]) === 1;
             }),
 
-        'release date': result => result.released == album.release_date
+        'release date': result => result.released == release_date
 
     }
 
