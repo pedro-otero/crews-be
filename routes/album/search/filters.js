@@ -12,7 +12,7 @@ module.exports = (album, collection) => {
 
     const filters = {
 
-        'title': result => result.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
+        'title': result => !!result.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
 
         'exact title': result => similarity(
             result.title,
@@ -36,7 +36,7 @@ module.exports = (album, collection) => {
 
     return {
         by: currentFilter => {
-            const postResults = collection.filter(result => {
+            const postResults = collection.map(result => {
                 const converted = {
                     id: result.id,
                     title: (result.title || '').toUpperCase(),
@@ -45,7 +45,7 @@ module.exports = (album, collection) => {
                     released: result.released,
                     year: result.year
                 };
-                return filters[currentFilter](converted);
+                return  { match: filters[currentFilter](converted) };
             });
             return postResults;
         }

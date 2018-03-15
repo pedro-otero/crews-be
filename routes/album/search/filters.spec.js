@@ -3,8 +3,6 @@ const match = require('./filters');
 
 describe('Filter by', () => {
 
-    const getId = item => item.id;
-
     it('title', () => {
         assert.deepEqual(match(
             // ALBUM
@@ -18,7 +16,8 @@ describe('Filter by', () => {
             ]
 
             // FILTERS
-        ).by('title').map(getId), [1, 3]);
+        ).by('title'),
+            [{ match: true }, { match: false }, { match: true }]);
     });
 
     it('exact title', () => {
@@ -34,7 +33,7 @@ describe('Filter by', () => {
             ]
 
             // FILTERS
-        ).by('exact title').map(getId), [1]);
+        ).by('exact title'), [{ match: true }, { match: false }, { match: false }]);
     });
 
     describe('format', () => {
@@ -52,7 +51,7 @@ describe('Filter by', () => {
                 ]
 
                 // FILTERS
-            ).by('format').map(getId), [2]);
+            ).by('format'), [{ match: false }, { match: true }, { match: false }]);
         });
 
         it('as string', () => {
@@ -68,7 +67,7 @@ describe('Filter by', () => {
                 ]
 
                 // FILTERS
-            ).by('format').map(getId), [2, 3]);
+            ).by('format'), [{ match: false }, { match: true }, { match: true }]);
         });
 
     });
@@ -88,7 +87,7 @@ describe('Filter by', () => {
                 ]
 
                 // FILTERS
-            ).by('year').map(getId), [2]);
+            ).by('year'), [{ match: false }, { match: true }, { match: false }]);
         });
 
         it('full date in release_date', () => {
@@ -104,7 +103,7 @@ describe('Filter by', () => {
                 ]
 
                 // FILTERS
-            ).by('year').map(getId), [2]);
+            ).by('year'), [{ match: false }, { match: true }, { match: false }]);
         });
 
     });
@@ -144,7 +143,7 @@ describe('Filter by', () => {
             ]
 
             // FILTERS
-        ).by('tracklist').map(getId), [1]);
+        ).by('tracklist'), [{ match: true }]);
     });
 
     it('release date', () => {
@@ -160,7 +159,7 @@ describe('Filter by', () => {
             ]
 
             // FILTERS
-        ).by('release date').map(getId), [2]);
+        ).by('release date'), [{ match: false }, { match: true }, { match: false }]);
     });
 
 });
