@@ -45,12 +45,13 @@ module.exports = (album) => {
 
   const by = currentFilter => result => ({ match: filters[currentFilter](convert(result)) });
 
-  return {
-    byTitle: by('title'),
-    byExactTitle: by('exact title'),
-    byFormat: by('format'),
-    byYear: by('year'),
-    byTracklist: by('tracklist'),
-    byReleaseDate: by('release date'),
-  }
+  return Object.keys(filters).reduce((instance, filter) => {
+    instance[`by${
+      filter
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('')
+    }`] = by(filter);
+    return instance;
+  }, {});
 };
