@@ -32,28 +32,25 @@ module.exports = (album) => {
 
     'release date': result => result.released == release_date
 
-  }
+  };
 
-  const bys = {
-    by: currentFilter => result => {
-      const converted = {
-        id: result.id,
-        title: (result.title || '').toUpperCase(),
-        format: ((typeof result.format === 'string') ? result.format.split(', ') : (result.format || [])).map(format => format.toUpperCase()),
-        tracklist: (result.tracklist || []).map(track => track.title.toUpperCase()),
-        released: result.released,
-        year: result.year
-      };
-      return { match: filters[currentFilter](converted) };
-    }
-  }
+  const convert = result => ({
+    id: result.id,
+    title: (result.title || '').toUpperCase(),
+    format: ((typeof result.format === 'string') ? result.format.split(', ') : (result.format || [])).map(format => format.toUpperCase()),
+    tracklist: (result.tracklist || []).map(track => track.title.toUpperCase()),
+    released: result.released,
+    year: result.year
+  });
+
+  const by = currentFilter => result => ({ match: filters[currentFilter](convert(result)) });
 
   return {
-    byTitle: release => bys.by('title')(release),
-    byExactTitle: release => bys.by('exact title')(release),
-    byFormat: release => bys.by('format')(release),
-    byYear: release => bys.by('year')(release),
-    byTracklist: release => bys.by('tracklist')(release),
-    byReleaseDate: release => bys.by('release date')(release),
+    byTitle: by('title'),
+    byExactTitle: by('exact title'),
+    byFormat: by('format'),
+    byYear: by('year'),
+    byTracklist: by('tracklist'),
+    byReleaseDate: by('release date'),
   }
-}
+};
