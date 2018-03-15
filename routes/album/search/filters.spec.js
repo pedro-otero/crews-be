@@ -1,165 +1,179 @@
 const assert = require('assert');
 const match = require('./filters');
 
-describe('Filter by', () => {
+describe('Filter by', function() {
 
-    it('title', () => {
-        assert.deepEqual(match(
-            // ALBUM
-            {name: 'Album'},
+  before(function () {
+    this.matchAlbum = match({
+      name: 'Album',
+      artists: [{ name: 'ARTIST' }],
+      album_type: 'album',
+      release_date: '2012',
+      tracks: { items: [
+        { name: 'TRACK #1' },
+        { name: 'TRACK #2 - INTERLUDE' },
+        { name: 'TRACK #3 (NAME IN PARENTHESES)' },
+        { name: '(PRECEDING PARENTHESIS) TRACK #4' },
+        { name: "TRACK #5 (Stuff that's not in the release)" },
+        { name: "TRACK #6 - Stuff that's not in the release" },
+        { name: 'TRACK #7' },
+        { name: 'TRACK #8' }
+      ]}
+    });
+  });
 
-            // COLLECTION
-            [
-                {id: 1, title: 'Artist - Album'},
-                {id: 2, title: 'Artist - Some other album'},
-                {id: 3, title: 'The Artist - Album'}
-            ]
-
-            // FILTERS
-        ).by('title'),
-            [{ match: true }, { match: false }, { match: true }]);
+  describe('title', function () {
+    it('true', function () {
+      assert.deepEqual(this.matchAlbum.byTitle({
+        title: 'Artist - Album'
+      }), {
+        match: true
+      });
     });
 
-    it('exact title', () => {
-        assert.deepEqual(match(
-            // ALBUM
-            {name: 'Album', artists: [{name: 'ARTIST'}]},
+    it('false', function () {
+      assert.deepEqual(this.matchAlbum.byTitle({
+        title: 'Artist - Some other album'
+      }), {
+        match: false
+      });
+    });
+  });
 
-            // COLLECTION
-            [
-                {id: 1, title: 'Artist - Album'},
-                {id: 2, title: 'Artist - Some other album'},
-                {id: 3, title: 'The Artist - Album'}
-            ]
-
-            // FILTERS
-        ).by('exact title'), [{ match: true }, { match: false }, { match: false }]);
+  describe('exact title', function () {
+    it('true', function () {
+      assert.deepEqual(this.matchAlbum.byExactTitle({
+        title: 'Artist - Album'
+      }), {
+        match: true
+      });
     });
 
-    describe('format', () => {
+    it('false', function () {
+      assert.deepEqual(this.matchAlbum.byExactTitle({
+        title: 'Artist - Some other album'
+      }), {
+        match: false
+      });
+    });
+  });
 
-        it('as array', () => {
-            assert.deepEqual(match(
-                // ALBUM
-                {album_type: 'album'},
-
-                // COLLECTION
-                [
-                    {id: 1, format: ['LP']},
-                    {id: 2, format: ['album']},
-                    {id: 3, format: ['cassette']}
-                ]
-
-                // FILTERS
-            ).by('format'), [{ match: false }, { match: true }, { match: false }]);
+  describe('format', function () {
+    describe('as array', function () {
+      it('true', function () {
+        assert.deepEqual(this.matchAlbum.byFormat({
+          format: ['album']
+        }), {
+          match: true
         });
+      });
 
-        it('as string', () => {
-            assert.deepEqual(match(
-                // ALBUM
-                {album_type: 'album'},
-
-                // COLLECTION
-                [
-                    {id: 1, format: 'LP'},
-                    {id: 2, format: 'album'},
-                    {id: 3, format: 'album, cassette'}
-                ]
-
-                // FILTERS
-            ).by('format'), [{ match: false }, { match: true }, { match: true }]);
+      it('false', function () {
+        assert.deepEqual(this.matchAlbum.byFormat({
+          format: ['LP']
+        }), {
+          match: false
         });
-
+      });
     });
 
-    describe('year', () => {
-
-        it('only year in release_date', () => {
-            assert.deepEqual(match(
-                // ALBUM
-                {release_date: '2012'},
-
-                // COLLECTION
-                [
-                    {id: 1, year: '2011'},
-                    {id: 2, year: '2012'},
-                    {id: 3, year: '2013'}
-                ]
-
-                // FILTERS
-            ).by('year'), [{ match: false }, { match: true }, { match: false }]);
+    describe('as string', function () {
+      it('true', function () {
+        assert.deepEqual(this.matchAlbum.byFormat({
+          format: 'album'
+        }), {
+          match: true
         });
+      });
 
-        it('full date in release_date', () => {
-            assert.deepEqual(match(
-                // ALBUM
-                {release_date: '2012-04-25'},
-
-                // COLLECTION
-                [
-                    {id: 1, year: '2011'},
-                    {id: 2, year: '2012'},
-                    {id: 3, year: '2013'}
-                ]
-
-                // FILTERS
-            ).by('year'), [{ match: false }, { match: true }, { match: false }]);
+      it('false', function () {
+        assert.deepEqual(this.matchAlbum.byFormat({
+          format: 'LP'
+        }), {
+          match: false
         });
+      });
+    });
+  });
 
+  describe('year', function () {
+    describe('only year in release_date', function () {
+      it('true', function () {
+        assert.deepEqual(this.matchAlbum.byYear({
+          year: '2012'
+        }), {
+          match: true
+        });
+      });
+
+      it('false', function () {
+        assert.deepEqual(this.matchAlbum.byYear({
+          year: '2011'
+        }), {
+          match: false
+        });
+      });
     });
 
-    it('tracklist', () => {
-        assert.deepEqual(match(
-            // ALBUM
-            {
-                tracks: {
-                    items: [
-                        {name: 'TRACK #1'},
-                        {name: 'TRACK #2 - INTERLUDE'},
-                        {name: 'TRACK #3 (NAME IN PARENTHESES)'},
-                        {name: '(PRECEDING PARENTHESIS) TRACK #4'},
-                        {name: "TRACK #5 (Stuff that's not in the release)"},
-                        {name: "TRACK #6 - Stuff that's not in the release"},
-                        {name: 'TRACK #7'},
-                        {name: 'TRACK #8'}
-                    ]
-                }
-            },
+    describe('full date in release_date', function () {
+      beforeEach(function () {
+        this.matchAlbum.release_date = '2012-04-25';
+      });
 
-            // COLLECTION
-            [
-                {
-                    id: 1, tracklist: [
-                        {title: 'Track #1'},
-                        {title: 'track #2 (Interlude)'},
-                        {title: 'track #3 - Name in parentheses'},
-                        {title: '(Preceding parenthesis) track #4'},
-                        {title: 'track #5'},
-                        {title: 'track #6'},
-                        {title: "track #7 (Stuff that's not in the release)"},
-                        {title: "track #8 - Stuff that's not in the release"}
-                    ]
-                }
-            ]
+      it('true', function () {
+        assert.deepEqual(this.matchAlbum.byYear({
+          year: '2012'
+        }), {
+          match: true
+        });
+      });
 
-            // FILTERS
-        ).by('tracklist'), [{ match: true }]);
+      it('false', function () {
+        assert.deepEqual(this.matchAlbum.byYear({
+          year: '2011'
+        }), {
+          match: false
+        });
+      });
+    });
+  });
+
+  it('tracklist', function() {
+    assert.deepEqual(this.matchAlbum.byTracklist({
+      tracklist: [
+        { title: 'Track #1' },
+        { title: 'track #2 (Interlude)' },
+        { title: 'track #3 - Name in parentheses' },
+        { title: '(Preceding parenthesis) track #4' },
+        { title: 'track #5' },
+        { title: 'track #6' },
+        { title: "track #7 (Stuff that's not in the release)" },
+        { title: "track #8 - Stuff that's not in the release" }
+      ]}), {
+      match: true
+    });
+  });
+
+  describe('release date', function() {
+    before(function () {
+      this.matchAlbum = match({release_date: '2012-04-25'});
     });
 
-    it('release date', () => {
-        assert.deepEqual(match(
-            // ALBUM
-            {release_date: '2012-04-25'},
-
-            // COLLECTION
-            [
-                {id: 1, released: '2011'},
-                {id: 2, released: '2012-04-25'},
-                {id: 3, released: '2013'}
-            ]
-
-            // FILTERS
-        ).by('release date'), [{ match: false }, { match: true }, { match: false }]);
+    it('true', function () {
+      assert.deepEqual(this.matchAlbum.byReleaseDate({
+        released: '2012-04-25'
+      }), {
+        match: true
+      });
     });
+
+    it('false', function () {
+      assert.deepEqual(this.matchAlbum.byReleaseDate({
+        released: '2011'
+      }), {
+        match: false
+      });
+    });
+  });
 
 });
