@@ -7,7 +7,7 @@ const searches = (state = {}, { type, id }) => {
       const newSearch = { matches: [] };
       return Object.assign({
         [id]: newSearch
-      }, ...state);
+      }, state);
   }
   return state;
 };
