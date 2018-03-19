@@ -1,13 +1,13 @@
 const { combineReducers } = require('redux');
 
-const { ADD_SEARCH, ADD_ALBUM, ADD_MATCHES } = require('./actions');
+const { ADD_SEARCH, ADD_ALBUM, ADD_MATCHES, SET_STATUS } = require('./actions');
 
 const buildAlbum = require('../build');
 const matchAlbum = require('../match');
 
 const idFilter = id => item => item.id === id;
 
-const searches = (state = [], { type, id, releases, album }) => {
+const searches = (state = [], { type, id, releases, album, status }) => {
   switch (type) {
     case ADD_SEARCH:
       return [{ id, matches: [], status: 'ADDED' }, ...state];
@@ -21,6 +21,12 @@ const searches = (state = [], { type, id, releases, album }) => {
         matches: [releases.map(release => release.id), ...matches],
         builtAlbum
       }, ...state.filter(idFilter(id))];
+    case SET_STATUS:
+      const search = state.find(idFilter(id));
+      return [
+        Object.assign({}, search, { status }),
+        ...state.filter(idFilter(id))
+      ]
   }
   return state;
 };

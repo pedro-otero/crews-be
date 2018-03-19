@@ -20,8 +20,17 @@ const addMatches = (album, releases) => ({
   releases
 });
 
+const SET_STATUS = 'SET_STATUS';
+
+const setStatus = (id, status) => ({
+  type: SET_STATUS,
+  id,
+  status
+});
+
 module.exports = {
   ADD_SEARCH, addSearch,
   ADD_ALBUM, addAlbum,
-  ADD_MATCHES, addMatches
+  ADD_MATCHES, addMatches,
+  SET_STATUS, setStatus,
 };
