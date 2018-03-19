@@ -11,7 +11,7 @@ const searches = (state = [], { type, id, releases, albumId }) => {
       const { matches } = state.find(idFilter(albumId));
       return [{
         id: albumId,
-        matches: [releases, ...matches]
+        matches: [releases.map(release => release.id), ...matches]
       }, ...state.filter(idFilter(id))];
   }
   return state;
