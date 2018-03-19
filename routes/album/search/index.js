@@ -23,7 +23,9 @@ module.exports = function (db) {
 
   this.findReleases = album => find(album, 'master')
     .then(get(db.getMasterVersions))
-    .then(match(album).by('year'))
+    .then(mastetVersions => {
+      return match(album).by('year')(mastetVersions);
+    })
     .then(filtered => filtered.reduce((allVersions, currentMaster) => allVersions.concat(currentMaster.versions), []))
     .then(allVersions => allVersions.map(version => version.id))
     .then(releaseIds => releaseIds.length ? releaseIds : find(album, 'release'))
