@@ -6,23 +6,21 @@ const actions = require('./state/actions');
 
 router.get('/:spotifyAlbumId', function (req, res) {
 
-
-  const discogify = req.app.locals.discogify;
-  const spotifyApi = req.app.locals.spotifyApi;
+  const { discogify, spotifyApi } = req.app.locals;
+  const { spotifyAlbumId } = req.params;
 
   const doCatch = e => {
     console.log(e);
     return;
   };
 
-  const search = store.getState().searches.find(item => item.id === req.params.spotifyAlbumId);
+  const search = store.getState().searches.find(item => item.id === spotifyAlbumId);
 
   if (!search) {
     spotifyApi
       .then(api => {
-        const albumId = req.params.spotifyAlbumId;
-        store.dispatch(actions.addSearch(albumId));
-        return api.getAlbum(albumId);
+        store.dispatch(actions.addSearch(spotifyAlbumId));
+        return api.getAlbum(spotifyAlbumId);
       })
       .then(response => {
         const album = response.body;
