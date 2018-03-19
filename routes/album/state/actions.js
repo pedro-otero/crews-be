@@ -12,7 +12,16 @@ const addAlbum = album => ({
   album,
 });
 
+const ADD_MATCHES = 'ADD_MATCHES';
+
+const addMatches = (albumId, releases) => ({
+  type: ADD_MATCHES,
+  albumId,
+  releases
+});
+
 module.exports = {
   ADD_SEARCH, addSearch,
-  ADD_ALBUM, addAlbum
+  ADD_ALBUM, addAlbum,
+  ADD_MATCHES, addMatches
 };

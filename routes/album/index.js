@@ -30,6 +30,7 @@ router.get('/:spotifyAlbumId', function (req, res) {
     })
     .then(album => {
       discogify.findReleases(album).then(releases => {
+        store.dispatch(actions.addMatches(album.id, releases));
         const release = matchAlbum(album, releases);
         const builtAlbum = buildAlbum(album, release);
         res.json(builtAlbum);
