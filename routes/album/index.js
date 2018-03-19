@@ -37,11 +37,12 @@ router.get('/:spotifyAlbumId', function (req, res) {
 
   const search = store.getState().searches.find(item => item.id === spotifyAlbumId);
 
-  if (!search) {
+  if (search) {
+    res.json(search);
+  } else {
     searchAlbum(spotifyApi, spotifyAlbumId, discogify);
+    res.status(201).json({ id: spotifyAlbumId, status: 'CREATED' });
   }
-
-  res.json(search);
   return;
 });
 
