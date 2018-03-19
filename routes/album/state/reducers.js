@@ -26,7 +26,7 @@ const searches = (state = [], { type, id, releases, album, status, entity, resul
       return [
         Object.assign({}, search, { status }),
         ...state.filter(idFilter(id))
-      ]
+      ];
     case RESULTS:
       search = state.find(idFilter(id));
       const newSearch = Object.assign({}, search, { [`${entity}Results`]: results });
