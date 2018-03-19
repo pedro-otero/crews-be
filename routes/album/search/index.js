@@ -22,7 +22,9 @@ module.exports = function (db) {
   this.findMasters = album => find(album, 'master').then(get(db.getMaster));
 
   this.findReleases = album => find(album, 'master')
-    .then(get(db.getMasterVersions))
+    .then(masters => {
+      return get(db.getMasterVersions)(masters);
+    })
     .then(mastetVersions => {
       return match(album).by('year')(mastetVersions);
     })
