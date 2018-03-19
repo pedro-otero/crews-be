@@ -12,7 +12,10 @@ module.exports = function (db) {
       artist: album.artists[0].name,
       release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
       type
-    }).then(search => search.results)
+    }).then(({ results }) => {
+      store.dispatch(actions.results(album.id, type, results));
+      return results;
+    })
       .then(match(album).by('title', 'exact title', 'format', 'year'))
       .then(filtered => filtered.map(result => result.id));
   };

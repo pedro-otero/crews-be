@@ -28,9 +28,19 @@ const setStatus = (id, status) => ({
   status
 });
 
+const RESULTS = 'RESULTS';
+
+const results = (id, entity, results) => ({
+  type: RESULTS,
+  id,
+  entity,
+  results
+});
+
 module.exports = {
   ADD_SEARCH, addSearch,
   ADD_ALBUM, addAlbum,
   ADD_MATCHES, addMatches,
   SET_STATUS, setStatus,
+  RESULTS, results,
 };
