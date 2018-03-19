@@ -4,9 +4,6 @@ const router = express.Router();
 const store = require('./state');
 const actions = require('./state/actions');
 
-const buildAlbum = require('./build');
-const matchAlbum = require('./match');
-
 router.get('/:spotifyAlbumId', function (req, res) {
 
 
@@ -14,9 +11,9 @@ router.get('/:spotifyAlbumId', function (req, res) {
   const spotifyApi = req.app.locals.spotifyApi;
 
   const doCatch = e => {
-    require('debug')('main')(e);
-    res.status(500).send(e.stack)
-  }
+    console.log(e);
+    return;
+  };
 
   const search = store.getState().searches.find(item => item.id === req.params.spotifyAlbumId);
 
@@ -34,14 +31,15 @@ router.get('/:spotifyAlbumId', function (req, res) {
       })
       .then(album => {
         discogify.findReleases(album).then(releases => {
-          store.dispatch(actions.addMatches(album.id, releases));
-          const release = matchAlbum(album, releases);
-          const builtAlbum = buildAlbum(album, release);
-        }).catch(doCatch);
-      }).catch(doCatch);
+          store.dispatch(actions.addMatches(album, releases));
+        })
+        .catch(doCatch);
+      })
+      .catch(doCatch);
   }
 
   res.json(search);
+  return;
 });
 
 module.exports = router;

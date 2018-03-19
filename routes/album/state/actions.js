@@ -14,9 +14,9 @@ const addAlbum = album => ({
 
 const ADD_MATCHES = 'ADD_MATCHES';
 
-const addMatches = (albumId, releases) => ({
+const addMatches = (album, releases) => ({
   type: ADD_MATCHES,
-  albumId,
+  album,
   releases
 });
 
