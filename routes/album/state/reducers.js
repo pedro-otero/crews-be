@@ -8,26 +8,27 @@ const matchAlbum = require('../match');
 const idFilter = id => item => item.id === id;
 
 const searches = (state = [], { type, id, releases, album, status, entity, results }) => {
-  const search = state.find(idFilter(id));
+  let search;
   switch (type) {
     case ADD_SEARCH:
-      return [{ id, matches: [], status: 'ADDED' }, ...state];
+      return [{ id, status: 'ADDED' }, ...state];
     case ADD_MATCHES:
-      const { matches } = state.find(idFilter(album.id));
       const release = matchAlbum(album, releases);
       const builtAlbum = buildAlbum(album, release);
-      return [{
-        id: album.id,
+      search = state.find(idFilter(album.id));
+      return [Object.assign({}, search, {
         status: 'MATCHED',
-        matches: [releases.map(release => release.id), ...matches],
+        matches: [releases.map(release => release.id), ...(search.matches || [])],
         builtAlbum
-      }, ...state.filter(idFilter(id))];
+      }), ...state.filter(idFilter(id))];
     case SET_STATUS:
+      search = state.find(idFilter(id ? id : album.id));
       return [
         Object.assign({}, search, { status }),
         ...state.filter(idFilter(id))
       ]
     case RESULTS:
+      search = state.find(idFilter(id));
       const newSearch = Object.assign({}, search, { [`${entity}Results`]: results });
       return [newSearch, ...state.filter(idFilter(id))];
   }
