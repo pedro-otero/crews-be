@@ -5,4 +5,14 @@ const addSearch = id => ({
   id,
 });
 
-module.exports = {  ADD_SEARCH, addSearch };
+const ADD_ALBUM = 'ADD_ALBUM';
+
+const addAlbum = album => ({
+  type: ADD_ALBUM,
+  album,
+});
+
+module.exports = {
+  ADD_SEARCH, addSearch,
+  ADD_ALBUM, addAlbum
+};
