@@ -22,11 +22,9 @@ const searches = (state = [], { type, id, releases, album, status, entity, resul
         builtAlbum
       }), ...state.filter(idFilter(id))];
     case SET_STATUS:
-      search = state.find(idFilter(id ? id : album.id));
-      return [
-        Object.assign({}, search, { status }),
-        ...state.filter(idFilter(id))
-      ];
+      search = state.find(idFilter(id));
+      const newSearch = Object.assign({}, search, { status });
+      return [newSearch, ...state.filter(idFilter(id))];
     case RESULTS:
       search = state.find(idFilter(id));
       const newSearch = Object.assign({}, search, { [`${entity}Results`]: results });
