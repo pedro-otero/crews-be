@@ -7,13 +7,14 @@ const actions = require('../state/actions');
 module.exports = function (db) {
 
   const find = (album, type) => {
-    store.dispatch(actions.setStatus(album.id, `FINDING ${type.toUpperCase()}`));
+    const { id, artists, name } = album;
+    store.dispatch(actions.setStatus(id, `FINDING ${type.toUpperCase()}`));
     return db.search({
-      artist: album.artists[0].name,
-      release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
+      artist: artists[0].name,
+      release_title: name.replace(/(.+) \((.+)\)/, '$1'),
       type
     }).then(({ results }) => {
-      store.dispatch(actions.results(album.id, type, results));
+      store.dispatch(actions.results(id, type, results));
       return results;
     })
       .then(match(album).by('title', 'exact title', 'format', 'year'))
