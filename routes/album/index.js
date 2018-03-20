@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const store = require('./state');
-const actions = require('./state/actions');
+const actions = require('./state/actionCreators');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 
@@ -13,17 +13,17 @@ function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 
   spotifyApi
     .then(api => {
-      store.dispatch(actions.addSearch(spotifyAlbumId));
+      actions.addSearch(spotifyAlbumId);
       return api.getAlbum(spotifyAlbumId);
     })
     .then(response => {
       const album = response.body;
-      store.dispatch(actions.addAlbum(album));
+      actions.addAlbum(album);
       return album;
     })
     .then(album => {
       discogify.findReleases(album).then(releases => {
-        store.dispatch(actions.addMatches(album, releases));
+        actions.addMatches(album, releases);
       })
         .catch(doCatch);
     })

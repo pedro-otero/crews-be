@@ -1,20 +1,19 @@
 "use strict";
 
 const match = require('./filters');
-const store = require('../state');
-const actions = require('../state/actions');
+const actions = require('../state/actionCreators');
 
 module.exports = function (db) {
 
   const find = (album, type) => {
     const { id, artists, name } = album;
-    store.dispatch(actions.setStatus(id, `FINDING ${type.toUpperCase()}`));
+    actions.setStatus(id, `FINDING ${type.toUpperCase()}`);
     return db.search({
       artist: artists[0].name,
       release_title: name.replace(/(.+) \((.+)\)/, '$1'),
       type
     }).then(({ results }) => {
-      store.dispatch(actions.results(id, type, results));
+      actions.results(id, type, results);
       return results;
     })
       .then(match(album).by('title', 'exact title', 'format', 'year'))
