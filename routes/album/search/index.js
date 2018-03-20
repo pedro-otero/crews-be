@@ -28,8 +28,8 @@ module.exports = function (db) {
     .then(masters => {
       return get(db.getMasterVersions)(masters);
     })
-    .then(mastetVersions => {
-      return match(album).by('year')(mastetVersions);
+    .then(masterVersions => {
+      return match(album).by('year')(masterVersions);
     })
     .then(filtered => filtered.reduce((allVersions, currentMaster) => allVersions.concat(currentMaster.versions), []))
     .then(allVersions => allVersions.map(version => version.id))
