@@ -1,4 +1,4 @@
-const { ADD_ALBUM, ADD_MATCHES } = require('../actions/constants');
+const { ADD_ALBUM, ADD_MATCHES } = require('../action/constants');
 const searches = require('./searches');
 
 const albums = (state = [], { type, album }) => {
