@@ -3,7 +3,8 @@ const assert = require('assert');
 const {
   ADD_SEARCH,
   ADD_MATCHES,
-  SET_STATUS
+  SET_STATUS,
+  RESULTS,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -79,5 +80,26 @@ describe('Searches reducer', function () {
       });
       assert.equal('some status', searches[0].status);
     });
+  });
+
+  describe(RESULTS, function () {
+    beforeEach(function () {
+      this.searches = reduce([{
+        id: 1
+      }], {
+        type: RESULTS,
+        entity: 'master',
+        results: []
+      });
+    });
+
+    it('sets master results in the search', function () {
+      assert(this.searches[0].masterResults);
+    });
+  });
+
+  it('returns default state', function () {
+    const searches = reduce(undefined, { type: 'nada' });
+    assert(!searches.length);
   });
 });
