@@ -5,12 +5,12 @@ const {
   ADD_MATCHES,
   SET_STATUS
 } = require('../action/constants');
-const searches = require('./searches');
+const reduce = require('./searches');
 
 describe('Searches reducer', function () {
 
   const addSearch = id => function () {
-    this.newSearches = searches([], {
+    this.newSearches = reduce([], {
       type: ADD_SEARCH,
       id
     });
@@ -34,7 +34,7 @@ describe('Searches reducer', function () {
 
   describe(ADD_MATCHES, function () {
     beforeEach(function () {
-      this.newSearches = searches([{
+      this.newSearches = reduce([{
         id: 'albumId',
       }], {
         type: ADD_MATCHES,
@@ -70,7 +70,7 @@ describe('Searches reducer', function () {
 
   describe(SET_STATUS, function () {
     it('sets the status', function () {
-      const newSearches = searches([{
+      const newSearches = reduce([{
         id: 'albumId',
       }], {
         type: SET_STATUS,
