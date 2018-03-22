@@ -1,16 +1,19 @@
 const assert = require('assert');
 
-const { ADD_SEARCH } = require('../action/constants');
+const { ADD_SEARCH, ADD_MATCHES } = require('../action/constants');
 const searches = require('./searches');
 
 describe('Searches reducer', function () {
-  describe(ADD_SEARCH, function () {
-    beforeEach(function () {
-      this.newSearches = searches([], {
-        type: ADD_SEARCH,
-        id: 'albumId'
-      });
+
+  const addSearch = id => function() {
+    this.newSearches = searches([], {
+      type: ADD_SEARCH,
+      id
     });
+  };
+
+  describe(ADD_SEARCH, function () {
+    beforeEach(addSearch('albumId'));
 
     it('Pushes searches', function () {
       assert.equal(1, this.newSearches.length);
