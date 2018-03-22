@@ -1,13 +1,6 @@
-const { ADD_ALBUM, ADD_MATCHES } = require('../action/constants');
+const { ADD_MATCHES } = require('../action/constants');
 const searches = require('./searches');
-
-const albums = (state = [], { type, album }) => {
-  switch (type) {
-    case ADD_ALBUM:
-      return [album, ...state];
-  }
-  return state;
-};
+const albums = require('./albums');
 
 const releases = (state = [], { type, releases }) => {
   switch (type) {
