@@ -7,7 +7,7 @@ const {
   ADD_MATCHES,
   SET_STATUS,
   RESULTS,
-} = require('./constants');
+} = require('./actions/constants');
 
 const addSearch = id => ({
   type: ADD_SEARCH,
