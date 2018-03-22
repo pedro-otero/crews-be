@@ -1,6 +1,3 @@
-const { bindActionCreators } = require('redux');
-const store = require('./');
-
 const {
   ADD_SEARCH,
   ADD_ALBUM,
@@ -38,10 +35,10 @@ const results = (id, entity, results) => ({
   results
 });
 
-module.exports = bindActionCreators({
+module.exports = {
   addSearch,
   addAlbum,
   addMatches,
   setStatus,
   results,
-}, store.dispatch);
+};
