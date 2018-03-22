@@ -1,7 +1,7 @@
-const { ADD_SEARCH, ADD_ALBUM, ADD_MATCHES, SET_STATUS, RESULTS } = require('./actions');
+const { ADD_SEARCH, ADD_ALBUM, ADD_MATCHES, SET_STATUS, RESULTS } = require('../actions');
 
-const buildAlbum = require('../build');
-const matchAlbum = require('../match');
+const buildAlbum = require('../../build');
+const matchAlbum = require('../../match');
 
 const idFilter = id => item => item.id === id;
 
