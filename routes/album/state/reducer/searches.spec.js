@@ -1,6 +1,10 @@
 const assert = require('assert');
 
-const { ADD_SEARCH, ADD_MATCHES } = require('../action/constants');
+const {
+  ADD_SEARCH,
+  ADD_MATCHES,
+  SET_STATUS
+} = require('../action/constants');
 const searches = require('./searches');
 
 describe('Searches reducer', function () {
@@ -61,6 +65,19 @@ describe('Searches reducer', function () {
 
     it('sets search\s builtAlbum', function () {
       assert(this.newSearches[0].builtAlbum);
+    });
+  });
+
+  describe(SET_STATUS, function () {
+    it('sets the status', function () {
+      const newSearches = searches([{
+        id: 'albumId',
+      }], {
+        type: SET_STATUS,
+        id: 'albumId',
+        status: 'some status'
+      });
+      assert.equal('some status', newSearches[0].status);
     });
   });
 });
