@@ -5,7 +5,7 @@ const searches = require('./searches');
 
 describe('Searches reducer', function () {
 
-  const addSearch = id => function() {
+  const addSearch = id => function () {
     this.newSearches = searches([], {
       type: ADD_SEARCH,
       id
@@ -25,6 +25,42 @@ describe('Searches reducer', function () {
 
     it('Creates a request with status ADDED', function () {
       assert.equal('ADDED', this.newSearches[0].status);
+    });
+  });
+
+  describe(ADD_MATCHES, function () {
+    beforeEach(function () {
+      this.newSearches = searches([{
+        id: 'albumId',
+      }], {
+        type: ADD_MATCHES,
+        album: {
+          id: 'albumId',
+          artists: [{ name: 'who' }],
+          tracks: {
+            items: []
+          },
+        },
+        releases: [{
+          id: 1
+        }]
+      })
+    });
+
+    it('puts one match in the search', function () {
+      assert.equal(1, this.newSearches[0].matches.length);
+    });
+
+    it('matches release to the search by album id', function () {
+      assert.equal(1, this.newSearches[0].matches[0]);
+    });
+
+    it('sets search as MATCHED', function () {
+      assert.equal('MATCHED', this.newSearches[0].status);
+    });
+
+    it('sets search\s builtAlbum', function () {
+      assert(this.newSearches[0].builtAlbum);
     });
   });
 });
