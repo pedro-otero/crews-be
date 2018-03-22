@@ -1,5 +1,3 @@
-const { combineReducers } = require('redux');
-
 const { ADD_SEARCH, ADD_ALBUM, ADD_MATCHES, SET_STATUS, RESULTS } = require('./actions');
 
 const buildAlbum = require('../build');
@@ -53,4 +51,4 @@ const releases = (state = [], { type, releases }) => {
   return state;
 }
 
-module.exports = combineReducers({ searches, albums, releases });
+module.exports = ({ searches, albums, releases });

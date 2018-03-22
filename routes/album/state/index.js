@@ -1,4 +1,4 @@
-const { createStore } = require('redux');
+const { createStore, combineReducers } = require('redux');
 const reducers = require('./reducers');
 
-module.exports = createStore(reducers);
+module.exports = createStore(combineReducers(reducers));
