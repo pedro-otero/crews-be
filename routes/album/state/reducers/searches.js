@@ -1,4 +1,4 @@
-const { ADD_SEARCH, ADD_MATCHES, SET_STATUS, RESULTS } = require('../actions');
+const { ADD_SEARCH, ADD_MATCHES, SET_STATUS, RESULTS } = require('../constants');
 
 const buildAlbum = require('../../build');
 const matchAlbum = require('../../match');
