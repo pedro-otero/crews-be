@@ -5,10 +5,21 @@ const searches = require('./searches');
 
 describe('Searches reducer', function () {
   beforeEach(function () {
-    this.newSearches = searches([], { type: actions.ADD_SEARCH, data: { album: {} } });
+    this.newSearches = searches([], {
+      type: actions.ADD_SEARCH,
+      id: 'albumId'
+    });
   });
 
-  it('Adds a new search', function () {
+  it('Pushes searches', function () {
     assert.equal(1, this.newSearches.length);
+  });
+
+  it('Creates a request with the same id as the album', function () {
+    assert.equal('albumId', this.newSearches[0].id);
+  });
+
+  it('Creates a request with status ADDED', function () {
+    assert.equal('ADDED', this.newSearches[0].status);
   });
 });
