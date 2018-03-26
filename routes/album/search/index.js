@@ -1,7 +1,7 @@
 "use strict";
 
 const match = require('./filters');
-const actions = require('../state/action');
+const { actions } = require('../state');
 
 module.exports = function (db) {
 

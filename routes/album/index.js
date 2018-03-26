@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const store = require('./state');
-const actions = require('./state/action');
+const { store, actions } = require('./state');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 

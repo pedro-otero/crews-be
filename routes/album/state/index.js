@@ -1,4 +1,7 @@
-const { createStore, combineReducers } = require('redux');
+const { bindActionCreators, createStore, combineReducers } = require('redux');
 const reducers = require('./reducer');
 
-module.exports = createStore(combineReducers(reducers));
+const store = createStore(combineReducers(reducers));
+
+exports.actions = bindActionCreators(require('./action/creators'), store.dispatch);
+exports.store = store;
