@@ -15,15 +15,21 @@ describe('Master search results reducer', function () {
     beforeEach(function () {
       this.results = reduce([], {
         type: ADD_MASTER_RESULTS,
-        action: {
-          album: 1,
-          results: [{}],
-        }
+        album: 1,
+        results: [{}],
       });
     });
 
     it('stores one results object', function () {
       assert.equal(1, this.results.length);
+    });
+
+    it('stores a results object for the indicated album', function () {
+      assert.equal(1, this.results[0].album);
+    });
+
+    it('stores a results object with the indicated results', function () {
+      assert.equal(1, this.results[0].results.length);
     });
   });
 });
