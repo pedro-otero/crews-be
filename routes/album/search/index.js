@@ -11,7 +11,8 @@ module.exports = function (db) {
     return db.search({
       artist: artists[0].name,
       release_title: name.replace(/(.+) \((.+)\)/, '$1'),
-      type
+      type,
+      per_page: 100,
     }).then(({ results }) => {
       ({
         'master': () => actions.masterResults(id, results),
