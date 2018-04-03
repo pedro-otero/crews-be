@@ -13,7 +13,10 @@ module.exports = function (db) {
       release_title: name.replace(/(.+) \((.+)\)/, '$1'),
       type
     }).then(({ results }) => {
-      actions.results(id, type, results);
+      ({
+        'master': () => actions.masterResults(id, results),
+        'release': () => actions.releaseResults(id, results),
+      })[type]();
       return results;
     })
       .then(match(album).by('title', 'exact title', 'format', 'year'))
