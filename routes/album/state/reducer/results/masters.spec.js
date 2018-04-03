@@ -11,14 +11,19 @@ describe('Master search results reducer', () => {
     assert.equal(0, results.length);
   });
 
-  it('stores results for an album', () => {
-    const results = reduce([], {
-      type: ADD_MASTER_RESULTS,
-      action: {
-        album: 1,
-        results: [{}],
-      }
+  describe('store results for an album', () => {
+    beforeEach(function () {
+      this.results = reduce([], {
+        type: ADD_MASTER_RESULTS,
+        action: {
+          album: 1,
+          results: [{}],
+        }
+      });
     });
-    assert.equal(1, results.length);
+
+    it('stores one results object', function () {
+      assert.equal(1, this.results.length);
+    });
   });
 });
