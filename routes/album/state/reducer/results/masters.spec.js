@@ -5,13 +5,13 @@ const {
   ADD_MASTER_RESULTS
 } = require('../../action/constants');
 
-describe('Master search results reducer', () => {
-  it('returns default state', () => {
+describe('Master search results reducer', function () {
+  it('returns default state', function () {
     const results = reduce(undefined, {});
     assert.equal(0, results.length);
   });
 
-  describe('store results for an album', () => {
+  describe('store results for an album', function () {
     beforeEach(function () {
       this.results = reduce([], {
         type: ADD_MASTER_RESULTS,
