@@ -1,4 +1,4 @@
-const { ADD_SEARCH, ADD_MATCHES, SET_STATUS, RESULTS } = require('../action/constants');
+const { ADD_SEARCH, ADD_MATCHES, SET_STATUS } = require('../action/constants');
 
 const buildAlbum = require('../../build');
 const matchAlbum = require('../../match');
@@ -24,10 +24,6 @@ module.exports = (state = [], { type, id, releases, album, status, entity, resul
     case SET_STATUS:
       search = state.find(idFilter(id));
       newSearch = Object.assign({}, search, { status });
-      break;
-    case RESULTS:
-      search = state.find(idFilter(id));
-      newSearch = Object.assign({}, search, { [`${entity}Results`]: results });
       break;
     default:
       return state;
