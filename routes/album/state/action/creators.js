@@ -3,7 +3,8 @@ const {
   ADD_ALBUM,
   ADD_MATCHES,
   SET_STATUS,
-  RESULTS,
+  ADD_MASTER_RESULTS,
+  ADD_RELEASE_RESULTS,
 } = require('./constants');
 
 const addSearch = id => ({
@@ -28,10 +29,15 @@ const setStatus = (id, status) => ({
   status
 });
 
-const results = (id, entity, results) => ({
-  type: RESULTS,
-  id,
-  entity,
+const masterResults = (album, results) => ({
+  type: ADD_MASTER_RESULTS,
+  album,
+  results
+});
+
+const releaseResults = (album, results) => ({
+  type: ADD_RELEASE_RESULTS,
+  album,
   results
 });
 
@@ -40,5 +46,6 @@ module.exports = {
   addAlbum,
   addMatches,
   setStatus,
-  results,
+  masterResults,
+  releaseResults,
 };
