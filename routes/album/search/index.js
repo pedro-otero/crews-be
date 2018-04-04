@@ -30,20 +30,21 @@ module.exports = function (db) {
   this.findReleases = album => {
     return find(album, 'master')
       .then(masters => {
-        return get(db.getMasterVersions)(masters);
-      })
-      .then(masterVersions => {
-        return match(album).by('year')(masterVersions);
-      })
-      .then(filtered => filtered.reduce((allVersions, currentMaster) => allVersions.concat(currentMaster.versions), []))
-      .then(allVersions => allVersions.map(version => version.id))
-      .then(releaseIds => releaseIds.length ? releaseIds : find(album, 'release'))
-      .then(releases => {
-        releases
-          .map(release => db.getRelease(release.id))
-          .forEach(promise => {
-            promise.then(actions.addRelease);
+        if (masters.length) {
+          masters.forEach(master => {
+            db.getMasterVersions(master.id).then(result => {
+              result.versions.forEach(version => {
+                db.getRelease(version.id).then(actions.addRelease);
+              });
+            });
           });
+        } else {
+          find(album, 'release').then(results => {
+            results.forEach(result => {
+              db.getRelease(result.id).then(actions.addRelease);
+            })
+          });
+        }
       });
   }
-}
+};
