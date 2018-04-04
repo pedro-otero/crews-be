@@ -3,6 +3,8 @@ const router = express.Router();
 
 const { store, actions } = require('./state');
 const match = require('./search/filters');
+const buildAlbum = require('./build');
+const matchAlbum = require('./match');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 
@@ -51,7 +53,12 @@ router.get('/:spotifyAlbumId', function (req, res) {
         .filter(release => results.releases.includes(release.id)));
     const album = store.getState().albums.find(album => album.id === spotifyAlbumId);
     const filtered = match(album).by('tracklist', 'release date')(releases);
-    res.json(Object.assign(search, { matches: filtered }));
+    const release = matchAlbum(album, filtered);
+    const builtAlbum = buildAlbum(album, release);
+    res.json(Object.assign(search, {
+      built: filtered.map(release => buildAlbum(album, release)),
+      bestMatch: builtAlbum
+    }));
   } else {
     searchAlbum(spotifyApi, spotifyAlbumId, discogify);
     res.status(201).json({ id: spotifyAlbumId, status: 'CREATED' });
