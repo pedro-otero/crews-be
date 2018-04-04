@@ -28,8 +28,6 @@ module.exports = function (db) {
 
   const get = func => ids => Promise.all(ids.map(id => func(id)));
 
-  this.findMasters = album => find(album, 'master').then(get(db.getMaster));
-
   this.findReleases = album => find(album, 'master')
     .then(masters => {
       return get(db.getMasterVersions)(masters);
