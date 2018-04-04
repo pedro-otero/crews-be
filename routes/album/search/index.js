@@ -20,9 +20,11 @@ module.exports = function (db) {
         'master': () => actions.masterResults(id, results),
         'release': () => actions.releaseResults(id, results),
       })[type]();
-      return results;
-    })
-      .then(match(album).by('title', 'exact title', 'format', 'year'));
+      const first = match(album).by('title', 'exact title', 'format', 'year')(results);
+      const second = results.filter(result => !first.find(f => f.id === result.id));
+      const ordered = first.concat(second);
+      return ordered;
+    });
   };
 
   this.findReleases = album => {
