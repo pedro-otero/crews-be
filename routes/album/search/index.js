@@ -22,11 +22,10 @@ module.exports = function (db) {
       })[type]();
       return results;
     })
-      .then(match(album).by('title', 'exact title', 'format', 'year'))
-      .then(filtered => filtered.map(result => result.id));
+      .then(match(album).by('title', 'exact title', 'format', 'year'));
   };
 
-  const get = func => ids => Promise.all(ids.map(id => func(id)));
+  const get = func => objects => Promise.all(objects.map(object => func(object.id)));
 
   this.findReleases = album => find(album, 'master')
     .then(masters => {
@@ -38,9 +37,9 @@ module.exports = function (db) {
     .then(filtered => filtered.reduce((allVersions, currentMaster) => allVersions.concat(currentMaster.versions), []))
     .then(allVersions => allVersions.map(version => version.id))
     .then(releaseIds => releaseIds.length ? releaseIds : find(album, 'release'))
-    .then(releaseIds => {
-      releaseIds
-        .map(db.getRelease)
+    .then(releases => {
+      releases
+        .map(release => db.getRelease(release.id))
         .forEach(promise => {
           promise.then(actions.addRelease);
         });
