@@ -7,7 +7,6 @@ module.exports = function (db) {
 
   const find = (album, type) => {
     const { id, artists, name } = album;
-    actions.setStatus(id, `FINDING ${type.toUpperCase()}`);
     let page = 1;
     return db.search({
       artist: artists[0].name,
