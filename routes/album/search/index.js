@@ -25,8 +25,6 @@ module.exports = function (db) {
       .then(match(album).by('title', 'exact title', 'format', 'year'));
   };
 
-  const get = func => objects => Promise.all(objects.map(object => func(object.id)));
-
   this.findReleases = album => {
     return find(album, 'master')
       .then(masters => {
