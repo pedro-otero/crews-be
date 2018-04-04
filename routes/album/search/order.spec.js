@@ -20,5 +20,13 @@ describe('Order search results function', function () {
     it('first item is release with id 2', function () {
       assert.equal(2, this.ordered[0].id);
     });
+
+    it('second item is release with id 1', function () {
+      assert.equal(1, this.ordered[1].id);
+    });
+
+    it('preserves array length', function () {
+      assert.equal(2, this.ordered.length);
+    });
   });
 });
