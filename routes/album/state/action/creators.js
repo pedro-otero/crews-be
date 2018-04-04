@@ -1,7 +1,7 @@
 const {
   ADD_SEARCH,
   ADD_ALBUM,
-  ADD_MATCHES,
+  ADD_RELEASE,
   SET_STATUS,
   ADD_MASTER_RESULTS,
   ADD_RELEASE_RESULTS,
@@ -17,10 +17,9 @@ const addAlbum = album => ({
   album,
 });
 
-const addMatches = (album, releases) => ({
-  type: ADD_MATCHES,
-  album,
-  releases
+const addRelease = release => ({
+  type: ADD_RELEASE,
+  release
 });
 
 const setStatus = (id, status) => ({
@@ -44,7 +43,7 @@ const releaseResults = (album, results) => ({
 module.exports = {
   addSearch,
   addAlbum,
-  addMatches,
+  addRelease,
   setStatus,
   masterResults,
   releaseResults,

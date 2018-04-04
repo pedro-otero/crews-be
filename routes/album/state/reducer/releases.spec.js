@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 const {
-  ADD_MATCHES,
+  ADD_RELEASE,
 } = require('../action/constants');
 const reduce = require('./releases');
 
@@ -9,12 +9,12 @@ describe('Releases reducer', function () {
 
   const addMatch = id => function () {
     this.releases = reduce([], {
-      type: ADD_MATCHES,
-      releases: [{ id }]
+      type: ADD_RELEASE,
+      release: { id }
     });
   };
 
-  describe(ADD_MATCHES, function () {
+  describe(ADD_RELEASE, function () {
     beforeEach(addMatch('releaseId'));
 
     it('Pushes releases', function () {

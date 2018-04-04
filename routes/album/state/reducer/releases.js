@@ -1,9 +1,9 @@
-const { ADD_MATCHES } = require('../action/constants');
+const { ADD_RELEASE } = require('../action/constants');
 
-module.exports = (state = [], { type, releases }) => {
+module.exports = (state = [], { type, release }) => {
   switch (type) {
-    case ADD_MATCHES:
-      return [...releases, ...state];
+    case ADD_RELEASE:
+      return [...state, release];
   }
   return state;
 };

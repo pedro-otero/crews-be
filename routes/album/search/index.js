@@ -37,6 +37,11 @@ module.exports = function (db) {
     .then(filtered => filtered.reduce((allVersions, currentMaster) => allVersions.concat(currentMaster.versions), []))
     .then(allVersions => allVersions.map(version => version.id))
     .then(releaseIds => releaseIds.length ? releaseIds : find(album, 'release'))
-    .then(get(db.getRelease))
-    .then(match(album).by('tracklist', 'release date'));
+    .then(releaseIds => {
+      releaseIds
+        .map(db.getRelease)
+        .forEach(promise => {
+          promise.then(actions.addRelease);
+        });
+    });
 }
