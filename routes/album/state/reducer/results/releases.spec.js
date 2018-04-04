@@ -16,7 +16,7 @@ describe('Release search results reducer', function () {
       this.results = reduce([], {
         type: ADD_RELEASE_RESULTS,
         album: 1,
-        results: [{}],
+        page: { results: [{}] },
       });
     });
 
@@ -29,7 +29,7 @@ describe('Release search results reducer', function () {
     });
 
     it('stores a results object with the indicated results', function () {
-      assert.equal(1, this.results[0].results.length);
+      assert.equal(1, this.results[0].page.results.length);
     });
   });
 });

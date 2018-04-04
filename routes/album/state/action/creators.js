@@ -28,16 +28,16 @@ const setStatus = (id, status) => ({
   status
 });
 
-const masterResults = (album, results) => ({
+const masterResults = (album, page) => ({
   type: ADD_MASTER_RESULTS,
   album,
-  results
+  page
 });
 
-const releaseResults = (album, results) => ({
+const releaseResults = (album, page) => ({
   type: ADD_RELEASE_RESULTS,
   album,
-  results
+  page
 });
 
 module.exports = {

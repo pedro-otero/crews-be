@@ -4,7 +4,7 @@ module.exports = function (state = [], action) {
   const func = {
     [ADD_RELEASE_RESULTS]: () => [...state, {
       album: action.album,
-      results: action.results,
+      page: action.page,
     }]
   }[action.type];
   if (func) {

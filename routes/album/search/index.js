@@ -15,13 +15,13 @@ module.exports = function (db) {
       type,
       per_page: 100,
       page,
-    }).then(({ results }) => {
+    }).then(page => {
       ({
-        'master': () => actions.masterResults(id, results),
-        'release': () => actions.releaseResults(id, results),
+        'master': () => actions.masterResults(id, page),
+        'release': () => actions.releaseResults(id, page),
       })[type]();
-      const first = match(album).by('title', 'exact title', 'format', 'year')(results);
-      const second = results.filter(result => !first.find(f => f.id === result.id));
+      const first = match(album).by('title', 'exact title', 'format', 'year')(page.results);
+      const second = page.results.filter(result => !first.find(f => f.id === result.id));
       const ordered = first.concat(second);
       return ordered;
     });

@@ -40,11 +40,11 @@ router.get('/:spotifyAlbumId', function (req, res) {
     const results = {
       masters: store.getState().results.masters
         .filter(result => result.album === spotifyAlbumId)
-        .reduce((all, current) => all.concat(current.results), [])
+        .reduce((all, current) => all.concat(current.page.results), [])
         .map(item => item.id),
       releases: store.getState().results.releases
         .filter(result => result.album === spotifyAlbumId)
-        .reduce((all, current) => all.concat(current.results), [])
+        .reduce((all, current) => all.concat(current.page.results), [])
         .map(item => item.id),
     };
     const releases = store.getState().releases
