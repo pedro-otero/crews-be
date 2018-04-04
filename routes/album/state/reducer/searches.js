@@ -5,7 +5,7 @@ const matchAlbum = require('../../match');
 
 const idFilter = id => item => item.id === id;
 
-module.exports = (state = [], { type, id, releases, album, status, entity, results }) => {
+module.exports = (state = [], { type, id, releases, album, status }) => {
   let search, newSearch;
   switch (type) {
     case ADD_SEARCH:
