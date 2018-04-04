@@ -5,15 +5,13 @@ const { actions } = require('../state');
 
 module.exports = function (db) {
 
-  const params = ({ artists: [{ name: artist }], name }, type, page = 1) => {
-    return {
-      artist,
-      release_title: name.replace(/(.+) \((.+)\)/, '$1'),
-      type,
-      per_page: 100,
-      page,
-    };
-  };
+  const params = ({ artists: [{ name: artist }], name }, type, page = 1) => ({
+    artist,
+    release_title: name.replace(/(.+) \((.+)\)/, '$1'),
+    type,
+    per_page: 100,
+    page,
+  });
 
   const find = (album, type) => {
     return db.search(params(album, type)).then(page => {
