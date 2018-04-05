@@ -3,6 +3,16 @@ const match = require('./filters');
 
 describe('Tracklist comparator', function () {
 
+  it('Different lengths', function () {
+    assert.equal(match([
+        { name: 'TrAck #1' },
+        { name: 'TrAck #1' },
+      ], [
+        { title: 'Track #1' },
+      ]
+    ), 0);
+  });
+
   it('Exactly equal', function () {
     assert.equal(match([
         { name: 'TrAck #1' },
