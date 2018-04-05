@@ -1,4 +1,4 @@
-module.exports = (results, { name, artists: [{ name: artist }], release_date }) => {
+module.exports = (results, { name, artists: [{ name: artist }], release_date, album_type }) => {
   return results.map((release, position) => {
     const exactTitle = `${artist} - ${name}`;
     let score = 0;
@@ -9,6 +9,12 @@ module.exports = (results, { name, artists: [{ name: artist }], release_date }) 
       score++;
     }
     if (release.year === release_date.substring(0, 4)) {
+      score++;
+    }
+    const format = ((typeof release.format === 'string') ?
+      release.format.split(', ') :
+      (release.format || [])).map(format => format.toUpperCase());
+    if (format.includes(album_type.toUpperCase())) {
       score++;
     }
     return { position, score };
