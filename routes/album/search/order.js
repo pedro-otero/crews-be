@@ -3,10 +3,10 @@ module.exports = (results, { name, artists: [{ name: artist }] }) => {
     const exactTitle = `${artist} - ${name}`;
     let score = 0;
     if (exactTitle === release.title) {
-      score += 25;
+      score++;
     }
     if (release.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) {
-      score += 25;
+      score++;
     }
     return { position, score };
   }).reduce((ordered, item) => {
