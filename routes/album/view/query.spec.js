@@ -10,7 +10,7 @@ describe('Search state view', function () {
           masters: [{
             album: 1,
             page: {
-              results: [{}, {}, {},]
+              results: [{ id: 'a' }, {}, { id: 'c' },]
             }
           }, {
             album: 1,
@@ -29,7 +29,10 @@ describe('Search state view', function () {
               results: [{}, {},]
             }
           },],
-        }
+        },
+        releases: [
+          { id: 10, master_id: 'a' }, { id: 11, master_id: 'a' },
+          { id: 12, master_id: 'c' }, { id: 13, master_id: 'd' },]
       })
     };
     this.query = Query(1, this.store);
@@ -43,5 +46,10 @@ describe('Search state view', function () {
   it('Gets release search results', function () {
     const releaseSearchResults = this.query.getReleaseSearchResults();
     assert.equal(3, releaseSearchResults.length);
+  });
+
+  it('Gets retrieved releases so far', function () {
+    const releases = this.query.getRetrievedReleases();
+    assert.equal(3, releases.length);
   });
 });
