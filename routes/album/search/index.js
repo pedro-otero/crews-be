@@ -1,6 +1,6 @@
 "use strict";
 
-const match = require('./filters');
+const order = require('./order');
 const { actions } = require('../state');
 
 module.exports = function (db) {
@@ -19,10 +19,7 @@ module.exports = function (db) {
         'master': () => actions.masterResults(album.id, page),
         'release': () => actions.releaseResults(album.id, page),
       })[type]();
-      const first = match(album).by('title', 'exact title', 'format', 'year')(page.results);
-      const second = page.results.filter(result => !first.find(f => f.id === result.id));
-      const ordered = first.concat(second);
-      return ordered;
+      return order(page.results, album);
     });
   };
 
