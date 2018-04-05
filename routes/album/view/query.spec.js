@@ -9,8 +9,15 @@ describe('Search state view', function () {
         results: {
           masters: [{
             album: 1,
-            page: {}
-          }],
+            page: {
+              results: [{ id: 'a' }, { id: 'b' }, { id: 'c' },]
+            }
+          }, {
+            album: 1,
+            page: {
+              results: [{ id: 'd' }, { id: 'e' },]
+            }
+          },],
           releases: [{
             album: 1,
             page: {}
@@ -23,7 +30,7 @@ describe('Search state view', function () {
 
   it('Gets master search results', function () {
     const masterSearchResults = this.query.getMasterSearchResults();
-    assert.equal(1, masterSearchResults.length);
+    assert.equal(5, masterSearchResults.length);
   });
 
   it('Gets release search results', function () {
