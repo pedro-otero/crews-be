@@ -1,4 +1,4 @@
-module.exports = (results, { name, artists: [{ name: artist }] }) => {
+module.exports = (results, { name, artists: [{ name: artist }], release_date }) => {
   return results.map((release, position) => {
     const exactTitle = `${artist} - ${name}`;
     let score = 0;
@@ -6,6 +6,9 @@ module.exports = (results, { name, artists: [{ name: artist }] }) => {
       score++;
     }
     if (release.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) {
+      score++;
+    }
+    if (release.year === release_date.substring(0, 4)) {
       score++;
     }
     return { position, score };
