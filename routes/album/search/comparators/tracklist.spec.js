@@ -1,5 +1,5 @@
 const assert = require('assert');
-const match = require('./filters');
+const match = require('./tracklist');
 
 describe('Tracklist comparator', function () {
 

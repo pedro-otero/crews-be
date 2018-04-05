@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { store, actions } = require('./state');
-const match = require('./search/comparators/filters');
+const match = require('./search/comparators/tracklist');
 const buildAlbum = require('./build');
 const matchAlbum = require('./match');
 
