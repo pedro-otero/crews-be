@@ -12,16 +12,6 @@ module.exports = (album) => {
 
   const filters = {
 
-    'title': result => !!result.title.match(`.+ - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`),
-
-    'exact title': result => similarity(
-      result.title,
-      (`${artists[0].name.toUpperCase()} - ${name.replace(/(.+) \((.+)\)/, '$1').toUpperCase()}`)) === 1,
-
-    'format': result => result.format.includes(album_type.toUpperCase()),
-
-    'year': result => result.year == release_date.substr(0, 4),
-
     'tracklist': result => result.tracklist.length == tracks.items.length &&
       tracks.items.map(track => track.name.toUpperCase()).every((track, i) => {
         const titles = [track, result.tracklist[i]]
@@ -29,8 +19,6 @@ module.exports = (album) => {
           .map(title => title.split(' - ')[0]);
         return similarity(titles[0], titles[1]) === 1;
       }),
-
-    'release date': result => result.released == release_date
 
   };
 

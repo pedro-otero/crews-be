@@ -52,7 +52,7 @@ router.get('/:spotifyAlbumId', function (req, res) {
       .concat(store.getState().releases
         .filter(release => results.releases.includes(release.id)));
     const album = store.getState().albums.find(album => album.id === spotifyAlbumId);
-    const filtered = match(album).by('tracklist', 'release date')(releases);
+    const filtered = match(album).by('tracklist')(releases);
     const release = matchAlbum(album, filtered);
     const builtAlbum = buildAlbum(album, release);
     res.json(Object.assign(search, {
