@@ -6,7 +6,9 @@ module.exports = function (albumId, store) {
         .reduce((all, item) => all.concat(item.page.results), []);
     },
     getReleaseSearchResults: () => {
-      return store.getState().results.releases.filter(result => result.album === albumId);
+      return store.getState().results.releases
+        .filter(result => result.album === albumId)
+        .reduce((all, item) => all.concat(item.page.results), []);
     },
   }
 };

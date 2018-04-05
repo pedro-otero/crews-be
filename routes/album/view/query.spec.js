@@ -20,8 +20,15 @@ describe('Search state view', function () {
           },],
           releases: [{
             album: 1,
-            page: {}
-          }],
+            page: {
+              results: [{}]
+            }
+          }, {
+            album: 1,
+            page: {
+              results: [{},{},]
+            }
+          },],
         }
       })
     };
@@ -35,6 +42,6 @@ describe('Search state view', function () {
 
   it('Gets release search results', function () {
     const releaseSearchResults = this.query.getReleaseSearchResults();
-    assert.equal(1, releaseSearchResults.length);
+    assert.equal(3, releaseSearchResults.length);
   });
 });
