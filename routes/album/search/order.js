@@ -12,6 +12,9 @@ module.exports = (results, { name, artists: [{ name: artist }] }) => {
   }).reduce((ordered, item) => {
     if (ordered.length) {
       const position = ordered.findIndex(innerItem => innerItem.score < item.score);
+      if (position === -1) {
+        return ordered.concat([item]);
+      }
       return [
         ...ordered.slice(0, position),
         item,
