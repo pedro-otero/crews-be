@@ -6,11 +6,8 @@ module.exports = (spotify, discogs) => {
     return false;
   }
 
-  const album = spotify.map(track => track.name);
-  const release = discogs.map(track => track.title);
-
-  const similarities = album.map((track, i) => similarity(track, release[i]));
-
-  const sum = similarities.reduce((sum, similarity) => sum + similarity, 0);
-  return (sum / similarities.length);
+  return spotify
+    .map(track => track.name)
+    .map((track, i) => similarity(track, discogs[i].title))
+    .reduce((sum, similarity, i, array) => sum + (similarity / array.length), 0);
 };
