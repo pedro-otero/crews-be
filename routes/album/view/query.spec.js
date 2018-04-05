@@ -10,12 +10,12 @@ describe('Search state view', function () {
           masters: [{
             album: 1,
             page: {
-              results: [{ id: 'a' }, { id: 'b' }, { id: 'c' },]
+              results: [{}, {}, {},]
             }
           }, {
             album: 1,
             page: {
-              results: [{ id: 'd' }, { id: 'e' },]
+              results: [{}, {},]
             }
           },],
           releases: [{
@@ -26,7 +26,7 @@ describe('Search state view', function () {
           }, {
             album: 1,
             page: {
-              results: [{},{},]
+              results: [{}, {},]
             }
           },],
         }
