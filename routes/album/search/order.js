@@ -10,18 +10,14 @@ module.exports = (results, { name, artists: [{ name: artist }] }) => {
     }
     return { position, score };
   }).reduce((ordered, item) => {
-    if (ordered.length) {
-      const position = ordered.findIndex(innerItem => innerItem.score < item.score);
-      if (position === -1) {
-        return ordered.concat([item]);
-      }
-      return [
-        ...ordered.slice(0, position),
-        item,
-        ...ordered.slice(position, ordered.length)
-      ]
-    } else {
-      return [item];
+    const position = ordered.findIndex(innerItem => innerItem.score < item.score);
+    if (position === -1) {
+      return ordered.concat([item]);
     }
+    return [
+      ...ordered.slice(0, position),
+      item,
+      ...ordered.slice(position, ordered.length)
+    ]
   }, []).map(item => results[item.position]);
 };
