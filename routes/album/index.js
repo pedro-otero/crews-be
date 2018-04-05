@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { store, actions } = require('./state');
-const match = require('./search/comparators/tracklist');
+const compareTracklist = require('./search/comparators/tracklist');
 const buildAlbum = require('./build');
 const matchAlbum = require('./match');
 
@@ -52,12 +52,20 @@ router.get('/:spotifyAlbumId', function (req, res) {
       .concat(store.getState().releases
         .filter(release => results.releases.includes(release.id)));
     const album = store.getState().albums.find(album => album.id === spotifyAlbumId);
-    const filtered = match(album).by('tracklist')(releases);
-    const release = matchAlbum(album, filtered);
-    const builtAlbum = buildAlbum(album, release);
+    const ordered = releases.reduce((all, release) => {
+      if (all.length) {
+        if (compareTracklist(album.tracks.items, release.tracklist) > compareTracklist(album.tracks.items, all[0].tracklist)) {
+          return [release, ...all];
+        } else {
+          return all.concat(release);
+        }
+      } else {
+        return [release];
+      }
+    }, []);
     res.json(Object.assign(search, {
-      built: filtered.map(release => buildAlbum(album, release)),
-      bestMatch: builtAlbum
+      built: ordered.map(release => buildAlbum(album, release)),
+      bestMatch: buildAlbum(album, ordered[0])
     }));
   } else {
     searchAlbum(spotifyApi, spotifyAlbumId, discogify);
