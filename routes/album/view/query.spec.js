@@ -18,17 +18,16 @@ describe('Search state view', function () {
         }
       })
     };
+    this.query = Query(1, this.store);
   });
 
   it('Gets master search results', function () {
-    const query = Query(1, this.store);
-    const masterSearchResults = query.getMasterSearchResults();
+    const masterSearchResults = this.query.getMasterSearchResults();
     assert.equal(1, masterSearchResults.length);
   });
 
   it('Gets release search results', function () {
-    const query = Query(1, this.store);
-    const releaseSearchResults = query.getReleaseSearchResults();
+    const releaseSearchResults = this.query.getReleaseSearchResults();
     assert.equal(1, releaseSearchResults.length);
   });
 });
