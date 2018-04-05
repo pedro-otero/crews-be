@@ -1,45 +1,16 @@
 const similarity = require('string-similarity').compareTwoStrings;
 
-module.exports = (album) => {
+module.exports = (spotify, discogs) => {
 
-  const {
-    name,
-    artists,
-    album_type,
-    release_date,
-    tracks
-  } = album;
+  if (discogs.length !== spotify.length) {
+    return false;
+  }
 
-  const filters = {
+  const album = spotify.map(track => track.name);
+  const release = discogs.map(track => track.title);
 
-    'tracklist': result => result.tracklist.length == tracks.items.length &&
-      tracks.items.map(track => track.name.toUpperCase()).every((track, i) => {
-        const titles = [track, result.tracklist[i]]
-          .map(title => title.replace(/(.+) \((.+)\)/, '$1 - $2'))
-          .map(title => title.split(' - ')[0]);
-        return similarity(titles[0], titles[1]) === 1;
-      }),
+  const similarities = album.map((track, i) => similarity(track, release[i]));
 
-  };
-
-  const convert = result => ({
-    id: result.id,
-    title: (result.title || '').toUpperCase(),
-    format: ((typeof result.format === 'string') ? result.format.split(', ') : (result.format || [])).map(format => format.toUpperCase()),
-    tracklist: (result.tracklist || []).map(track => track.title.toUpperCase()),
-    released: result.released,
-    year: result.year
-  });
-
-  const by = currentFilter => result => ({ match: filters[currentFilter](convert(result)) });
-
-  return Object.keys(filters).reduce((instance, filter) => {
-    instance[`by${
-      filter
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('')
-    }`] = by(filter);
-    return instance;
-  }, {});
+  const sum = similarities.reduce((sum, similarity) => sum + similarity, 0);
+  return (sum / similarities.length);
 };
