@@ -23,13 +23,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* App locals setup */
-const disconnectConfig = require('./disconnect-config.json');
-const disconnect = new require('disconnect').Client(disconnectConfig.agent, disconnectConfig.keys);
-const Search = require('./src/search');
-const Throxy = require('throxy');
-const throxy = new Throxy(disconnect.database(), 1100);
-app.locals.discogify = new Search(throxy
-);
+
+app.locals.discogify = require('./src/setup/discogs');
 const SpotifyWebApi = require('spotify-web-api-node');
 const spotifyConfig = require('./spotify-config.json');
 const spotifyApi = new SpotifyWebApi({
