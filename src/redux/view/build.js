@@ -1,16 +1,3 @@
-const millisToTime = millis => {
-    const seconds = millis / 1000;
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-}
-
-const secsToTime = seconds => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-}
-
 function splitRange(tracksstring) {
     var split = tracksstring.split('to').map(s => s.trim());
     var tracks = [];
@@ -47,16 +34,6 @@ const buildSong = discogsRelease => (spotifyTrack, trackIndex) => {
         .concat(track.extraartists || []);
     const result = {
         title: spotifyTrack.name,
-        explicit: spotifyTrack.explicit,
-        duration: millisToTime(spotifyTrack.duration_ms),
-        track_id: spotifyTrack.id,
-        videos: (discogsRelease.videos || [])
-            .filter(video => video.title.includes(spotifyTrack.name))
-            .map(video => ({
-                embed: video.embed,
-                uri: video.uri,
-                duration: secsToTime(video.duration)
-            })),
         producers: reduce(allCredits)('producers'),
         composers: reduce(allCredits)('composers'),
         featured: reduce(allCredits)('featured'),
@@ -78,16 +55,5 @@ const buildSong = discogsRelease => (spotifyTrack, trackIndex) => {
 }
 
 module.exports = (spotifyAlbum, discogsRelease) => ({
-    title: spotifyAlbum.name,
-    artist: spotifyAlbum.artists[0].name,
-    duration: millisToTime(spotifyAlbum.tracks.items.map(track => track.duration_ms).reduce((a, b) => a + b, 0)),
-    spotify: {
-        album_id: spotifyAlbum.id,
-        images: spotifyAlbum.images
-    },
-    discogs: {
-        release_id: discogsRelease.id,
-        images: discogsRelease.images
-    },
     tracks: spotifyAlbum.tracks.items.map(buildSong(discogsRelease))
 });

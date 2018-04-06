@@ -6,7 +6,6 @@ describe('Build', function () {
 
         before(function () {
             this.album = {
-                artists: [{name: 'The artist'}],
                 tracks: {
                     items: [{
                         name: 'Some track',
@@ -57,22 +56,10 @@ describe('Build', function () {
             expect(this.built.title).to.equal(this.album.name);
         });
 
-        it('sets artist', function () {
-            expect(this.built.artist).to.equal(this.album.artists[0].name);
-        });
-
-        it('sets duration', function () {
-            expect(this.built.duration).to.equal('0:01');
-        });
-
         describe('builds tracks', function () {
 
             it('sets title', function () {
                 expect(this.built.tracks[0].title).to.equal(this.album.tracks.items[0].name);
-            });
-
-            it('sets duration', function () {
-                expect(this.built.tracks[0].duration).to.equal('0:01');
             });
 
             it('adds producers that are in the release track', function () {
