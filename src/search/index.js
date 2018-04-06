@@ -1,7 +1,7 @@
 const { store, actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
-module.exports = function searchAlbum(spotify, id, discogs) {
+module.exports = (spotify, id, discogs) => {
 
   const doCatch = e => {
     console.log(e);
