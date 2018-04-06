@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* App locals setup */
 const disconnectConfig = require('./disconnect-config.json');
 const disconnect = new require('disconnect').Client(disconnectConfig.agent, disconnectConfig.keys);
-const Search = require('./routes/album/search');
+const Search = require('./src/search');
 const Throxy = require('throxy');
 const throxy = new Throxy(disconnect.database(), 1100);
 app.locals.discogify = new Search(throxy
