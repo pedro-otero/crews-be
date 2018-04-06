@@ -4,7 +4,7 @@ const router = express.Router();
 const { store, actions } = require('./state');
 const compareTracklist = require('./search/comparators/tracklist');
 const buildAlbum = require('./build');
-const matchAlbum = require('./match');
+const Query = require('./view/query');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 
@@ -37,20 +37,8 @@ router.get('/:spotifyAlbumId', function (req, res) {
   const search = store.getState().searches.find(item => item.id === spotifyAlbumId);
 
   if (search) {
-    const results = {
-      masters: store.getState().results.masters
-        .filter(result => result.album === spotifyAlbumId)
-        .reduce((all, current) => all.concat(current.page.results), [])
-        .map(item => item.id),
-      releases: store.getState().results.releases
-        .filter(result => result.album === spotifyAlbumId)
-        .reduce((all, current) => all.concat(current.page.results), [])
-        .map(item => item.id),
-    };
-    const releases = store.getState().releases
-      .filter(release => results.masters.includes(release.master_id))
-      .concat(store.getState().releases
-        .filter(release => results.releases.includes(release.id)));
+    const query = Query(spotifyAlbumId, store);
+    const releases = query.getRetrievedReleases();
     const album = store.getState().albums.find(album => album.id === spotifyAlbumId);
     const ordered = releases.reduce((all, release) => {
       if (all.length) {
