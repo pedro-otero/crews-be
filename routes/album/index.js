@@ -1,8 +1,8 @@
 const express = require('express');
-const router = express.Router();
 
 const searchAlbum = require('../../src/search');
 
+const router = express.Router();
 router.get('/:spotifyAlbumId', function (req, res) {
   const {
     app: { locals: { discogs, spotify } },
