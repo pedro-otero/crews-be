@@ -6,19 +6,17 @@ describe('Search state view', function () {
   it('Gets release search results', function () {
     const store = {
       getState: () => ({
-        results: {
-          releases: [{
-            album: 1,
-            page: {
-              results: [{}]
-            }
-          }, {
-            album: 1,
-            page: {
-              results: [{}, {},]
-            }
-          },]
-        }
+        results: [{
+          album: 1,
+          page: {
+            results: [{}]
+          }
+        }, {
+          album: 1,
+          page: {
+            results: [{}, {},]
+          }
+        },]
       })
     };
     const query = Query(1, store);
@@ -29,14 +27,12 @@ describe('Search state view', function () {
   it('Gets retrieved releases', function () {
     const store = {
       getState: () => ({
-        results: {
-          releases: [{
-            album: 1,
-            page: {
-              results: [{ id: 'r1' }, { id: 'r2' }]
-            }
-          },]
-        },
+        results: [{
+          album: 1,
+          page: {
+            results: [{ id: 'r1' }, { id: 'r2' }]
+          }
+        },],
         releases: [{ id: 'r1' }, { id: 'r2' },]
       })
     };

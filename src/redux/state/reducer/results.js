@@ -1,4 +1,4 @@
-const { ADD_RELEASE_RESULTS } = require("../../action/constants");
+const { ADD_RELEASE_RESULTS } = require("../action/constants");
 
 module.exports = function (state = [], action) {
   const func = {

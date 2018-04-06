@@ -1,9 +1,9 @@
 const assert = require('assert');
 
-const reduce = require('./releases');
+const reduce = require('./results');
 const {
   ADD_RELEASE_RESULTS
-} = require('../../action/constants');
+} = require('../action/constants');
 
 describe('Release search results reducer', function () {
   it('returns default state', function () {

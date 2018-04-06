@@ -4,7 +4,7 @@ const buildAlbum = require('./build');
 module.exports = function (albumId, store) {
   const state = () => store.getState();
 
-  const releaseResults = () => state().results.releases
+  const releaseResults = () => state().results
     .filter(result => result.album === albumId)
     .reduce((all, item) => all.concat(item.page.results), []);
 
