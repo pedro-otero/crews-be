@@ -10,6 +10,7 @@ module.exports = function (albumId, store) {
     .reduce((all, item) => all.concat(item.page.results), []);
 
   return {
+    getAlbum: () => state().albums.find(album => album.id === albumId),
     getMasterSearchResults: () => masterResults(),
     getReleaseSearchResults: () => releaseResults(),
     getRetrievedReleases: () => {

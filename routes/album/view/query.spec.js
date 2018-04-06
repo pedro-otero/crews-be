@@ -75,4 +75,15 @@ describe('Search state view', function () {
     const releases = query.getRetrievedReleases();
     assert.equal(2, releases.length);
   });
+
+  it('Gets album', function () {
+    const store = {
+      getState: () => ({
+        albums: [{id:1}]
+      })
+    };
+    const query = Query(1, store);
+    const album = query.getAlbum();
+    assert(album);
+  });
 });
