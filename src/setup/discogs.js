@@ -1,7 +1,7 @@
 const Throxy = require('throxy');
 const Disconnect = require('disconnect');
 
-const Search = require('../search');
+const Search = require('../discogs');
 const disconnectConfig = require('../../disconnect-config.json');
 
 const disconnect = new Disconnect.Client(disconnectConfig.agent, disconnectConfig.keys);
