@@ -25,26 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* App locals setup */
 
 app.locals.discogify = require('./src/setup/discogs');
-const SpotifyWebApi = require('spotify-web-api-node');
-const spotifyConfig = require('./spotify-config.json');
-const spotifyApi = new SpotifyWebApi({
-    clientId: spotifyConfig.keys.consumer,
-    clientSecret: spotifyConfig.keys.secret,
-    redirectUri: spotifyConfig.urls.redirect
-});
-app.locals.spotifyApi = new Promise(function (resolve, reject) {
-    spotifyApi.clientCredentialsGrant().then(response => {
-        if (response.statusCode == 200) {
-            const token = response.body.access_token;
-            spotifyApi.setAccessToken(token);
-            console.log('Spotify client authenticated succesfully');
-            resolve(spotifyApi)
-        } else {
-            console.log('ERRROR AUTHENTICATING ' + JSON.stringify(response));
-            reject(response);
-        }
-    });
-});
+app.locals.spotifyApi = require('./src/setup/spotify');
 
 app.use('/', routes);
 app.use('/users', users);
