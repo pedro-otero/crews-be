@@ -99,7 +99,7 @@ describe('Build', function () {
     });
   });
 
-  describe('works with x-y track string in release extra artists', function () {
+  describe('works with x to y track string in release extra artists', function () {
     beforeEach(function () {
       this.album = {
         tracks: {
@@ -114,9 +114,9 @@ describe('Build', function () {
       };
       this.release = {
         extraartists: [{
-          name: 'P2',
+          name: 'P1',
           role: 'Produced By',
-          tracks: '1-3'
+          tracks: '1 to 3'
         }],
         tracklist: [{
           title: 'Track 1',
@@ -137,6 +137,18 @@ describe('Build', function () {
 
     it('built bundle has 3 tracks', function () {
       assert.equal(3, this.built.tracks.length);
+    });
+
+    it('built bundle has P1 as producer of Track 1', function () {
+      assert.equal('P1', this.built.tracks[0].producers[0]);
+    });
+
+    it('built bundle has P1 as producer of Track 2', function () {
+      assert.equal('P1', this.built.tracks[1].producers[0]);
+    });
+
+    it('built bundle has P1 as producer of Track 3', function () {
+      assert.equal('P1', this.built.tracks[2].producers[0]);
     });
   });
 });
