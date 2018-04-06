@@ -4,7 +4,7 @@ const router = express.Router();
 const { store, actions } = require('../../src/redux/state');
 const compareTracklist = require('./search/comparators/tracklist');
 const buildAlbum = require('./build');
-const Query = require('./view/query');
+const Query = require('../../src/redux/view/query');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
 
