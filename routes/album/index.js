@@ -4,14 +4,14 @@ const router = express.Router();
 const { store, actions } = require('../../src/redux/state');
 const Query = require('../../src/redux/view/query');
 
-function searchAlbum(spotifyApi, spotifyAlbumId, discogs) {
+function searchAlbum(spotify, spotifyAlbumId, discogs) {
 
   const doCatch = e => {
     console.log(e);
     return;
   };
 
-  spotifyApi
+  spotify
     .then(api => {
       actions.addSearch(spotifyAlbumId);
       return api.getAlbum(spotifyAlbumId);
@@ -29,7 +29,7 @@ function searchAlbum(spotifyApi, spotifyAlbumId, discogs) {
 
 router.get('/:spotifyAlbumId', function (req, res) {
 
-  const { discogs, spotifyApi } = req.app.locals;
+  const { discogs, spotify } = req.app.locals;
   const { spotifyAlbumId } = req.params;
 
   const search = store.getState().searches.find(item => item.id === spotifyAlbumId);
@@ -41,7 +41,7 @@ router.get('/:spotifyAlbumId', function (req, res) {
       built: query.getAllMatches(),
     }));
   } else {
-    searchAlbum(spotifyApi, spotifyAlbumId, discogs);
+    searchAlbum(spotify, spotifyAlbumId, discogs);
     res.status(201).json({ id: spotifyAlbumId, status: 'CREATED' });
   }
   return;

@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* App locals setup */
 
 app.locals.discogs = require('./src/setup/discogs');
-app.locals.spotifyApi = require('./src/setup/spotify');
+app.locals.spotify = require('./src/setup/spotify');
 
 app.use('/', routes);
 app.use('/users', users);

@@ -17,7 +17,7 @@ describe('Albums endpoint', function () {
     const port = process.env.PORT || 3000;
 
     before(function (done) {
-        app.locals.spotifyApi = Promise.resolve({
+        app.locals.spotify = Promise.resolve({
             getAlbum: (id) => Promise.resolve(tests.reduce((albums, t) => {
                 albums[t.album.id] = {body: t.album};
                 return albums;
