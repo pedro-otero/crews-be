@@ -28,9 +28,6 @@ module.exports = function searchAlbum(spotify, id, discogs) {
       .then(response => {
         const album = response.body;
         actions.addAlbum(album);
-        return album;
-      })
-      .then(album => {
         discogs.findReleases(album).catch(doCatch);
       })
       .catch(doCatch);
