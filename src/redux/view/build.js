@@ -26,10 +26,10 @@ const reduce = allCredits => highlightedRole => allCredits
     .some(role => roles[highlightedRole].includes(role)))
   .map(credit => credit.name);
 
-const buildSong = ({ tracklist, extraartists }) => (spotifyTrack, trackIndex) => {
+const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackIndex) => {
   const track = tracklist[trackIndex];
   const position = track.position || String(trackIndex + 1);
-  const allCredits = (extraartists || [])
+  const allCredits = extraartists
     .filter(credit => getTracksList(credit.tracks).includes(position))
     .concat(track.extraartists || []);
   const result = {
