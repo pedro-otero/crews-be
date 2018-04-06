@@ -1,17 +1,17 @@
 const { store, actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
-module.exports = function searchAlbum(spotify, spotifyAlbumId, discogs) {
+module.exports = function searchAlbum(spotify, id, discogs) {
 
   const doCatch = e => {
     console.log(e);
     return;
   };
 
-  const search = store.getState().searches.find(item => item.id === spotifyAlbumId);
+  const search = store.getState().searches.find(item => item.id === id);
 
   if (search) {
-    const query = Query(spotifyAlbumId, store);
+    const query = Query(id, store);
     return Object.assign(search, {
       data: {
         bestMatch: query.getBestMatch(),
@@ -22,8 +22,8 @@ module.exports = function searchAlbum(spotify, spotifyAlbumId, discogs) {
   } else {
     spotify
       .then(api => {
-        actions.addSearch(spotifyAlbumId);
-        return api.getAlbum(spotifyAlbumId);
+        actions.addSearch(id);
+        return api.getAlbum(id);
       })
       .then(response => {
         const album = response.body;
@@ -36,7 +36,7 @@ module.exports = function searchAlbum(spotify, spotifyAlbumId, discogs) {
       .catch(doCatch);
     return {
       data: {
-        id: spotifyAlbumId,
+        id,
         status: 'CREATED'
       },
       status: 201
