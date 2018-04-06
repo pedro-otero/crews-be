@@ -23,7 +23,7 @@ describe('Albums endpoint', function () {
                 return albums;
             }, {})[id])
         });
-        app.locals.discogify = {
+        app.locals.discogs = {
             findReleases: (album) => Promise.resolve(tests.reduce((releases, t) => {
                 releases[t.album.id] = [t.release];
                 return releases;
