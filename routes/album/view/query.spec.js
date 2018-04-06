@@ -35,21 +35,17 @@ describe('Search state view', function () {
           { id: 12, master_id: 'c' }, { id: 13, master_id: 'd' },]
       })
     };
-    this.query = Query(1, this.store);
   });
 
   it('Gets master search results', function () {
-    const masterSearchResults = this.query.getMasterSearchResults();
+    const query = Query(1, this.store);
+    const masterSearchResults = query.getMasterSearchResults();
     assert.equal(5, masterSearchResults.length);
   });
 
   it('Gets release search results', function () {
-    const releaseSearchResults = this.query.getReleaseSearchResults();
+    const query = Query(1, this.store);
+    const releaseSearchResults = query.getReleaseSearchResults();
     assert.equal(3, releaseSearchResults.length);
-  });
-
-  it('Gets retrieved releases so far', function () {
-    const releases = this.query.getRetrievedReleases();
-    assert.equal(3, releases.length);
   });
 });
