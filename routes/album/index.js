@@ -1,31 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { store, actions } = require('../../src/redux/state');
+const { store } = require('../../src/redux/state');
 const Query = require('../../src/redux/view/query');
-
-function searchAlbum(spotify, spotifyAlbumId, discogs) {
-
-  const doCatch = e => {
-    console.log(e);
-    return;
-  };
-
-  spotify
-    .then(api => {
-      actions.addSearch(spotifyAlbumId);
-      return api.getAlbum(spotifyAlbumId);
-    })
-    .then(response => {
-      const album = response.body;
-      actions.addAlbum(album);
-      return album;
-    })
-    .then(album => {
-      discogs.findReleases(album).catch(doCatch);
-    })
-    .catch(doCatch);
-}
+const searchAlbum = require('../../src/search');
 
 router.get('/:spotifyAlbumId', function (req, res) {
 
