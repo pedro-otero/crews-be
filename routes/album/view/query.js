@@ -11,8 +11,11 @@ module.exports = function (albumId, store) {
 
   return {
     getAlbum: () => state().albums.find(album => album.id === albumId),
+
     getMasterSearchResults: () => masterResults(),
+
     getReleaseSearchResults: () => releaseResults(),
+
     getRetrievedReleases: () => {
       return masterResults()
         .map(result => result.id)
