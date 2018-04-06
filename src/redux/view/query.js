@@ -1,5 +1,5 @@
 const compareTracklist = require('./comparators/tracklist');
-const buildAlbum = require('../../../routes/album/build');
+const buildAlbum = require('./build');
 
 module.exports = function (albumId, store) {
   const state = () => store.getState();

@@ -1,5 +1,5 @@
 const build = require('./build');
-const expect = require('expect.js');
+const expect = require('../../../node_modules/expect.js/expect');
 
 describe('Build', function () {
     describe('creates a bundle from album and release information', function () {
