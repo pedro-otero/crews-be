@@ -39,7 +39,7 @@ router.get('/:spotifyAlbumId', function (req, res) {
   if (search) {
     const query = Query(spotifyAlbumId, store);
     const releases = query.getRetrievedReleases();
-    const album = store.getState().albums.find(album => album.id === spotifyAlbumId);
+    const album = query.getAlbum();
     const ordered = releases.reduce((all, release) => {
       if (all.length) {
         if (compareTracklist(album.tracks.items, release.tracklist) > compareTracklist(album.tracks.items, all[0].tracklist)) {
