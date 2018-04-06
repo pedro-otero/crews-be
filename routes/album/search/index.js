@@ -1,7 +1,7 @@
 "use strict";
 
 const order = require('./order');
-const { actions } = require('../state');
+const { actions } = require('../../../src/redux/state');
 
 module.exports = function (db) {
 

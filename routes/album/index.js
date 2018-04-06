@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { store, actions } = require('./state');
+const { store, actions } = require('../../src/redux/state');
 const compareTracklist = require('./search/comparators/tracklist');
 const buildAlbum = require('./build');
 const Query = require('./view/query');
