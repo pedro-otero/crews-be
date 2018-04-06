@@ -9,7 +9,6 @@ describe('Build', function () {
                 tracks: {
                     items: [{
                         name: 'Some track',
-                        duration_ms: 1000
                     }]
                 }
             };
