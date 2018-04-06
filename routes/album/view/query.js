@@ -12,5 +12,15 @@ module.exports = function (albumId, store) {
   return {
     getMasterSearchResults: () => masterResults(),
     getReleaseSearchResults: () => releaseResults(),
+    getRetrievedReleases: () => {
+      return masterResults()
+        .map(result => result.id)
+        .reduce((releases, id) => releases.concat(
+          state().releases
+            .filter(release => release.master_id === id)), [])
+        .concat(releaseResults()
+          .map(result => state().releases
+            .find(item => item.id === result.id)))
+    }
   }
 };

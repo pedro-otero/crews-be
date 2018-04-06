@@ -51,4 +51,28 @@ describe('Search state view', function () {
     const releaseSearchResults = query.getReleaseSearchResults();
     assert.equal(3, releaseSearchResults.length);
   });
+
+  it('Gets retrieved releases', function () {
+    const store = {
+      getState: () => ({
+        results: {
+          masters: [{
+            album: 1,
+            page: {
+              results: [{ id: 'm1' }]
+            }
+          },], releases: [{
+            album: 1,
+            page: {
+              results: [{ id: 'r1' }]
+            }
+          },]
+        },
+        releases: [{ id: 'r1', master_id: 'm2' }, { id: 'r1', master_id: 'm1' },]
+      })
+    };
+    const query = Query(1, store);
+    const releases = query.getRetrievedReleases();
+    assert.equal(2, releases.length);
+  });
 });
