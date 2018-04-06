@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 
 const { store, actions } = require('../../src/redux/state');
-const compareTracklist = require('./search/comparators/tracklist');
-const buildAlbum = require('./build');
 const Query = require('../../src/redux/view/query');
 
 function searchAlbum(spotifyApi, spotifyAlbumId, discogify) {
@@ -38,26 +36,9 @@ router.get('/:spotifyAlbumId', function (req, res) {
 
   if (search) {
     const query = Query(spotifyAlbumId, store);
-    const releases = query.getRetrievedReleases();
-    const album = query.getAlbum();
-    const ordered = releases.reduce((all, release) => {
-      if (all.length) {
-        const current = compareTracklist(album.tracks.items, release.tracklist);
-        const first = compareTracklist(album.tracks.items, all[0].tracklist);
-        if (current > first) {
-          return [release, ...all];
-        } else if (current > 0) {
-          return all.concat(release);
-        } else {
-          return all;
-        }
-      } else {
-        return [release];
-      }
-    }, []);
     res.json(Object.assign(search, {
-      built: ordered.map(release => buildAlbum(album, release)),
-      bestMatch: buildAlbum(album, ordered[0])
+      bestMatch: query.getBestMatch(),
+      built: query.getAllMatches(),
     }));
   } else {
     searchAlbum(spotifyApi, spotifyAlbumId, discogify);
