@@ -11,24 +11,23 @@ module.exports = (spotify, id, discogs) => {
         bestMatch: query.getBestMatch(),
         built: query.getAllMatches(),
       },
-      status: 200
+      status: 200,
     });
-  } else {
-    spotify
-      .then(api => {
-        actions.addSearch(id);
-        return api.getAlbum(id);
-      })
-      .then(({ body: album }) => {
-        actions.addAlbum(album);
-        discogs.findReleases(album);
-      });
-    return {
-      data: {
-        id,
-        status: 'CREATED'
-      },
-      status: 201
-    };
   }
+  spotify
+    .then((api) => {
+      actions.addSearch(id);
+      return api.getAlbum(id);
+    })
+    .then(({ body: album }) => {
+      actions.addAlbum(album);
+      discogs.findReleases(album);
+    });
+  return {
+    data: {
+      id,
+      status: 'CREATED',
+    },
+    status: 201,
+  };
 };
