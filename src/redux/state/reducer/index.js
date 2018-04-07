@@ -3,4 +3,6 @@ const albums = require('./albums');
 const releases = require('./releases');
 const results = require('./results');
 
-module.exports = ({ searches, albums, releases, results });
+module.exports = ({
+  searches, albums, releases, results,
+});
