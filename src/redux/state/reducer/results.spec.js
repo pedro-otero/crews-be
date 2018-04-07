@@ -2,16 +2,16 @@ const assert = require('assert');
 
 const reduce = require('./results');
 const {
-  ADD_RELEASE_RESULTS
+  ADD_RELEASE_RESULTS,
 } = require('../action/constants');
 
-describe('Release search results reducer', function () {
-  it('returns default state', function () {
+describe('Release search results reducer', () => {
+  it('returns default state', () => {
     const results = reduce(undefined, {});
     assert.equal(0, results.length);
   });
 
-  describe('store results for an album', function () {
+  describe('store results for an album', () => {
     beforeEach(function () {
       this.results = reduce([], {
         type: ADD_RELEASE_RESULTS,
