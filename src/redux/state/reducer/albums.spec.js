@@ -5,16 +5,15 @@ const {
 } = require('../action/constants');
 const reduce = require('./albums');
 
-describe('Albums reducer', function () {
-
+describe('Albums reducer', () => {
   const addAlbum = id => function () {
     this.albums = reduce([], {
       type: ADD_ALBUM,
-      album: { id }
+      album: { id },
     });
   };
 
-  describe(ADD_ALBUM, function () {
+  describe(ADD_ALBUM, () => {
     beforeEach(addAlbum('albumId'));
 
     it('Pushes albums', function () {
