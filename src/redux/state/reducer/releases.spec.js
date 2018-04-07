@@ -5,16 +5,15 @@ const {
 } = require('../action/constants');
 const reduce = require('./releases');
 
-describe('Releases reducer', function () {
-
+describe('Releases reducer', () => {
   const addMatch = id => function () {
     this.releases = reduce([], {
       type: ADD_RELEASE,
-      release: { id }
+      release: { id },
     });
   };
 
-  describe(ADD_RELEASE, function () {
+  describe(ADD_RELEASE, () => {
     beforeEach(addMatch('releaseId'));
 
     it('Pushes releases', function () {
