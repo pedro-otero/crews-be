@@ -10,7 +10,8 @@ module.exports = function (albumId, store) {
 
   const getRetrievedReleases = () => releaseResults()
     .map(result => state().releases
-      .find(item => item.id === result.id));
+      .find(item => item.id === result.id))
+    .filter(item => !!item);
 
   const getAlbum = () => state().albums.find(album => album.id === albumId);
 
