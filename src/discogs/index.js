@@ -6,6 +6,10 @@ const order = require('./order');
 const { actions } = require('../redux/state/index');
 
 module.exports = function (db) {
+  const doCatch = e => {
+    console.log(e);
+    return;
+  };
 
   this.findReleases = album => {
     const logger = winston.createLogger({
@@ -19,13 +23,14 @@ module.exports = function (db) {
     const msg = (album, theRest) => `${album.artists[0].name} - ${album.name} (${album.id}) :: ${theRest}`;
 
     const { artists: [{ name: artist }], name } = album;
-    return db.search({
+    const params = {
       artist,
       release_title: name.replace(/(.+) \((.+)\)/, '$1'),
       type: 'release',
       per_page: 100,
       page: 1,
-    }).then(page => {
+    };
+    db.search(params).then(page => {
       logger.info(msg(album, `${page.pagination.items} release results found`));
       actions.releaseResults(album.id, page);
       const results = order(page.results, album);
@@ -33,8 +38,8 @@ module.exports = function (db) {
         db.getRelease(result.id).then(release => {
           logger.info(msg(album, `Release ${release.id} (master ${release.master_id}) retrieved`));
           actions.addRelease(release);
-        });
+        }).catch(doCatch);
       })
-    });
+    }).catch(doCatch);
   }
 };

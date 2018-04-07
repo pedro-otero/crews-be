@@ -2,12 +2,6 @@ const { store, actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
 module.exports = (spotify, id, discogs) => {
-
-  const doCatch = e => {
-    console.log(e);
-    return;
-  };
-
   const search = store.getState().searches.find(item => item.id === id);
 
   if (search) {
@@ -27,9 +21,8 @@ module.exports = (spotify, id, discogs) => {
       })
       .then(({ body: album }) => {
         actions.addAlbum(album);
-        discogs.findReleases(album).catch(doCatch);
-      })
-      .catch(doCatch);
+        discogs.findReleases(album);
+      });
     return {
       data: {
         id,
