@@ -30,7 +30,7 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
     .filter(credit => getTracksList(credit.tracks)
       .includes(position))
     .concat(track.extraartists || []);
-  const result = {
+  return {
     title: spotifyTrack.name,
     producers: reduce(allCredits)('producers'),
     composers: reduce(allCredits)('composers'),
@@ -49,7 +49,6 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
       return credits;
     }, {}),
   };
-  return result;
 };
 
 module.exports = (spotifyAlbum, discogsRelease) => ({
