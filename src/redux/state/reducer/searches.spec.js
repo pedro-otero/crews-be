@@ -2,20 +2,18 @@ const assert = require('assert');
 
 const {
   ADD_SEARCH,
-  RESULTS,
 } = require('../action/constants');
 const reduce = require('./searches');
 
-describe('Searches reducer', function () {
-
+describe('Searches reducer', () => {
   const addSearch = id => function () {
     this.searches = reduce([], {
       type: ADD_SEARCH,
-      id
+      id,
     });
   };
 
-  describe(ADD_SEARCH, function () {
+  describe(ADD_SEARCH, () => {
     beforeEach(addSearch('albumId'));
 
     it('Pushes searches', function () {
@@ -31,7 +29,7 @@ describe('Searches reducer', function () {
     });
   });
 
-  it('returns default state', function () {
+  it('returns default state', () => {
     const searches = reduce(undefined, { type: 'nada' });
     assert(!searches.length);
   });
