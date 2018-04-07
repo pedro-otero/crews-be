@@ -40,13 +40,14 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
         .filter(role => !roles.producers.includes(role) &&
           !roles.composers.includes(role) &&
           !roles.featured.includes(role));
+      const result = Object.assign({}, credits);
       if (newCredits.length) {
-        if (!(credit.name in credits)) {
-          credits.defineProperty(credit.name, []);
+        if (!(result.name in result)) {
+          result[credit.name] = [];
         }
-        credits[credit.name].push(...newCredits);
+        result[credit.name].push(...newCredits);
       }
-      return credits;
+      return result;
     }, {}),
   };
 };
