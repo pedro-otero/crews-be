@@ -17,13 +17,13 @@ const addAlbum = album => ({
 
 const addRelease = release => ({
   type: ADD_RELEASE,
-  release
+  release,
 });
 
 const releaseResults = (album, page) => ({
   type: ADD_RELEASE_RESULTS,
   album,
-  page
+  page,
 });
 
 module.exports = {
