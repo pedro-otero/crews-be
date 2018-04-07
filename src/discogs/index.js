@@ -18,7 +18,20 @@ const logger = winston.createLogger({
       case 'results':
         return info.message;
       case 'release':
-        return `${info.message.album.artists[0].name} - ${info.message.album.name} (${info.message.album.id}) :: P(${info.message.page.pagination.page}/${info.message.page.pagination.pages}) R(${(info.message.i + 1)}/${info.message.page.results.length}) Release ${info.message.release.id} (master ${info.message.release.master_id}) retrieved`;
+        const {
+          album: {
+            artists: [{ name: artist }],
+            name: album,
+            id: albumId,
+          },
+          page: {
+            pagination: { page: currentPage, pages: totalPages },
+            results,
+          },
+          release: { id: releaseId, master_id: masterId },
+          i,
+        } = info.message;
+        return `${artist} - ${album} (${albumId}) :: P(${currentPage}/${totalPages}) R(${(i + 1)}/${results.length}) Release ${releaseId} (master ${masterId}) retrieved`;
       default:
         return info.message;
     }
