@@ -1,4 +1,5 @@
 const SpotifyWebApi = require('spotify-web-api-node');
+const winston = require('winston');
 
 const spotifyConfig = require('../../spotify-config.json');
 
@@ -8,15 +9,22 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: spotifyConfig.urls.redirect,
 });
 
+const logger = winston.createLogger({
+  level: 'info',
+  transports: [
+    new winston.transports.Console(),
+  ],
+});
+
 const api = new Promise((resolve, reject) => {
   spotifyApi.clientCredentialsGrant().then((response) => {
     if (response.statusCode === 200) {
       const token = response.body.access_token;
       spotifyApi.setAccessToken(token);
-      console.log('Spotify client authenticated succesfully');
+      logger.info('Spotify client authenticated succesfully');
       resolve(spotifyApi);
     } else {
-      console.log(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
+      logger.error(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
       reject(response);
     }
   });
