@@ -3,20 +3,20 @@ const winston = require('winston');
 const order = require('./order');
 const { actions } = require('../redux/state/index');
 
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console(),
+  ],
+});
+
 module.exports = function (db) {
   const doCatch = (e) => {
-    console.log(e);
+    logger.error(e);
   };
 
   this.findReleases = (album) => {
-    const logger = winston.createLogger({
-      level: 'info',
-      format: winston.format.json(),
-      transports: [
-        new winston.transports.Console(),
-      ],
-    });
-
     const msg = text => `${album.artists[0].name} - ${album.name} (${album.id}) :: ${text}`;
 
     const { artists: [{ name: artist }], name } = album;
