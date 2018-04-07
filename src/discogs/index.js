@@ -11,12 +11,6 @@ const logger = winston.createLogger({
     release: 2,
     error: 3,
   },
-  color: {
-    finish: 'blue',
-    results: 'green',
-    release: 'yellow',
-    error: 'red',
-  },
   format: combine(printf((info) => {
     switch (info.level) {
       case 'finish':
