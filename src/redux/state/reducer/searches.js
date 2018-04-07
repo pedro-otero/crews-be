@@ -4,8 +4,10 @@ const {
 
 const idFilter = id => item => item.id === id;
 
-module.exports = (state = [], { type, id, releases, album, status }) => {
-  let search, newSearch;
+module.exports = (state = [], {
+  type, id,
+}) => {
+  let newSearch;
   switch (type) {
     case ADD_SEARCH:
       newSearch = { id, status: 'ADDED' };
