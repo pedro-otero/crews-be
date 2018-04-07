@@ -3,11 +3,37 @@ const winston = require('winston');
 const order = require('./order');
 const { actions } = require('../redux/state/index');
 
+const { printf, combine } = winston.format;
 const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
+  levels: {
+    finish: 0,
+    results: 1,
+    release: 2,
+    error: 3,
+  },
+  color: {
+    finish: 'blue',
+    results: 'green',
+    release: 'yellow',
+    error: 'red',
+  },
+  format: combine(printf((info) => {
+    switch (info.level) {
+      case 'finish':
+        return info.message;
+      case 'results':
+        return info.message;
+      case 'release':
+        return info.message;
+      default:
+        return info.message;
+    }
+  })),
   transports: [
-    new winston.transports.Console(),
+    new winston.transports.Console({ level: 'finish' }),
+    new winston.transports.Console({ level: 'results' }),
+    new winston.transports.Console({ level: 'release' }),
+    new winston.transports.Console({ level: 'error' }),
   ],
 });
 
@@ -29,12 +55,12 @@ module.exports = function (db) {
     };
 
     const loadAllReleases = (page) => {
-      logger.info(msg(album, `${page.pagination.page}/${page.pagination.pages} page with ${page.results.length} release results found`));
+      logger.results(msg(album, `${page.pagination.page}/${page.pagination.pages} page with ${page.results.length} release results found`));
       actions.releaseResults(album.id, page);
       const results = order(page.results, album);
       results.forEach((result, i) => {
         db.getRelease(result.id).then((release) => {
-          logger.info(msg(album, `P(${page.pagination.page}/${page.pagination.pages}) R(${(i + 1)}/${results.length}) Release ${release.id} (master ${release.master_id}) retrieved`));
+          logger.release(msg(album, `P(${page.pagination.page}/${page.pagination.pages}) R(${(i + 1)}/${results.length}) Release ${release.id} (master ${release.master_id}) retrieved`));
           actions.addRelease(release);
           if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
             Object.assign(params, { page: page.pagination.page + 1 });
