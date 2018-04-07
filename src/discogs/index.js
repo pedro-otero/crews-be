@@ -30,7 +30,8 @@ module.exports = function (db) {
       per_page: 100,
       page: 1,
     };
-    db.search(params).then(page => {
+
+    const loadAllReleases = page => {
       logger.info(msg(album, `${page.pagination.items} release results found`));
       actions.releaseResults(album.id, page);
       const results = order(page.results, album);
@@ -39,7 +40,9 @@ module.exports = function (db) {
           logger.info(msg(album, `Release ${release.id} (master ${release.master_id}) retrieved`));
           actions.addRelease(release);
         }).catch(doCatch);
-      })
-    }).catch(doCatch);
+      });
+    };
+
+    db.search(params).then(loadAllReleases).catch(doCatch);
   }
 };
