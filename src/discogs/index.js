@@ -18,7 +18,7 @@ const logger = winston.createLogger({
       case 'results':
         return info.message;
       case 'release':
-        return info.message;
+        return `${info.message.album.artists[0].name} - ${info.message.album.name} (${info.message.album.id}) :: P(${info.message.page.pagination.page}/${info.message.page.pagination.pages}) R(${(info.message.i + 1)}/${info.message.page.results.length}) Release ${info.message.release.id} (master ${info.message.release.master_id}) retrieved`;
       default:
         return info.message;
     }
@@ -54,7 +54,12 @@ module.exports = function (db) {
       const results = order(page.results, album);
       results.forEach((result, i) => {
         db.getRelease(result.id).then((release) => {
-          logger.release(msg(album, `P(${page.pagination.page}/${page.pagination.pages}) R(${(i + 1)}/${results.length}) Release ${release.id} (master ${release.master_id}) retrieved`));
+          logger.release({
+            album,
+            page,
+            release,
+            i,
+          });
           actions.addRelease(release);
           if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
             Object.assign(params, { page: page.pagination.page + 1 });
