@@ -4,6 +4,7 @@ module.exports = (state = [], { type, release }) => {
   switch (type) {
     case ADD_RELEASE:
       return [...state, release];
+    default:
+      return state;
   }
-  return state;
 };
