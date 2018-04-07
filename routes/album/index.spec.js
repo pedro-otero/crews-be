@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const winston = require('winston');
 
 const tests = fs.readdirSync('./routes/album/tests/').map(dir => ({
   album: require(path.join(__dirname, 'tests', dir, 'album.json')),
@@ -11,6 +12,15 @@ const app = require('../../app');
 const http = require('http');
 const superagent = require('superagent');
 const expect = require('expect.js');
+
+const { printf, combine } = winston.format;
+const logger = winston.createLogger({
+  level: 'info',
+  format: combine(printf(info => `${info.message}`)),
+  transports: [
+    new winston.transports.Console(),
+  ],
+});
 
 describe('Albums endpoint', () => {
   let server;
@@ -29,7 +39,7 @@ describe('Albums endpoint', () => {
     };
     server = http.createServer(app);
     server.listen(port, () => {
-      console.log(`Express server in test listening on port ${port}`);
+      logger.info(`Express server in test listening on port ${port}`);
       done();
     });
   });
@@ -72,6 +82,6 @@ describe('Albums endpoint', () => {
 
   after(() => {
     server.close();
-    console.log('Express server in test has been shut down');
+    logger.info('Express server in test has been shut down');
   });
 });
