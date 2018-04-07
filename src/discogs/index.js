@@ -68,10 +68,7 @@ module.exports = function (db) {
       results.forEach((result, i) => {
         db.getRelease(result.id).then((release) => {
           logger.release({
-            album,
-            page,
-            release,
-            i,
+            album, page, release, i,
           });
           actions.addRelease(release);
           if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
