@@ -1,24 +1,21 @@
 function splitRange(tracksstring) {
-  var split = tracksstring.split('to').map(s => s.trim());
-  var tracks = [];
-  var start = split[0];
-  var end = split[1];
-  for (var i = Number(start); i <= Number(end); i++) {
-    tracks.push(i.toString());
-  }
-  return tracks;
-};
+  const split = tracksstring.split('to')
+    .map(s => s.trim());
+  const start = Number(split[0]);
+  const end = Number(split[1]);
+  return new Array(end).map((item, i) => start + i);
+}
 
 const getTracksList = tracksstring => tracksstring
   .split(',')
   .map(s => s.trim())
-  .map(el => el.includes('to') ? splitRange(el) : el)
+  .map(el => (el.includes('to') ? splitRange(el) : el))
   .reduce((a, b) => a.concat(b), []);
 
 const roles = {
   producers: ['Producer', 'Produced By', 'Producer [Produced By]'],
   composers: ['Written-By', 'Lyrics By', 'Music By'],
-  featured: ['Featuring', 'feat.']
+  featured: ['Featuring', 'feat.'],
 };
 
 const reduce = allCredits => highlightedRole => allCredits
@@ -30,7 +27,8 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
   const track = tracklist[trackIndex];
   const position = track.position || String(trackIndex + 1);
   const allCredits = extraartists
-    .filter(credit => getTracksList(credit.tracks).includes(position))
+    .filter(credit => getTracksList(credit.tracks)
+      .includes(position))
     .concat(track.extraartists || []);
   const result = {
     title: spotifyTrack.name,
@@ -44,7 +42,7 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
           !roles.featured.includes(role));
       if (newCredits.length) {
         if (!(credit.name in credits)) {
-          credits[credit.name] = [];
+          credits.defineProperty(credit.name, []);
         }
         credits[credit.name].push(...newCredits);
       }
@@ -52,8 +50,8 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
     }, {}),
   };
   return result;
-}
+};
 
 module.exports = (spotifyAlbum, discogsRelease) => ({
-  tracks: spotifyAlbum.tracks.items.map(buildSong(discogsRelease))
+  tracks: spotifyAlbum.tracks.items.map(buildSong(discogsRelease)),
 });
