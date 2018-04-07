@@ -1,5 +1,22 @@
 const winston = require('winston');
 
+function release(info) {
+  const {
+    album: {
+      artists: [{ name: artist }],
+      name: album,
+      id: albumId,
+    },
+    page: {
+      pagination: { page: currentPage, pages: totalPages },
+      results,
+    },
+    release: { id: releaseId, master_id: masterId },
+    i,
+  } = info.message;
+  return `${artist} - ${album} (${albumId}) :: P(${currentPage}/${totalPages}) R(${(i + 1)}/${results.length}) Release ${releaseId} (master ${masterId}) retrieved`;
+}
+
 const { printf, combine } = winston.format;
 const logger = winston.createLogger({
   levels: {
@@ -15,20 +32,7 @@ const logger = winston.createLogger({
       case 'results':
         return info.message;
       case 'release':
-        const {
-          album: {
-            artists: [{ name: artist }],
-            name: album,
-            id: albumId,
-          },
-          page: {
-            pagination: { page: currentPage, pages: totalPages },
-            results,
-          },
-          release: { id: releaseId, master_id: masterId },
-          i,
-        } = info.message;
-        return `${artist} - ${album} (${albumId}) :: P(${currentPage}/${totalPages}) R(${(i + 1)}/${results.length}) Release ${releaseId} (master ${masterId}) retrieved`;
+        return release(info);
       default:
         return info.message;
     }
