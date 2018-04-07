@@ -2,15 +2,15 @@ const assert = require('assert');
 
 const order = require('./order');
 
-describe('Order search results function', function () {
-  describe('orders by exact title', function () {
+describe('Order search results function', () => {
+  describe('orders by exact title', () => {
     beforeEach(function () {
       this.ordered = order([{
         id: 1,
-        title: 'An album whose exact title doesnt match'
+        title: 'An album whose exact title doesnt match',
       }, {
         id: 2,
-        title: 'Artist - Album'
+        title: 'Artist - Album',
       }], {
         name: 'Album',
         artists: [{ name: 'Artist' }],
@@ -32,14 +32,14 @@ describe('Order search results function', function () {
     });
   });
 
-  describe('orders by release title', function () {
+  describe('orders by release title', () => {
     beforeEach(function () {
       this.ordered = order([{
         id: 1,
-        title: 'Artist - Other Album'
+        title: 'Artist - Other Album',
       }, {
         id: 2,
-        title: 'Artist - Album'
+        title: 'Artist - Album',
       }], {
         name: 'Album',
         artists: [{ name: 'Artist' }],
@@ -61,7 +61,7 @@ describe('Order search results function', function () {
     });
   });
 
-  describe('orders by year', function () {
+  describe('orders by year', () => {
     beforeEach(function () {
       this.ordered = order([{
         id: 1,
@@ -92,7 +92,7 @@ describe('Order search results function', function () {
     });
   });
 
-  describe('orders by format', function () {
+  describe('orders by format', () => {
     beforeEach(function () {
       this.ordered = order([{
         id: 1,
