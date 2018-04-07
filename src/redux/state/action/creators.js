@@ -2,7 +2,6 @@ const {
   ADD_SEARCH,
   ADD_ALBUM,
   ADD_RELEASE,
-  ADD_MASTER_RESULTS,
   ADD_RELEASE_RESULTS,
 } = require('./constants');
 
@@ -21,12 +20,6 @@ const addRelease = release => ({
   release
 });
 
-const masterResults = (album, page) => ({
-  type: ADD_MASTER_RESULTS,
-  album,
-  page
-});
-
 const releaseResults = (album, page) => ({
   type: ADD_RELEASE_RESULTS,
   album,
@@ -37,6 +30,5 @@ module.exports = {
   addSearch,
   addAlbum,
   addRelease,
-  masterResults,
   releaseResults,
 };

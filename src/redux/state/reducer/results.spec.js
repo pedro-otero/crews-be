@@ -1,11 +1,11 @@
 const assert = require('assert');
 
-const reduce = require('./masters');
+const reduce = require('./results');
 const {
-  ADD_MASTER_RESULTS
-} = require('../../action/constants');
+  ADD_RELEASE_RESULTS
+} = require('../action/constants');
 
-describe('Master search results reducer', function () {
+describe('Release search results reducer', function () {
   it('returns default state', function () {
     const results = reduce(undefined, {});
     assert.equal(0, results.length);
@@ -14,7 +14,7 @@ describe('Master search results reducer', function () {
   describe('store results for an album', function () {
     beforeEach(function () {
       this.results = reduce([], {
-        type: ADD_MASTER_RESULTS,
+        type: ADD_RELEASE_RESULTS,
         album: 1,
         page: { results: [{}] },
       });

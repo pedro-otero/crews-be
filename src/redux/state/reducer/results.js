@@ -1,8 +1,8 @@
-const { ADD_MASTER_RESULTS } = require("../../action/constants");
+const { ADD_RELEASE_RESULTS } = require("../action/constants");
 
 module.exports = function (state = [], action) {
   const func = {
-    [ADD_MASTER_RESULTS]: () => [...state, {
+    [ADD_RELEASE_RESULTS]: () => [...state, {
       album: action.album,
       page: action.page,
     }]

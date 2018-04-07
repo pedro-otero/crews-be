@@ -4,23 +4,14 @@ const buildAlbum = require('./build');
 module.exports = function (albumId, store) {
   const state = () => store.getState();
 
-  const masterResults = () => state().results.masters
-    .filter(result => result.album === albumId)
-    .reduce((all, item) => all.concat(item.page.results), []);
-
-  const releaseResults = () => state().results.releases
+  const releaseResults = () => state().results
     .filter(result => result.album === albumId)
     .reduce((all, item) => all.concat(item.page.results), []);
 
   const getRetrievedReleases = () => {
-    return masterResults()
-      .map(result => result.id)
-      .reduce((releases, id) => releases.concat(
-        state().releases
-          .filter(release => release.master_id === id)), [])
-      .concat(releaseResults()
-        .map(result => state().releases
-          .find(item => item.id === result.id)))
+    return releaseResults()
+      .map(result => state().releases
+        .find(item => item.id === result.id))
   };
 
   const orderReleases = () => getRetrievedReleases().reduce((all, release) => {
@@ -43,8 +34,6 @@ module.exports = function (albumId, store) {
 
   return {
     getAlbum,
-
-    getMasterSearchResults: () => masterResults(),
 
     getReleaseSearchResults: () => releaseResults(),
 
