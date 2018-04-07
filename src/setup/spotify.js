@@ -5,18 +5,18 @@ const spotifyConfig = require('../../spotify-config.json');
 const spotifyApi = new SpotifyWebApi({
   clientId: spotifyConfig.keys.consumer,
   clientSecret: spotifyConfig.keys.secret,
-  redirectUri: spotifyConfig.urls.redirect
+  redirectUri: spotifyConfig.urls.redirect,
 });
 
-const api = new Promise(function (resolve, reject) {
-  spotifyApi.clientCredentialsGrant().then(response => {
-    if (response.statusCode == 200) {
+const api = new Promise((resolve, reject) => {
+  spotifyApi.clientCredentialsGrant().then((response) => {
+    if (response.statusCode === 200) {
       const token = response.body.access_token;
       spotifyApi.setAccessToken(token);
       console.log('Spotify client authenticated succesfully');
-      resolve(spotifyApi)
+      resolve(spotifyApi);
     } else {
-      console.log('ERRROR AUTHENTICATING ' + JSON.stringify(response));
+      console.log(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
       reject(response);
     }
   });
