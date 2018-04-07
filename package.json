@@ -18,7 +18,8 @@
     "spotify-web-api-node": "^2.5.0",
     "static-favicon": "~1.0.0",
     "string-similarity": "^1.2.0",
-    "throxy": "^1.0.0"
+    "throxy": "^1.0.0",
+    "winston": "^3.0.0-rc4"
   },
   "devDependencies": {
     "expect.js": "^0.2.0",
