@@ -8,11 +8,11 @@ module.exports = function (albumId, store) {
     .filter(result => result.album === albumId)
     .reduce((all, item) => all.concat(item.page.results), []);
 
-  const getRetrievedReleases = () => {
-    return releaseResults()
-      .map(result => state().releases
-        .find(item => item.id === result.id))
-  };
+  const getRetrievedReleases = () => releaseResults()
+    .map(result => state().releases
+      .find(item => item.id === result.id));
+
+  const getAlbum = () => state().albums.find(album => album.id === albumId);
 
   const orderReleases = () => getRetrievedReleases().reduce((all, release) => {
     if (all.length) {
@@ -22,15 +22,11 @@ module.exports = function (albumId, store) {
         return [release, ...all];
       } else if (current > 0) {
         return all.concat(release);
-      } else {
-        return all;
       }
-    } else {
-      return [release];
+      return all;
     }
+    return [release];
   }, []);
-
-  const getAlbum = () => state().albums.find(album => album.id === albumId);
 
   return {
     getAlbum,
@@ -42,5 +38,5 @@ module.exports = function (albumId, store) {
     getBestMatch: () => buildAlbum(getAlbum(), orderReleases()[0]),
 
     getAllMatches: () => orderReleases().map(release => buildAlbum(getAlbum(), release)),
-  }
+  };
 };
