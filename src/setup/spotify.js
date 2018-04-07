@@ -9,8 +9,10 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: spotifyConfig.urls.redirect,
 });
 
+const { printf, combine } = winston.format;
 const logger = winston.createLogger({
   level: 'info',
+  format: combine(printf(info => `${info.message}`)),
   transports: [
     new winston.transports.Console(),
   ],
