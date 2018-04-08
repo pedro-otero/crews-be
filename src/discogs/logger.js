@@ -1,12 +1,16 @@
 const winston = require('winston');
 
+function tag(album) {
+  const {
+    artists: [{ name: artist }],
+    name,
+    id: albumId,
+  } = album;
+  return `${artist} - ${name} (${albumId}) ::`;
+}
+
 function release(info) {
   const {
-    album: {
-      artists: [{ name: artist }],
-      name: album,
-      id: albumId,
-    },
     page: {
       pagination: { page: currentPage, pages: totalPages },
       results,
@@ -14,10 +18,9 @@ function release(info) {
     release: { id: releaseId, master_id: masterId },
     i,
   } = info.message;
-  const tag = `${artist} - ${album} (${albumId}) ::`;
   const pageIndicator = `${currentPage}/${totalPages}`;
   const itemIndicator = `${String(i + 1)}/${results.length}`;
-  return `${tag} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
+  return `${tag(info.message.album)} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
 }
 
 const { printf, combine } = winston.format;
