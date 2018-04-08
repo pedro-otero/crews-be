@@ -24,6 +24,19 @@ function releaseMsg({
   return `${tag(album)} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
 }
 
+function resultsMsg({
+  message: {
+    page, album,
+  },
+}) {
+  const {
+    pagination: { page: currentPage, pages: totalPages },
+    results,
+  } = page;
+  const pageIndicator = `${currentPage}/${totalPages}`;
+  return `${tag(album)} P ${pageIndicator}: ${results.length} items`;
+}
+
 const { printf, combine } = winston.format;
 const logger = winston.createLogger({
   levels: {
@@ -37,7 +50,7 @@ const logger = winston.createLogger({
       case 'finish':
         return info.message;
       case 'results':
-        return info.message;
+        return resultsMsg(info);
       case 'release':
         return releaseMsg(info);
       default:

@@ -21,7 +21,7 @@ module.exports = function (db) {
     };
 
     const loadAllReleases = (page) => {
-      logger.results(msg(album, `${page.pagination.page}/${page.pagination.pages} page with ${page.results.length} release results found`));
+      logger.results({ album, page });
       actions.releaseResults(album.id, page);
       const results = order(page.results, album);
       results.forEach((result, i) => {
