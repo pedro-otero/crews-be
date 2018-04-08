@@ -12,10 +12,6 @@ const logger = winston.createLogger({
 });
 
 module.exports = function (db) {
-  const doCatch = (e) => {
-    logger.error(e);
-  };
-
   this.findReleases = (album) => {
     const msg = text => `${album.artists[0].name} - ${album.name} (${album.id}) :: ${text}`;
 
