@@ -9,18 +9,19 @@ function tag(album) {
   return `${artist} - ${name} (${albumId}) ::`;
 }
 
-function release(info) {
+function releaseMsg({
+  message: {
+    page, release, album, i,
+  },
+}) {
   const {
-    page: {
-      pagination: { page: currentPage, pages: totalPages },
-      results,
-    },
-    release: { id: releaseId, master_id: masterId },
-    i,
-  } = info.message;
+    pagination: { page: currentPage, pages: totalPages },
+    results,
+  } = page;
+  const { id: releaseId, master_id: masterId } = release;
   const pageIndicator = `${currentPage}/${totalPages}`;
   const itemIndicator = `${String(i + 1)}/${results.length}`;
-  return `${tag(info.message.album)} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
+  return `${tag(album)} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
 }
 
 const { printf, combine } = winston.format;
@@ -38,7 +39,7 @@ const logger = winston.createLogger({
       case 'results':
         return info.message;
       case 'release':
-        return release(info);
+        return releaseMsg(info);
       default:
         return info.message;
     }
