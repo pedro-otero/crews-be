@@ -46,7 +46,7 @@ module.exports = function (albumId, store) {
         .filter(result => result.album === albumId && result.page.pagination.page === 1)[0]
         .page.pagination.items;
       const soFar = getRetrievedReleases().length;
-      return soFar / total;
+      return Math.round((soFar / total) * 100);
     },
   };
 };
