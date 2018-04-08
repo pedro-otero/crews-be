@@ -9,8 +9,6 @@ module.exports = function (db) {
   };
 
   this.findReleases = (album) => {
-    const msg = text => `${album.artists[0].name} - ${album.name} (${album.id}) :: ${text}`;
-
     const { artists: [{ name: artist }], name } = album;
     const params = {
       artist,
