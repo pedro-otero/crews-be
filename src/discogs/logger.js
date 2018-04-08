@@ -14,7 +14,10 @@ function release(info) {
     release: { id: releaseId, master_id: masterId },
     i,
   } = info.message;
-  return `${artist} - ${album} (${albumId}) :: P(${currentPage}/${totalPages}) R(${(i + 1)}/${results.length}) Release ${releaseId} (master ${masterId}) retrieved`;
+  const tag = `${artist} - ${album} (${albumId}) ::`;
+  const pageIndicator = `${currentPage}/${totalPages}`;
+  const itemIndicator = `${String(i + 1)}/${results.length}`;
+  return `${tag} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
 }
 
 const { printf, combine } = winston.format;
