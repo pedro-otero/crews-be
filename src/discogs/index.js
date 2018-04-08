@@ -19,20 +19,19 @@ module.exports = function (db) {
   this.findReleases = (album) => {
     const msg = text => `${album.artists[0].name} - ${album.name} (${album.id}) :: ${text}`;
 
-    const fetch = (params) => {
-      db.search(params).then((page) => {
-        logger.info(msg(album, `${page.pagination.page}/${page.pagination.pages} page with ${page.results.length} release results found`));
-        actions.releaseResults(album.id, page);
-        const results = order(page.results, album);
-        results.forEach(async (result, i) => {
-          const release = await db.getRelease(result.id);
-          logger.info(msg(album, `P(${page.pagination.page}/${page.pagination.pages}) R(${(i + 1)}/${results.length}) Release ${release.id} (master ${release.master_id}) retrieved`));
-          actions.addRelease(release);
-          if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
-            fetch(Object.assign(params, { page: page.pagination.page + 1 }));
-          }
-        }).catch(doCatch);
-      }).catch(doCatch);
+    const fetch = async (params) => {
+      const page = await db.search(params);
+      logger.info(msg(album, `${page.pagination.page}/${page.pagination.pages} page with ${page.results.length} release results found`));
+      actions.releaseResults(album.id, page);
+      const results = order(page.results, album);
+      results.forEach(async (result, i) => {
+        const release = await db.getRelease(result.id);
+        logger.info(msg(album, `P(${page.pagination.page}/${page.pagination.pages}) R(${(i + 1)}/${results.length}) Release ${release.id} (master ${release.master_id}) retrieved`));
+        actions.addRelease(release);
+        if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
+          fetch(Object.assign(params, { page: page.pagination.page + 1 }));
+        }
+      });
     };
 
     const { artists: [{ name: artist }], name } = album;
