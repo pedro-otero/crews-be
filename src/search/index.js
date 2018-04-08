@@ -8,6 +8,7 @@ module.exports = (spotify, id, discogs) => {
     const query = Query(id, store);
     return Object.assign(search, {
       data: {
+        progress: query.getProgress(),
         bestMatch: query.getBestMatch(),
         built: query.getAllMatches(),
       },

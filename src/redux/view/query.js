@@ -39,5 +39,14 @@ module.exports = function (albumId, store) {
     getBestMatch: () => buildAlbum(getAlbum(), orderReleases()[0]),
 
     getAllMatches: () => orderReleases().map(release => buildAlbum(getAlbum(), release)),
+
+    getProgress: () => {
+      const total = state()
+        .results
+        .filter(result => result.album === albumId && result.page.pagination.page === 1)[0]
+        .page.pagination.items;
+      const soFar = getRetrievedReleases().length;
+      return soFar / total;
+    },
   };
 };
