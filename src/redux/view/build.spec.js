@@ -1,5 +1,4 @@
 const build = require('./build');
-const expect = require('../../../node_modules/expect.js/expect');
 const assert = require('assert');
 
 describe('Build', () => {
@@ -52,46 +51,46 @@ describe('Build', () => {
     });
 
     it('sets title', function () {
-      expect(this.built.title).to.equal(this.album.name);
+      assert.equal(this.album.name,this.built.title);
     });
 
     describe('builds tracks', () => {
       it('sets title', function () {
-        expect(this.built.tracks[0].title).to.equal(this.album.tracks.items[0].name);
+        assert.equal(this.album.tracks.items[0].name,this.built.tracks[0].title);
       });
 
       it('adds producers that are in the release track', function () {
-        expect(this.built.tracks[0].producers).to.contain('P1');
+        assert(this.built.tracks[0].producers.includes('P1'));
       });
 
       it('adds producers that are in the release', function () {
-        expect(this.built.tracks[0].producers).to.contain('P2');
+        assert(this.built.tracks[0].producers.includes('P2'));
       });
 
       it('adds composers that are in the release track', function () {
-        expect(this.built.tracks[0].composers).to.contain('C1');
+        assert(this.built.tracks[0].composers.includes('C1'));
       });
 
       it('adds composers that are in the release', function () {
-        expect(this.built.tracks[0].composers).to.contain('C2');
+        assert(this.built.tracks[0].composers.includes('C2'));
       });
 
       it('adds featured artists that are in the release track', function () {
-        expect(this.built.tracks[0].featured).to.contain('F1');
+        assert(this.built.tracks[0].featured.includes('F1'));
       });
 
       it('adds featured artists that are in the release', function () {
-        expect(this.built.tracks[0].featured).to.contain('F2');
+        assert(this.built.tracks[0].featured.includes('F2'));
       });
 
       it('adds credits that are in the release track', function () {
-        expect(this.built.tracks[0].credits).to.have.property('A1');
-        expect(this.built.tracks[0].credits.A1).to.contain('Some instrument');
+        assert(Object.keys(this.built.tracks[0].credits).includes('A1'));
+        assert(this.built.tracks[0].credits.A1.includes('Some instrument'));
       });
 
       it('adds credits that are in the release', function () {
-        expect(this.built.tracks[0].credits).to.have.property('A2');
-        expect(this.built.tracks[0].credits.A2).to.contain('other instrument');
+        assert(Object.keys(this.built.tracks[0].credits).includes('A2'));
+        assert(this.built.tracks[0].credits.A2.includes('other instrument'));
       });
     });
   });
