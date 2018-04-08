@@ -16,10 +16,10 @@ module.exports = function (db) {
           album, page, release, i,
         });
         actions.addRelease(release);
-        if (i === page.results.length - 1 && page.pagination.page < page.pagination.pages) {
-          fetch(Object.assign(params, { page: page.pagination.page + 1 }));
-        }
       });
+      if (page.pagination.page < page.pagination.pages) {
+        fetch(Object.assign(params, { page: page.pagination.page + 1 }));
+      }
     };
 
     const { artists: [{ name: artist }], name } = album;
