@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const assert = require('assert');
 const winston = require('winston');
 
 const tests = fs.readdirSync('./routes/album/tests/').map(dir => ({
@@ -11,7 +12,6 @@ const tests = fs.readdirSync('./routes/album/tests/').map(dir => ({
 const app = require('../../app');
 const http = require('http');
 const superagent = require('superagent');
-const expect = require('expect.js');
 
 const { printf, combine } = winston.format;
 const logger = winston.createLogger({
@@ -52,27 +52,27 @@ describe('Albums endpoint', () => {
       superagent
         .get(`http://localhost:${port}/data/album/${album.id}`)
         .end((res) => {
-          expect(res.status).to.equal(200);
+          assert.equal(200, res.status);
           const actual = res.body;
-          expect(actual.title).to.equal(expected.title);
-          expect(actual.artist).to.equal(expected.artist);
-          expect(actual.duration).to.equal(expected.duration);
-          expect(actual.spotify.album_id).to.equal(expected.spotify.album_id);
+          assert.equal(expected.title, actual.title);
+          assert.equal(expected.artist, actual.artist);
+          assert.equal(expected.duration, actual.duration);
+          assert.equal(expected.spotify.album_id, actual.spotify.album_id);
           actual.tracks
             .map((track, i) => ({ actual: track, expected: expected.tracks[i] }))
             .forEach((set) => {
-              expect(set.actual.title).to.equal(set.expected.title);
-              expect(set.actual.duration).to.equal(set.expected.duration);
+              assert.equal(set.expected.title, set.actual.title);
+              assert.equal(set.expected.duration, set.actual.duration);
               set.actual.producers
-                .forEach(producer => expect(set.expected.producers).to.contain(producer));
+                .forEach(producer => assert(set.expected.producers.includes(producer)));
               set.actual.composers
-                .forEach(composer => expect(set.expected.composers).to.contain(composer));
+                .forEach(composer => assert(set.expected.composers.includes(composer)));
               set.actual.featured
-                .forEach(feat => expect(set.expected.featured).to.contain(feat));
+                .forEach(feat => assert(set.expected.featured.includes(feat)));
               Object.keys(set.actual.credits).forEach((name) => {
-                expect(Object.keys(set.expected.credits)).to.contain(name);
+                assert(Object.keys(set.expected.credits).includes(name));
                 set.actual.credits[name]
-                  .forEach(credit => expect(set.expected.credits[name]).to.contain(credit));
+                  .forEach(credit => assert(set.expected.credits[name].includes(credit)));
               });
             });
           done();
