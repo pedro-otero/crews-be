@@ -58,9 +58,6 @@ const logger = winston.createLogger({
     }
   })),
   transports: [
-    new winston.transports.Console({ level: 'finish' }),
-    new winston.transports.Console({ level: 'results' }),
-    new winston.transports.Console({ level: 'release' }),
     new winston.transports.Console({ level: 'error' }),
   ],
 });
