@@ -1,5 +1,15 @@
 const winston = require('winston');
 
+const { printf, combine } = winston.format;
+
+const levels = {
+  finish: 0,
+  results: 1,
+  release: 2,
+  error: 3,
+};
+const createTransports = () => [new winston.transports.Console({ level: 'error' })];
+
 module.exports = function (album) {
   const {
     artists: [{ name: artist }],
@@ -37,14 +47,8 @@ module.exports = function (album) {
     return `${tag(album)} P ${pageIndicator}: ${results.length} items`;
   }
 
-  const { printf, combine } = winston.format;
-  const logger = winston.createLogger({
-    levels: {
-      finish: 0,
-      results: 1,
-      release: 2,
-      error: 3,
-    },
+  return winston.createLogger({
+    levels,
     format: combine(printf((info) => {
       switch (info.level) {
         case 'finish':
@@ -57,10 +61,6 @@ module.exports = function (album) {
           return info.message;
       }
     })),
-    transports: [
-      new winston.transports.Console({ level: 'error' }),
-    ],
+    transports: createTransports(),
   });
-
-  return logger;
 };
