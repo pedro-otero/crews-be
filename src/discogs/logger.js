@@ -43,13 +43,13 @@ module.exports = function (album) {
   }) => {
     switch (level) {
       case 'finish':
-        return message;
+        return message.text;
       case 'results':
         return resultsMsg(message);
       case 'release':
         return releaseMsg(message);
       default:
-        return message;
+        return message.text;
     }
   };
 
