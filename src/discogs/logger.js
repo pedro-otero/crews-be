@@ -1,14 +1,13 @@
 const winston = require('winston');
 
 module.exports = function (album) {
-  function tag() {
-    const {
-      artists: [{ name: artist }],
-      name,
-      id: albumId,
-    } = album;
-    return `${artist} - ${name} (${albumId}) ::`;
-  }
+  const {
+    artists: [{ name: artist }],
+    name,
+    id: albumId,
+  } = album;
+
+  const tag = () => `${artist} - ${name} (${albumId}) ::`;
 
   function releaseMsg({
     message: {
