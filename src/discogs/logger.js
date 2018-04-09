@@ -39,20 +39,22 @@ module.exports = function (album) {
     },
   }) => `${tag(album)} P ${indicator(page, pages)}: ${results.length} items`;
 
+  const formatFunction = (info) => {
+    switch (info.level) {
+      case 'finish':
+        return info.message;
+      case 'results':
+        return resultsMsg(info);
+      case 'release':
+        return releaseMsg(info);
+      default:
+        return info.message;
+    }
+  };
+
   return winston.createLogger({
     levels,
-    format: combine(printf((info) => {
-      switch (info.level) {
-        case 'finish':
-          return info.message;
-        case 'results':
-          return resultsMsg(info);
-        case 'release':
-          return releaseMsg(info);
-        default:
-          return info.message;
-      }
-    })),
+    format: combine(printf(formatFunction)),
     transports: createTransports(),
   });
 };
