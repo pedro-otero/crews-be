@@ -5,6 +5,8 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+const searchAlbum = require('./src/search');
+
 const routes = require('./routes/index');
 const users = require('./routes/users');
 const albums = require('./routes/album');
@@ -29,7 +31,7 @@ app.locals.spotify = require('./src/setup/spotify');
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/data/album', albums);
+app.use('/data/album', albums(searchAlbum));
 
 // / catch 404 and forwarding to error handler
 app.use((req, res, next) => {

@@ -1,9 +1,8 @@
 const express = require('express');
 
-const searchAlbum = require('../../src/search');
-
 const router = express.Router();
-router.get('/:spotifyAlbumId', (req, res) => {
+
+const func = searchAlbum => router.get('/:spotifyAlbumId', (req, res) => {
   const {
     app: { locals: { discogs, spotify } },
     params: { spotifyAlbumId },
@@ -13,4 +12,4 @@ router.get('/:spotifyAlbumId', (req, res) => {
   res.status(status).json(data);
 });
 
-module.exports = router;
+module.exports = func;
