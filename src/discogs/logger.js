@@ -21,18 +21,14 @@ module.exports = function (album) {
 
   const indicator = (current, total) => `${current}/${total}`;
 
-  function releaseMsg({
+  const releaseMsg = ({
     message: {
-      page, release, i,
+      page: {
+        pagination: { page, pages },
+        results,
+      }, release: { id, master_id: masterId }, i,
     },
-  }) {
-    const {
-      pagination: { page: currentPage, pages: totalPages },
-      results,
-    } = page;
-    const { id: releaseId, master_id: masterId } = release;
-    return `${tag(album)} P(${indicator(currentPage, totalPages)}) I(${indicator(String(i + 1), results.length)}) R-${releaseId} (M-${masterId}) OK`;
-  }
+  }) => `${tag(album)} P(${indicator(page, pages)}) I(${indicator(String(i + 1), results.length)}) R-${id} (M-${masterId}) OK`;
 
   function resultsMsg({
     message: {
