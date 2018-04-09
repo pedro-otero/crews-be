@@ -30,17 +30,14 @@ module.exports = function (album) {
     },
   }) => `${tag(album)} P(${indicator(page, pages)}) I(${indicator(String(i + 1), results.length)}) R-${id} (M-${masterId}) OK`;
 
-  function resultsMsg({
+  const resultsMsg = ({
     message: {
-      page,
+      page: {
+        pagination: { page, pages },
+        results,
+      },
     },
-  }) {
-    const {
-      pagination: { page: currentPage, pages: totalPages },
-      results,
-    } = page;
-    return `${tag(album)} P ${indicator(currentPage, totalPages)}: ${results.length} items`;
-  }
+  }) => `${tag(album)} P ${indicator(page, pages)}: ${results.length} items`;
 
   return winston.createLogger({
     levels,
