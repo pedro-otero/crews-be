@@ -19,6 +19,8 @@ module.exports = function (album) {
 
   const tag = () => `${artist} - ${name} (${albumId}) ::`;
 
+  const indicator = (current, total) => `${current}/${total}`;
+
   function releaseMsg({
     message: {
       page, release, i,
@@ -29,9 +31,7 @@ module.exports = function (album) {
       results,
     } = page;
     const { id: releaseId, master_id: masterId } = release;
-    const pageIndicator = `${currentPage}/${totalPages}`;
-    const itemIndicator = `${String(i + 1)}/${results.length}`;
-    return `${tag(album)} P(${pageIndicator}) I(${itemIndicator}) R-${releaseId} (M-${masterId}) OK`;
+    return `${tag(album)} P(${indicator(currentPage, totalPages)}) I(${indicator(String(i + 1), results.length)}) R-${releaseId} (M-${masterId}) OK`;
   }
 
   function resultsMsg({
@@ -43,8 +43,7 @@ module.exports = function (album) {
       pagination: { page: currentPage, pages: totalPages },
       results,
     } = page;
-    const pageIndicator = `${currentPage}/${totalPages}`;
-    return `${tag(album)} P ${pageIndicator}: ${results.length} items`;
+    return `${tag(album)} P ${indicator(currentPage, totalPages)}: ${results.length} items`;
   }
 
   return winston.createLogger({
