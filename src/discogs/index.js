@@ -1,7 +1,7 @@
 const order = require('./order');
 const { actions } = require('../redux/state/index');
 
-const logger = require('./logger');
+const createLogger = require('./logger');
 
 const makeParams = (artist, title) => ({
   artist,
@@ -13,15 +13,16 @@ const makeParams = (artist, title) => ({
 
 module.exports = function (db) {
   this.findReleases = (album) => {
+    const logger = createLogger(album);
     const fetch = async (params) => {
       const page = await db.search(params);
-      logger.results({ album, page });
+      logger.results({ page });
       actions.releaseResults(album.id, page);
       const results = order(page.results, album);
       results.forEach(async (result, i) => {
         const release = await db.getRelease(result.id);
         logger.release({
-          album, page, release, i,
+          page, release, i,
         });
         actions.addRelease(release);
       });
