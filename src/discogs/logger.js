@@ -22,35 +22,34 @@ module.exports = function (album) {
   const indicator = (current, total) => `${current}/${total}`;
 
   const releaseMsg = ({
-    message: {
-      page: {
-        pagination: { page, pages },
-        results,
-      },
-      release: { id, master_id: masterId },
-      i,
+    page: {
+      pagination: { page, pages },
+      results,
     },
+    release: { id, master_id: masterId },
+    i,
   }) => `${tag(album)} P(${indicator(page, pages)}) I(${indicator(String(i + 1), results.length)}) R-${id} (M-${masterId}) OK`;
 
   const resultsMsg = ({
-    message: {
-      page: {
-        pagination: { page, pages },
-        results,
-      },
+    page: {
+      pagination: { page, pages },
+      results,
     },
   }) => `${tag(album)} P ${indicator(page, pages)}: ${results.length} items`;
 
-  const formatFunction = (info) => {
-    switch (info.level) {
+  const formatFunction = ({
+    level,
+    message,
+  }) => {
+    switch (level) {
       case 'finish':
-        return info.message;
+        return message;
       case 'results':
-        return resultsMsg(info);
+        return resultsMsg(message);
       case 'release':
-        return releaseMsg(info);
+        return releaseMsg(message);
       default:
-        return info.message;
+        return message;
     }
   };
 
