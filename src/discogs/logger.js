@@ -26,7 +26,9 @@ module.exports = function (album) {
       page: {
         pagination: { page, pages },
         results,
-      }, release: { id, master_id: masterId }, i,
+      },
+      release: { id, master_id: masterId },
+      i,
     },
   }) => `${tag(album)} P(${indicator(page, pages)}) I(${indicator(String(i + 1), results.length)}) R-${id} (M-${masterId}) OK`;
 
