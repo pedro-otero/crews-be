@@ -3,6 +3,14 @@ const { actions } = require('../redux/state/index');
 
 const logger = require('./logger');
 
+const makeParams = (artist, title) => ({
+  artist,
+  release_title: title.replace(/(.+) \((.+)\)/, '$1'),
+  type: 'release',
+  per_page: 100,
+  page: 1,
+});
+
 module.exports = function (db) {
   this.findReleases = (album) => {
     const fetch = async (params) => {
@@ -23,14 +31,6 @@ module.exports = function (db) {
     };
 
     const { artists: [{ name: artist }], name } = album;
-    const params = {
-      artist,
-      release_title: name.replace(/(.+) \((.+)\)/, '$1'),
-      type: 'release',
-      per_page: 100,
-      page: 1,
-    };
-
-    fetch(params);
+    fetch(makeParams(artist, name));
   };
 };
