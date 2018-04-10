@@ -79,7 +79,7 @@ describe('Find releases function', () => {
     });
 
     it('adds 2nd page of results to store', () => {
-      assert.deepEqual(actions.releaseResults.getCalls()[0].args[1], secondResults);
+      assert.deepEqual(actions.releaseResults.getCalls()[1].args[1], secondResults);
     });
 
     it('getRelease 1', function () {
