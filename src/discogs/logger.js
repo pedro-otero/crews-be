@@ -46,7 +46,7 @@ module.exports = function (album) {
   }) => {
     switch (level) {
       case 'finish':
-        return text;
+        return `${tag(album)} FINISHED`;
       case 'results':
         return resultsMsg(page);
       case 'release':

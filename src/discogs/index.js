@@ -28,6 +28,8 @@ module.exports = function (db) {
       });
       if (page.pagination.page < page.pagination.pages) {
         fetch(Object.assign(params, { page: page.pagination.page + 1 }));
+      } else {
+        logger.finish({});
       }
     };
 
