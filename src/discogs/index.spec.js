@@ -2,10 +2,12 @@ const sinon = require('sinon');
 const assert = require('assert');
 
 const Discogs = require('./index');
+const { actions } = require('../redux/state/index');
 
 describe('Find releases function', () => {
-  describe('calls the db functions', () => {
+  describe('calls the db and actions functions', () => {
     before(function () {
+      actions.addRelease = sinon.spy();
       this.db = {
         search: sinon.stub()
           .onCall(0).resolves({
@@ -31,7 +33,10 @@ describe('Find releases function', () => {
               year: '2000',
             }],
           }),
-        getRelease: sinon.stub().resolves({}),
+        getRelease: sinon.stub()
+          .onCall(0).resolves({ id: 1 })
+          .onCall(1)
+          .resolves({ id: 2 }),
       };
       this.discogs = new Discogs(this.db);
       this.discogs.findReleases({
@@ -68,8 +73,16 @@ describe('Find releases function', () => {
       assert(this.db.getRelease.calledWith(1));
     });
 
+    it('addRelease 1', () => {
+      assert.deepEqual(actions.addRelease.getCalls(0)[0].args[0], { id: 1 });
+    });
+
     it('getRelease 2', function () {
       assert(this.db.getRelease.calledWith(2));
+    });
+
+    it('addRelease 1', () => {
+      assert.deepEqual(actions.addRelease.getCalls(0)[1].args[0], { id: 2 });
     });
   });
 });
