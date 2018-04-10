@@ -6,11 +6,10 @@ const {
 const reduce = require('./searches');
 
 describe('Searches reducer', () => {
+  const add = id => ({ type: ADD_SEARCH, id });
   const addSearch = id => function () {
-    this.searches = reduce([], {
-      type: ADD_SEARCH,
-      id,
-    });
+    this.searches = reduce([], add(id));
+    return this.searches;
   };
 
   describe(ADD_SEARCH, () => {
@@ -26,6 +25,12 @@ describe('Searches reducer', () => {
 
     it('Creates a request with status ADDED', function () {
       assert.equal('ADDED', this.searches[0].status);
+    });
+
+    it('Adds another search retaining the previous one', function () {
+      let searches = reduce([], add('album'));
+      searches = reduce(searches, add('otherAlbum'));
+      assert.equal(2, searches.length);
     });
   });
 
