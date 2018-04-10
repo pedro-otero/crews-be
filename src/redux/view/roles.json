@@ -1,0 +1,15 @@
+{
+  "producers": [
+    "Producer",
+    "Produced By",
+    "Producer [Produced By]"
+  ],
+  "composers": [
+    "Written-By",
+    "Lyrics By",
+    "Music By"
+  ],
+  "featured": [
+    "Featuring", "feat."
+  ]
+}

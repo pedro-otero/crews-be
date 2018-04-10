@@ -12,11 +12,7 @@ const getTracksList = tracksstring => tracksstring
   .map(el => (el.includes('to') ? splitRange(el) : el))
   .reduce((a, b) => a.concat(b), []);
 
-const roles = {
-  producers: ['Producer', 'Produced By', 'Producer [Produced By]'],
-  composers: ['Written-By', 'Lyrics By', 'Music By'],
-  featured: ['Featuring', 'feat.'],
-};
+const roles = require('./roles');
 
 const reduce = allCredits => highlightedRole => allCredits
   .filter(credit => credit.role.split(', ')
