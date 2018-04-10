@@ -14,18 +14,27 @@ const makeParams = (artist, title) => ({
 module.exports = function (db) {
   this.findReleases = (album) => {
     const logger = createLogger(album);
-    const fetch = async (params) => {
-      const page = await db.search(params);
-      logger.results({ page });
-      actions.releaseResults(album.id, page);
+
+    async function getAllReleases(page) {
       const results = order(page.results, album);
-      results.forEach(async (result, i) => {
+      let i = 0;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const result of results) {
+        // eslint-disable-next-line no-await-in-loop
         const release = await db.getRelease(result.id);
         logger.release({
           page, release, i,
         });
+        i += 1;
         actions.addRelease(release);
-      });
+      }
+    }
+
+    const fetch = async (params) => {
+      const page = await db.search(params);
+      logger.results({ page });
+      actions.releaseResults(album.id, page);
+      await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
         fetch(Object.assign(params, { page: page.pagination.page + 1 }));
       } else {

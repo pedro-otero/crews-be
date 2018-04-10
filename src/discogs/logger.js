@@ -27,7 +27,7 @@ module.exports = function (album) {
       results,
     } = page;
     const { id, master_id: masterId } = release;
-    return `${tag(album)} P(${indicator(current, pages)}) I(${indicator(String(i + 1), results.length)}) R-${id} (M-${masterId}) OK`;
+    return `${tag(album)} P(${indicator(current, pages)}) I(${indicator((1 + +i), results.length)}) R-${id} (M-${masterId}) OK`;
   };
 
   const resultsMsg = ({
