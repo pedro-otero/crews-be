@@ -36,7 +36,7 @@ module.exports = function (db) {
       actions.releaseResults(album.id, page);
       await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
-        fetch(Object.assign(params, { page: page.pagination.page + 1 }));
+        fetch(Object.assign({}, params, { page: page.pagination.page + 1 }));
       } else {
         logger.finish({});
       }
