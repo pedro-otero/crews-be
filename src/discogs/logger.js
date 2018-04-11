@@ -1,6 +1,6 @@
 const winston = require('winston');
 
-const { printf, combine } = winston.format;
+const { printf, combine, timestamp: timestampFormat } = winston.format;
 
 const levels = {
   finish: 0,
@@ -46,22 +46,28 @@ module.exports = function (album) {
       i,
       text,
     },
+    timestamp,
   }) => {
+    let result = `${timestamp} `;
     switch (level) {
       case 'finish':
-        return `${tag(album)} FINISHED`;
+        result += `${tag(album)} FINISHED`;
+        break;
       case 'results':
-        return resultsMsg(page);
+        result += resultsMsg(page);
+        break;
       case 'release':
-        return releaseMsg(page, release, i);
+        result += releaseMsg(page, release, i);
+        break;
       default:
-        return text;
+        result += text;
     }
+    return result;
   };
 
   return winston.createLogger({
     levels,
-    format: combine(printf(formatFunction)),
+    format: combine(timestampFormat(), printf(formatFunction)),
     transports: createTransports(album.id),
   });
 };
