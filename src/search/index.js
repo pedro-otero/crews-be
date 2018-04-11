@@ -6,14 +6,11 @@ module.exports = (spotify, id, discogs) => {
 
   if (search) {
     const query = Query(id, store);
-    return Object.assign(search, {
-      data: {
-        id,
-        progress: query.getProgress(),
-        bestMatch: query.getBestMatch(),
-      },
-      status: 200,
-    });
+    return {
+      id,
+      progress: query.getProgress(),
+      bestMatch: query.getBestMatch(),
+    };
   }
   spotify
     .then((api) => {
@@ -25,11 +22,8 @@ module.exports = (spotify, id, discogs) => {
       discogs.findReleases(album);
     });
   return {
-    data: {
-      id,
-      progress: 0,
-      bestMatch: null,
-    },
-    status: 201,
+    id,
+    progress: 0,
+    bestMatch: null,
   };
 };

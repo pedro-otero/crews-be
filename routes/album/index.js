@@ -8,8 +8,8 @@ const func = searchAlbum => router.get('/:spotifyAlbumId', (req, res) => {
     params: { spotifyAlbumId },
   } = req;
 
-  const { status, data } = searchAlbum(spotify, spotifyAlbumId, discogs);
-  res.status(status).json(data);
+  const data = searchAlbum(spotify, spotifyAlbumId, discogs);
+  res.status(200).json(data);
 });
 
 module.exports = func;
