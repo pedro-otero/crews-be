@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha routes/ *.spec.js --recursive -w"
+    "test": "nyc --reporter=html --reporter=text mocha ./src *.spec.js --recursive"
   },
   "dependencies": {
     "body-parser": "~1.0.0",
@@ -26,6 +26,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.10.0",
     "mocha": "^1.16.2",
+    "nyc": "^11.6.0",
     "sinon": "^4.5.0",
     "superagent": "^0.15.7",
     "supertest": "^3.0.0"
