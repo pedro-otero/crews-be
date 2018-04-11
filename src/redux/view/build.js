@@ -3,7 +3,7 @@ function splitRange(tracksstring) {
     .map(s => s.trim());
   const start = Number(split[0]);
   const end = Number(split[1]);
-  return new Array(end).map((item, i) => start + i);
+  return [...Array((end - start) + 1).keys()].map((item, i) => String(start + i));
 }
 
 const getTracksList = tracksstring => tracksstring

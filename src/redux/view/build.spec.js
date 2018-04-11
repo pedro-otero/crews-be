@@ -51,12 +51,12 @@ describe('Build', () => {
     });
 
     it('sets title', function () {
-      assert.equal(this.album.name,this.built.title);
+      assert.equal(this.album.name, this.built.title);
     });
 
     describe('builds tracks', () => {
       it('sets title', function () {
-        assert.equal(this.album.tracks.items[0].name,this.built.tracks[0].title);
+        assert.equal(this.album.tracks.items[0].name, this.built.tracks[0].title);
       });
 
       it('adds producers that are in the release track', function () {
