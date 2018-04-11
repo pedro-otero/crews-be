@@ -1,3 +1,5 @@
+const roles = require('./roles');
+
 function splitRange(tracksstring) {
   const split = tracksstring.split('to')
     .map(s => s.trim());
@@ -11,8 +13,6 @@ const getTracksList = tracksstring => tracksstring
   .map(s => s.trim())
   .map(el => (el.includes('to') ? splitRange(el) : el))
   .reduce((a, b) => a.concat(b), []);
-
-const roles = require('./roles');
 
 const reduce = allCredits => highlightedRole => allCredits
   .filter(credit => credit.role.split(', ')
