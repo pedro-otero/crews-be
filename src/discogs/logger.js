@@ -8,7 +8,10 @@ const levels = {
   release: 2,
   error: 3,
 };
-const createTransports = () => [new winston.transports.Console({ level: 'error' })];
+const createTransports = filename => [
+  new winston.transports.Console({ level: 'error' }),
+  new winston.transports.File({ filename, level: 'error' }),
+];
 
 module.exports = function (album) {
   const {
@@ -59,6 +62,6 @@ module.exports = function (album) {
   return winston.createLogger({
     levels,
     format: combine(printf(formatFunction)),
-    transports: createTransports(),
+    transports: createTransports(album.id),
   });
 };
