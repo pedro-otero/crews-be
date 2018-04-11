@@ -1,9 +1,11 @@
+const roles = require('./roles');
+
 function splitRange(tracksstring) {
   const split = tracksstring.split('to')
     .map(s => s.trim());
   const start = Number(split[0]);
   const end = Number(split[1]);
-  return new Array(end).map((item, i) => start + i);
+  return [...Array((end - start) + 1).keys()].map((item, i) => String(start + i));
 }
 
 const getTracksList = tracksstring => tracksstring
@@ -11,12 +13,6 @@ const getTracksList = tracksstring => tracksstring
   .map(s => s.trim())
   .map(el => (el.includes('to') ? splitRange(el) : el))
   .reduce((a, b) => a.concat(b), []);
-
-const roles = {
-  producers: ['Producer', 'Produced By', 'Producer [Produced By]'],
-  composers: ['Written-By', 'Lyrics By', 'Music By'],
-  featured: ['Featuring', 'feat.'],
-};
 
 const reduce = allCredits => highlightedRole => allCredits
   .filter(credit => credit.role.split(', ')
