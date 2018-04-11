@@ -8,9 +8,9 @@ const levels = {
   release: 2,
   error: 3,
 };
-const createTransports = filename => [
+const createTransports = albumId => [
   new winston.transports.Console({ level: 'error' }),
-  new winston.transports.File({ filename, level: 'error' }),
+  new winston.transports.File({ filename: `log/${albumId}.log`, level: 'error' }),
 ];
 
 module.exports = function (album) {
