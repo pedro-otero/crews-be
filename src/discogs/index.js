@@ -3,15 +3,20 @@ const { actions } = require('../redux/state/index');
 
 const createLogger = require('./logger');
 
-const makeParams = (artist, title) => ({
-  artist,
-  release_title: title.replace(/(.+) \((.+)\)/, '$1'),
-  type: 'release',
-  per_page: 100,
-  page: 1,
-});
-
 module.exports = function (db) {
+  const search = async ({
+    name,
+    artists: [{
+      name: artist,
+    }],
+  }, page) => db.search({
+    artist,
+    release_title: name.replace(/(.+) \((.+)\)/, '$1'),
+    type: 'release',
+    per_page: 100,
+    page,
+  });
+
   this.findReleases = (album) => {
     const logger = createLogger(album);
 
@@ -30,19 +35,18 @@ module.exports = function (db) {
       }
     }
 
-    const fetch = async (params) => {
-      const page = await db.search(params);
+    const fetch = async (p) => {
+      const page = await search(album, p);
       logger.results({ page });
       actions.releaseResults(album.id, page);
       await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
-        fetch(Object.assign({}, params, { page: page.pagination.page + 1 }));
+        fetch(page.pagination.page + 1);
       } else {
         logger.finish({});
       }
     };
 
-    const { artists: [{ name: artist }], name } = album;
-    fetch(makeParams(artist, name));
+    fetch(1);
   };
 };
