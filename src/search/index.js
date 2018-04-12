@@ -1,5 +1,6 @@
 const { store, actions } = require('../redux/state');
 const Query = require('../redux/view/query');
+const createLogger = require('../discogs/logger');
 
 module.exports = (spotify, id, discogs) => {
   const search = store.getState().searches.find(item => item.id === id);
@@ -18,8 +19,31 @@ module.exports = (spotify, id, discogs) => {
       return api.getAlbum(id);
     })
     .then(({ body: album }) => {
+      const logger = createLogger(album);
       actions.addAlbum(album);
-      discogs.findReleases(album);
+      let page;
+      discogs.findReleases(album)
+        .subscribe(
+          ({ type, data }) => {
+            switch (type) {
+              case 'results':
+                page = data;
+                logger.results({ page });
+                actions.releaseResults(album.id, data);
+                break;
+              case 'release':
+                logger.release({
+                  page, release: data.release, i: data.i,
+                });
+                actions.addRelease(data.release);
+                break;
+              default:
+                throw Error('This should not happen');
+            }
+          },
+          (err) => { throw Error(err); },
+          () => logger.finish({})
+        );
     });
   return {
     id,

@@ -1,7 +1,6 @@
-const order = require('./order');
-const { actions } = require('../redux/state/index');
+const Rx = require('rxjs');
 
-const createLogger = require('./logger');
+const order = require('./order');
 
 module.exports = function (db) {
   const search = async ({
@@ -17,9 +16,7 @@ module.exports = function (db) {
     page,
   });
 
-  this.findReleases = (album) => {
-    const logger = createLogger(album);
-
+  this.findReleases = album => Rx.Observable.create((observer) => {
     async function getAllReleases(page) {
       const results = order(page.results, album);
       let i = 0;
@@ -27,26 +24,22 @@ module.exports = function (db) {
       for (const result of results) {
         // eslint-disable-next-line no-await-in-loop
         const release = await db.getRelease(result.id);
-        logger.release({
-          page, release, i,
-        });
+        observer.next({ type: 'release', data: { release, i } });
         i += 1;
-        actions.addRelease(release);
       }
     }
 
     const fetch = async (p) => {
       const page = await search(album, p);
-      logger.results({ page });
-      actions.releaseResults(album.id, page);
+      observer.next({ type: 'results', data: page });
       await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
         fetch(page.pagination.page + 1);
       } else {
-        logger.finish({});
+        observer.complete();
       }
     };
 
     fetch(1);
-  };
+  });
 };

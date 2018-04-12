@@ -2,7 +2,6 @@ const sinon = require('sinon');
 const assert = require('assert');
 
 const Discogs = require('./index');
-const { actions } = require('../redux/state/index');
 
 const firstResults = {
   pagination: {
@@ -30,9 +29,8 @@ const secondResults = {
 
 describe('Find releases function', () => {
   describe('calls the db and actions functions', () => {
-    before(function () {
-      actions.addRelease = sinon.spy();
-      actions.releaseResults = sinon.spy();
+    before(function (done) {
+      this.values = [];
       this.db = {
         search: sinon.stub()
           .onCall(0).resolves(firstResults)
@@ -51,7 +49,7 @@ describe('Find releases function', () => {
         }],
         release_date: '2000',
         album_type: 'album',
-      });
+      }).subscribe(this.values.push.bind(this.values), () => assert(false), done);
     });
 
     it('search 1st page', function () {
@@ -64,8 +62,8 @@ describe('Find releases function', () => {
       });
     });
 
-    it('adds 1st page of results to store', () => {
-      assert.deepEqual(actions.releaseResults.getCalls()[0].args[1], firstResults);
+    it('emits first page of results', function () {
+      assert.deepEqual(this.values[0].data, firstResults);
     });
 
     it('search 2nd page', function () {
@@ -78,24 +76,24 @@ describe('Find releases function', () => {
       });
     });
 
-    it('adds 2nd page of results to store', () => {
-      assert.deepEqual(actions.releaseResults.getCalls()[1].args[1], secondResults);
+    it('emits second page of results', function () {
+      assert.deepEqual(this.values[2].data, secondResults);
     });
 
     it('getRelease 1', function () {
       assert(this.db.getRelease.calledWith(1));
     });
 
-    it('addRelease 1', () => {
-      assert.deepEqual(actions.addRelease.getCalls(0)[0].args[0], { id: 1 });
+    it('emits release 1', function () {
+      assert.equal(this.values[1].data.release.id, 1);
     });
 
     it('getRelease 2', function () {
       assert(this.db.getRelease.calledWith(2));
     });
 
-    it('addRelease 2', () => {
-      assert.deepEqual(actions.addRelease.getCalls(0)[1].args[0], { id: 2 });
+    it('emits release 2', function () {
+      assert.equal(this.values[3].data.release.id, 2);
     });
   });
 });
