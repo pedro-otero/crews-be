@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const Discogs = require('./index');
+const Discogs = require('./discogs');
 
 const firstResults = {
   pagination: {
