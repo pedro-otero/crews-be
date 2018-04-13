@@ -26,13 +26,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* App locals setup */
 
-app.locals.discogs = require('./src/setup/discogs');
-app.locals.spotify = require('./src/setup/spotify');
-app.locals.store = require('./src/redux/state').store;
+app.locals.searchAlbum = require('./src/setup');
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/data/album', albums(searchAlbum));
+app.use('/data/album', albums);
 
 // / catch 404 and forwarding to error handler
 app.use((req, res, next) => {

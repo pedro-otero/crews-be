@@ -21,7 +21,7 @@ const store ={
 
 describe('Search function', function () {
   it('Returns a newly created search', function () {
-    const result = search(spotify, 1, discogs, store);
+    const result = search(spotify, discogs, store)(1);
     assert.equal(1, result.id);
   });
 });
