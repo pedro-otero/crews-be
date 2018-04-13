@@ -15,9 +15,13 @@ const discogs = {
   })
 };
 
+const store ={
+  getState:()=>({searches:[]})
+}
+
 describe('Search function', function () {
   it('Returns a newly created search', function () {
-    const result = search(spotify, 1, discogs);
+    const result = search(spotify, 1, discogs, store);
     assert.equal(1, result.id);
   });
 });

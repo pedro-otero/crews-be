@@ -1,8 +1,8 @@
-const { store, actions } = require('../redux/state');
+const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 const createLogger = require('../discogs/logger');
 
-module.exports = (spotify, id, discogs) => {
+module.exports = (spotify, id, discogs, store) => {
   const search = store.getState().searches.find(item => item.id === id);
 
   if (search) {

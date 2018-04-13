@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.locals.discogs = require('./src/setup/discogs');
 app.locals.spotify = require('./src/setup/spotify');
+app.locals.store = require('./src/redux/state').store;
 
 app.use('/', routes);
 app.use('/users', users);
