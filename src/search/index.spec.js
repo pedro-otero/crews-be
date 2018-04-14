@@ -114,4 +114,24 @@ describe('Search function', () => {
       });
     });
   });
+
+  it('Spotify login fails', (done) => {
+    const spotify = Promise.reject({
+      error: {
+        status: 500,
+      },
+    });
+    const func = search(spotify, discogs, store);
+    func(1)
+      .then(() => {
+        assert(false);
+      }, (err) => {
+        assert.equal(err.message, "Server couldn't login to Spotify");
+      })
+      .then(done)
+      .catch(() => {
+        assert(false);
+        done();
+      });
+  });
 });

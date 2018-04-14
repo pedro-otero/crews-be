@@ -18,6 +18,8 @@ module.exports = (spotify, discogs, store) => id => new Promise((resolve, reject
     .then((api) => {
       actions.addSearch(id);
       return api.getAlbum(id);
+    }, () => {
+      reject(Error("Server couldn't login to Spotify"));
     }).then(({ body: album }) => {
       resolve({
         id,
