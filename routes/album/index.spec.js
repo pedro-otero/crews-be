@@ -6,7 +6,7 @@ const route = require('./index');
 describe('Albums endpoint', () => {
   beforeEach(function () {
     const app = express();
-    app.locals.searchAlbum = () => ({ status: 200 });
+    app.locals.searchAlbum = () => Promise.resolve({ status: 200 });
     app.use('/data/album', route);
     this.request = request(app);
   });

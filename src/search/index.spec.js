@@ -24,9 +24,12 @@ describe('Search function', function () {
       this.search = search(spotify, discogs, store);
     });
 
-    it('Returns a newly created search', function () {
-      const result = this.search(1);
-      assert.equal(1, result.id);
+    it('Returns a newly created search', function (done) {
+      this.search(1)
+        .then(result => assert.equal(1, result.id))
+        .then(done)
+        .catch(() => assert(false));
     });
   });
+
 });
