@@ -85,4 +85,31 @@ describe('Search function', () => {
         });
     });
   });
+
+  describe('Fails for some other reason', () => {
+    beforeEach(function () {
+      const spotify = Promise.resolve({
+        getAlbum: () => Promise.reject({
+          error: {
+            status: 500,
+          },
+        }),
+      });
+      this.search = search(spotify, discogs, store);
+    });
+
+    it('Returns error with message', function (done) {
+      this.search(1)
+        .then(() => {
+          assert(false);
+        }, (err) => {
+          assert.equal(err.message, "There's something wrong with Spotify");
+        })
+        .then(done)
+        .catch(() => {
+          assert(false);
+          done();
+        });
+    });
+  });
 });
