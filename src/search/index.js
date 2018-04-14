@@ -51,6 +51,7 @@ module.exports = (spotify, discogs, store) => id => new Promise((resolve, reject
         );
     }, (reason) => {
       reject(Error({
+        400: 'Spotify album id is invalid',
         404: 'Album does not exist in Spotify',
       }[reason.error.status]));
     }).catch(reject);

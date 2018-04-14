@@ -58,4 +58,31 @@ describe('Search function', () => {
         });
     });
   });
+
+  describe('Spotify id is invalid', () => {
+    beforeEach(function () {
+      const spotify = Promise.resolve({
+        getAlbum: () => Promise.reject({
+          error: {
+            status: 400,
+          },
+        }),
+      });
+      this.search = search(spotify, discogs, store);
+    });
+
+    it('Returns error with message', function (done) {
+      this.search(1)
+        .then(() => {
+          assert(false);
+        }, (err) => {
+          assert.equal(err.message, 'Spotify album id is invalid');
+        })
+        .then(done)
+        .catch(() => {
+          assert(false);
+          done();
+        });
+    });
+  });
 });
