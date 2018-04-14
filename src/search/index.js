@@ -14,9 +14,9 @@ module.exports = (spotify, discogs, store) => (id) => {
     };
   }
   spotify
-    .then((api) => {
+    .then(async (api) => {
       actions.addSearch(id);
-      const { body: album } = api.getAlbum(id);
+      const { body: album } = await api.getAlbum(id);
       const logger = createLogger(album);
       actions.addAlbum(album);
       let page;
