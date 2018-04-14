@@ -16,9 +16,7 @@ module.exports = (spotify, discogs, store) => (id) => {
   spotify
     .then((api) => {
       actions.addSearch(id);
-      return api.getAlbum(id);
-    })
-    .then(({ body: album }) => {
+      const { body: album } = api.getAlbum(id);
       const logger = createLogger(album);
       actions.addAlbum(album);
       let page;
