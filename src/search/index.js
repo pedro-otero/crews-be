@@ -14,12 +14,16 @@ module.exports = (spotify, discogs, store) => (id) => new Promise((resolve,rejec
     });
     return;
   }
-  let error;
   spotify
     .then((api) => {
       actions.addSearch(id);
       return api.getAlbum(id);
     }).then(({ body: album }) => {
+    resolve({
+      id,
+      progress: 0,
+      bestMatch: null,
+    });
       const logger = createLogger(album);
       actions.addAlbum(album);
       let page;
@@ -45,15 +49,9 @@ module.exports = (spotify, discogs, store) => (id) => new Promise((resolve,rejec
           (err) => { throw Error(err); },
           () => logger.finish({})
         );
-    }, ({ status }) => {
-      if (status===404) {
-        error = 'The album does not exist';
+    }, (reason) => {
+      if (reason.error.status===404) {
+        reject(Error('Album does not exist in Spotify'));
       }
-  });
-  resolve({
-    error,
-    id,
-    progress: 0,
-    bestMatch: null,
-  });
+  }).catch(reject);
 });
