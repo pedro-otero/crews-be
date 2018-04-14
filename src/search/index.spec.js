@@ -16,100 +16,102 @@ const store = {
 };
 
 describe('Search function', () => {
-  describe('Spotify getAlbum exists', () => {
-    beforeEach(function () {
-      const spotify = Promise.resolve({
-        getAlbum: sinon.stub().resolves({}),
-      });
-      this.search = search(spotify, discogs, store);
-    });
-
-    it('Returns a newly created search', function (done) {
-      this.search(1)
-        .then(result => assert.equal(1, result.id))
-        .then(done)
-        .catch(() => assert(false));
-    });
-  });
-
-  describe('Spotify album does not exist', () => {
-    beforeEach(function () {
-      const spotify = Promise.resolve({
-        getAlbum: () => Promise.reject({
-          error: {
-            status: 404,
-          },
-        }),
-      });
-      this.search = search(spotify, discogs, store);
-    });
-
-    it('Returns error with message', function (done) {
-      this.search(1)
-        .then(() => {
-          assert(false);
-        }, (err) => {
-          assert.equal(err.message, 'Album does not exist in Spotify');
-        })
-        .then(done)
-        .catch(() => {
-          assert(false);
-          done();
+  describe('Spotify logs in', () => {
+    describe('Spotify getAlbum exists', () => {
+      beforeEach(function () {
+        const spotify = Promise.resolve({
+          getAlbum: sinon.stub().resolves({}),
         });
-    });
-  });
-
-  describe('Spotify id is invalid', () => {
-    beforeEach(function () {
-      const spotify = Promise.resolve({
-        getAlbum: () => Promise.reject({
-          error: {
-            status: 400,
-          },
-        }),
+        this.search = search(spotify, discogs, store);
       });
-      this.search = search(spotify, discogs, store);
-    });
 
-    it('Returns error with message', function (done) {
-      this.search(1)
-        .then(() => {
-          assert(false);
-        }, (err) => {
-          assert.equal(err.message, 'Spotify album id is invalid');
-        })
-        .then(done)
-        .catch(() => {
-          assert(false);
-          done();
-        });
-    });
-  });
-
-  describe('Fails for some other reason', () => {
-    beforeEach(function () {
-      const spotify = Promise.resolve({
-        getAlbum: () => Promise.reject({
-          error: {
-            status: 500,
-          },
-        }),
+      it('Returns a newly created search', function (done) {
+        this.search(1)
+          .then(result => assert.equal(1, result.id))
+          .then(done)
+          .catch(() => assert(false));
       });
-      this.search = search(spotify, discogs, store);
     });
 
-    it('Returns error with message', function (done) {
-      this.search(1)
-        .then(() => {
-          assert(false);
-        }, (err) => {
-          assert.equal(err.message, "There's something wrong with Spotify");
-        })
-        .then(done)
-        .catch(() => {
-          assert(false);
-          done();
+    describe('Spotify album does not exist', () => {
+      beforeEach(function () {
+        const spotify = Promise.resolve({
+          getAlbum: () => Promise.reject({
+            error: {
+              status: 404,
+            },
+          }),
         });
+        this.search = search(spotify, discogs, store);
+      });
+
+      it('Returns error with message', function (done) {
+        this.search(1)
+          .then(() => {
+            assert(false);
+          }, (err) => {
+            assert.equal(err.message, 'Album does not exist in Spotify');
+          })
+          .then(done)
+          .catch(() => {
+            assert(false);
+            done();
+          });
+      });
+    });
+
+    describe('Spotify id is invalid', () => {
+      beforeEach(function () {
+        const spotify = Promise.resolve({
+          getAlbum: () => Promise.reject({
+            error: {
+              status: 400,
+            },
+          }),
+        });
+        this.search = search(spotify, discogs, store);
+      });
+
+      it('Returns error with message', function (done) {
+        this.search(1)
+          .then(() => {
+            assert(false);
+          }, (err) => {
+            assert.equal(err.message, 'Spotify album id is invalid');
+          })
+          .then(done)
+          .catch(() => {
+            assert(false);
+            done();
+          });
+      });
+    });
+
+    describe('Fails for some other reason', () => {
+      beforeEach(function () {
+        const spotify = Promise.resolve({
+          getAlbum: () => Promise.reject({
+            error: {
+              status: 500,
+            },
+          }),
+        });
+        this.search = search(spotify, discogs, store);
+      });
+
+      it('Returns error with message', function (done) {
+        this.search(1)
+          .then(() => {
+            assert(false);
+          }, (err) => {
+            assert.equal(err.message, "There's something wrong with Spotify");
+          })
+          .then(done)
+          .catch(() => {
+            assert(false);
+            done();
+          });
+      });
     });
   });
 });
