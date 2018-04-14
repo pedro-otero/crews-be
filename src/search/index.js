@@ -2,7 +2,7 @@ const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 const createLogger = require('./logger');
 
-module.exports = (spotify, discogs, store) => (id) => new Promise((resolve,reject)=>{
+module.exports = (spotify, discogs, store) => id => new Promise((resolve, reject) => {
   const search = store.getState().searches.find(item => item.id === id);
 
   if (search) {
@@ -19,11 +19,11 @@ module.exports = (spotify, discogs, store) => (id) => new Promise((resolve,rejec
       actions.addSearch(id);
       return api.getAlbum(id);
     }).then(({ body: album }) => {
-    resolve({
-      id,
-      progress: 0,
-      bestMatch: null,
-    });
+      resolve({
+        id,
+        progress: 0,
+        bestMatch: null,
+      });
       const logger = createLogger(album);
       actions.addAlbum(album);
       let page;
@@ -50,8 +50,8 @@ module.exports = (spotify, discogs, store) => (id) => new Promise((resolve,rejec
           () => logger.finish({})
         );
     }, (reason) => {
-      if (reason.error.status===404) {
+      if (reason.error.status === 404) {
         reject(Error('Album does not exist in Spotify'));
       }
-  }).catch(reject);
+    }).catch(reject);
 });
