@@ -58,8 +58,6 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return api.getAlbum(id);
   };
 
-  const failSpotifyLogin = () => Error("Server couldn't login to Spotify");
-
   const start = () => new Promise((resolve, reject) => {
     if (search) {
       const query = Query(id, store);
@@ -67,7 +65,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       return;
     }
     spotify
-      .then(getAlbum, () => reject(failSpotifyLogin()))
+      .then(getAlbum, () => reject(Error("Server couldn't login to Spotify")))
       .then(({ body }) => {
         resolve(response());
         album = body;
