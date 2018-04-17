@@ -30,7 +30,7 @@ describe('Find releases function', () => {
         .subscribe(this.values.push.bind(this.values), () => assert(false), done);
     });
 
-    it('search 1st page', function () {
+    it('searches 1st page', function () {
       assert.deepEqual(this.db.search.getCalls()[0].args[0], {
         artist: 'Artist',
         release_title: 'Album',
@@ -44,7 +44,7 @@ describe('Find releases function', () => {
       assert.deepEqual(this.values[0].data.page, firstResults);
     });
 
-    it('search 2nd page', function () {
+    it('searches 2nd page', function () {
       assert.deepEqual(this.db.search.getCalls()[1].args[0], {
         artist: 'Artist',
         release_title: 'Album',
@@ -58,7 +58,7 @@ describe('Find releases function', () => {
       assert.deepEqual(this.values[2].data.page, secondResults);
     });
 
-    it('getRelease 1', function () {
+    it('gets release 1', function () {
       assert(this.db.getRelease.calledWith(1));
     });
 
@@ -66,7 +66,7 @@ describe('Find releases function', () => {
       assert.equal(this.values[1].data.release.id, 1);
     });
 
-    it('getRelease 2', function () {
+    it('gets release 2', function () {
       assert(this.db.getRelease.calledWith(2));
     });
 
