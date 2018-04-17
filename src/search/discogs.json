@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "pagination": {
+        "pages": 2,
+        "page": 1
+      },
+      "results": [
+        {
+          "id": 1,
+          "title": "Artist - Album",
+          "year": "2000"
+        }
+      ]
+    },
+    {
+      "pagination": {
+        "pages": 2,
+        "page": 2
+      },
+      "results": [
+        {
+          "id": 2,
+          "title": "Artist - Album",
+          "year": "2000"
+        }
+      ]
+    }
+  ]
+}

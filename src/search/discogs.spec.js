@@ -1,31 +1,10 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const Discogs = require('./discogs');
+const Discogs = require('./discogs.js');
+const mocks = require('./discogs.json');
 
-const firstResults = {
-  pagination: {
-    pages: 2,
-    page: 1,
-  },
-  results: [{
-    id: 1,
-    title: 'Artist - Album',
-    year: '2000',
-  }],
-};
-
-const secondResults = {
-  pagination: {
-    pages: 2,
-    page: 2,
-  },
-  results: [{
-    id: 2,
-    title: 'Artist - Album',
-    year: '2000',
-  }],
-};
+const { results: [firstResults, secondResults] } = mocks;
 
 describe('Find releases function', () => {
   describe('calls the db and actions functions', () => {
