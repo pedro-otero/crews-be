@@ -2,16 +2,27 @@ const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
+  function response(query) {
+    if (typeof query === 'undefined') {
+      return {
+        id,
+        progress: 0,
+        bestMatch: null,
+      };
+    }
+    return {
+      id,
+      progress: query.getProgress(),
+      bestMatch: query.getBestMatch(),
+    };
+  }
+
   const start = () => new Promise((resolve, reject) => {
     const search = store.getState().searches.find(item => item.id === id);
 
     if (search) {
       const query = Query(id, store);
-      resolve({
-        id,
-        progress: query.getProgress(),
-        bestMatch: query.getBestMatch(),
-      });
+      resolve(response(query));
       return;
     }
     spotify
@@ -21,11 +32,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       }, () => {
         reject(Error("Server couldn't login to Spotify"));
       }).then(({ body: album }) => {
-        resolve({
-          id,
-          progress: 0,
-          bestMatch: null,
-        });
+        resolve(response());
         const logger = createLogger(album);
         actions.addAlbum(album);
         let page;
