@@ -127,4 +127,32 @@ describe('Find releases function', () => {
       assert.equal(this.errors[0], 'ERROR');
     });
   });
+
+  describe('fails to get release', () => {
+    before(function (done) {
+      this.errors = [];
+      this.db = {
+        search: sinon.stub()
+          .onCall(0).resolves(firstResults)
+          .onCall(1)
+          .resolves(secondResults),
+        getRelease: sinon.stub().rejects('ERROR'),
+      };
+      this.discogs = Discogs(this.db);
+      this.discogs
+        .findReleases(album)
+        .subscribe(() => {}, (error) => {
+          this.errors.push(error);
+          done();
+        }, () => assert(false));
+    });
+
+    it('Emits error message', function () {
+      assert.equal(this.errors[0], 'ERROR');
+    });
+
+    it('Does not search next page', function () {
+      assert.equal(this.args = this.db.search.getCalls().length, 1);
+    });
+  });
 });

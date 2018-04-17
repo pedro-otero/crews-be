@@ -18,9 +18,14 @@ module.exports = function (db) {
         const results = order(page.results, album);
         // eslint-disable-next-line no-restricted-syntax
         for (const result of results) {
-          // eslint-disable-next-line no-await-in-loop
-          const release = await db.getRelease(result.id);
-          observer.next({ type: 'release', data: { release } });
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            const release = await db.getRelease(result.id);
+            observer.next({ type: 'release', data: { release } });
+          } catch (error) {
+            observer.error(error);
+            return;
+          }
         }
         if (page.pagination.page < page.pagination.pages) {
           fetch(page.pagination.page + 1);
