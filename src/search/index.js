@@ -26,13 +26,13 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const next = ({ type, data: { page, release, i } }) => ({
+  const next = ({ type, data: { page, release } }) => ({
     results: () => {
       logger.results({ page });
       actions.releaseResults(album.id, page);
     },
     release: () => {
-      logger.release({ release, i });
+      logger.release({ release });
       actions.addRelease(release);
     },
   })[type]();

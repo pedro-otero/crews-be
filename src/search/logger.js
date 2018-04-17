@@ -25,14 +25,15 @@ module.exports = function (album) {
 
   const indicator = (current, total) => `${current}/${total}`;
 
-  const releaseMsg = (release, i) => {
+  const releaseMsg = (release) => {
     const page = pagesArray.find(p => p.results.find(r => r.id === release.id) !== undefined);
+    const i = page.results.findIndex(r => r.id === release.id) + 1;
     const {
       pagination: { page: current, pages },
       results,
     } = page;
     const { id, master_id: masterId } = release;
-    return `${tag(album)} P(${indicator(current, pages)}) I(${indicator((1 + +i), results.length)}) R-${id} (M-${masterId}) OK`;
+    return `${tag(album)} P(${indicator(current, pages)}) I(${indicator(i, results.length)}) R-${id} (M-${masterId}) OK`;
   };
 
   const resultsMsg = (pageObject) => {
@@ -49,7 +50,6 @@ module.exports = function (album) {
     message: {
       page,
       release,
-      i,
       text,
     },
     timestamp,
@@ -63,7 +63,7 @@ module.exports = function (album) {
         result += resultsMsg(page);
         break;
       case 'release':
-        result += releaseMsg(release, i);
+        result += releaseMsg(release);
         break;
       default:
         result += text;
