@@ -8,7 +8,8 @@ const func = router.get('/:spotifyAlbumId', (req, res) => {
     params: { spotifyAlbumId },
   } = req;
 
-  searchAlbum(spotifyAlbumId).then((data) => {
+  const search = searchAlbum(spotifyAlbumId);
+  search.start().then((data) => {
     res.status(200).json(data);
   });
 });
