@@ -38,6 +38,23 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     reject(Error("Server couldn't login to Spotify"));
   });
 
+  const onNext = (logger, album) => ({ type, data }) => {
+    switch (type) {
+      case 'results':
+        logger.results({ page: data });
+        actions.releaseResults(album.id, data);
+        break;
+      case 'release':
+        logger.release({
+          release: data.release, i: data.i,
+        });
+        actions.addRelease(data.release);
+        break;
+      default:
+        throw Error('This should not happen');
+    }
+  };
+
   const start = () => new Promise((resolve, reject) => {
     if (search) {
       const query = Query(id, store);
@@ -50,22 +67,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       actions.addAlbum(album);
       discogs.findReleases(album)
         .subscribe(
-          ({ type, data }) => {
-            switch (type) {
-              case 'results':
-                logger.results({ page: data });
-                actions.releaseResults(album.id, data);
-                break;
-              case 'release':
-                logger.release({
-                  release: data.release, i: data.i,
-                });
-                actions.addRelease(data.release);
-                break;
-              default:
-                throw Error('This should not happen');
-            }
-          },
+          onNext(logger, album),
           error => logger.error(error),
           () => logger.finish({})
         );
