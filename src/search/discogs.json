@@ -36,5 +36,13 @@
     ],
     "release_date": "2000",
     "album_type": "album"
-  }
+  },
+  "releases": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
 }

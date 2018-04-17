@@ -4,7 +4,11 @@ const assert = require('assert');
 const Discogs = require('./discogs.js');
 const mocks = require('./discogs.json');
 
-const { results: [firstResults, secondResults], album } = mocks;
+const {
+  results: [firstResults, secondResults],
+  album,
+  releases: [r1, r2],
+} = mocks;
 
 describe('Find releases function', () => {
   describe('calls the db and actions functions', () => {
@@ -16,9 +20,9 @@ describe('Find releases function', () => {
           .onCall(1)
           .resolves(secondResults),
         getRelease: sinon.stub()
-          .onCall(0).resolves({ id: 1 })
+          .onCall(0).resolves(r1)
           .onCall(1)
-          .resolves({ id: 2 }),
+          .resolves(r2),
       };
       this.discogs = Discogs(this.db);
       this.discogs
