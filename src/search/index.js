@@ -8,7 +8,8 @@ const spotifyErrorMessages = {
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
-  let album, logger;
+  let album;
+  let logger;
 
   function response(query) {
     if (typeof query === 'undefined') {
@@ -67,11 +68,9 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       resolve(response());
       logger = createLogger(album);
       actions.addAlbum(album);
-      discogs.findReleases(album).subscribe(
-        onNext,
-        error => logger.error(error),
-        () => logger.finish({})
-      );
+      discogs
+        .findReleases(album)
+        .subscribe(onNext, logger.error, logger.finish.bind(logger, {}));
     }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
