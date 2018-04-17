@@ -26,17 +26,15 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const onNext = ({ type, data }) => {
+  const onNext = ({ type, data: { page, release, i } }) => {
     switch (type) {
       case 'results':
-        logger.results({ page: data });
-        actions.releaseResults(album.id, data);
+        logger.results({ page });
+        actions.releaseResults(album.id, page);
         break;
       case 'release':
-        logger.release({
-          release: data.release, i: data.i,
-        });
-        actions.addRelease(data.release);
+        logger.release({ release, i });
+        actions.addRelease(release);
         break;
       default:
         throw Error('This should not happen');

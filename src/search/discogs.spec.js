@@ -63,7 +63,7 @@ describe('Find releases function', () => {
     });
 
     it('emits first page of results', function () {
-      assert.deepEqual(this.values[0].data, firstResults);
+      assert.deepEqual(this.values[0].data.page, firstResults);
     });
 
     it('search 2nd page', function () {
@@ -77,7 +77,7 @@ describe('Find releases function', () => {
     });
 
     it('emits second page of results', function () {
-      assert.deepEqual(this.values[2].data, secondResults);
+      assert.deepEqual(this.values[2].data.page, secondResults);
     });
 
     it('getRelease 1', function () {

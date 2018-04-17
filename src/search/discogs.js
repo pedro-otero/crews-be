@@ -31,7 +31,7 @@ module.exports = function (db) {
 
     const fetch = async (p) => {
       const page = await search(album, p);
-      observer.next({ type: 'results', data: page });
+      observer.next({ type: 'results', data: { page } });
       await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
         fetch(page.pagination.page + 1);
