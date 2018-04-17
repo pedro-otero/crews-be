@@ -1,8 +1,7 @@
 const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
-const createLogger = require('./logger');
 
-module.exports = (spotify, discogs, store) => id => new Promise((resolve, reject) => {
+module.exports = (spotify, discogs, store, createLogger) => id => new Promise((resolve, reject) => {
   const search = store.getState().searches.find(item => item.id === id);
 
   if (search) {
@@ -48,7 +47,7 @@ module.exports = (spotify, discogs, store) => id => new Promise((resolve, reject
                 throw Error('This should not happen');
             }
           },
-          (err) => { throw Error(err); },
+          error => logger.error(error),
           () => logger.finish({})
         );
     }, (reason) => {
