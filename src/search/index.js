@@ -23,7 +23,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     if (code in spotifyErrorMessages.http) {
       return Error(spotifyErrorMessages.http[code]);
     }
-    return Error("There's something wrong with Spotify");
+    return Error(spotifyErrorMessages.general);
   };
 
   const onNext = ({ type, data }) => {
@@ -63,7 +63,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       return;
     }
     spotify
-      .then(getAlbum, () => reject(Error("Server couldn't login to Spotify")))
+      .then(getAlbum, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         resolve(response());
         album = body;
