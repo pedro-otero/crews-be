@@ -19,6 +19,17 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     };
   }
 
+  const albumRejection = (reason) => {
+    const errorMessages = {
+      400: 'Spotify album id is invalid',
+      404: 'Album does not exist in Spotify',
+    };
+    if (reason.error.status in errorMessages) {
+      return Error(errorMessages[reason.error.status]);
+    }
+    return Error("There's something wrong with Spotify");
+  };
+
   const start = () => new Promise((resolve, reject) => {
 
     if (search) {
@@ -59,17 +70,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
             error => logger.error(error),
             () => logger.finish({})
           );
-      }, (reason) => {
-        const errorMessages = {
-          400: 'Spotify album id is invalid',
-          404: 'Album does not exist in Spotify',
-        };
-        if (reason.error.status in errorMessages) {
-          reject(Error(errorMessages[reason.error.status]));
-        } else {
-          reject(Error("There's something wrong with Spotify"));
-        }
-      }).catch(reject);
+      }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
   return { start };
