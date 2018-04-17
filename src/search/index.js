@@ -8,6 +8,16 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   let album;
   let logger;
 
+  const storeTransaction = (() => {
+    const addSearch = () => actions.addSearch(id);
+    const addAlbum = () => actions.addAlbum(album);
+    const addResults = page => actions.releaseResults(album.id, page);
+    const addRelease = release => actions.addRelease(release);
+    return {
+      addSearch, addAlbum, addResults, addRelease,
+    };
+  })();
+
   function response(query) {
     let progress = 0;
     let bestMatch = null;
@@ -29,11 +39,11 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const next = ({ type, data: { page, release } }) => ({
     results: () => {
       logger.results({ page });
-      actions.releaseResults(album.id, page);
+      storeTransaction.addResults(page);
     },
     release: () => {
       logger.release({ release });
-      actions.addRelease(release);
+      storeTransaction.addRelease(release);
     },
   })[type]();
 
@@ -44,7 +54,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   };
 
   const getAlbum = (api) => {
-    actions.addSearch(id);
+    storeTransaction.addSearch();
     return api.getAlbum(id);
   };
 
@@ -59,7 +69,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       .then(({ body }) => {
         resolve(response());
         album = body;
-        actions.addAlbum(album);
+        storeTransaction.addAlbum();
         logger = createLogger(album);
         findReleases();
       }, reason => reject(albumRejection(reason))).catch(reject);
