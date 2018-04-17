@@ -48,19 +48,17 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       resolve(response());
       const logger = createLogger(album);
       actions.addAlbum(album);
-      let page;
       discogs.findReleases(album)
         .subscribe(
           ({ type, data }) => {
             switch (type) {
               case 'results':
-                page = data;
-                logger.results({ page });
+                logger.results({ page: data });
                 actions.releaseResults(album.id, data);
                 break;
               case 'release':
                 logger.release({
-                  page, release: data.release, i: data.i,
+                  release: data.release, i: data.i,
                 });
                 actions.addRelease(data.release);
                 break;
