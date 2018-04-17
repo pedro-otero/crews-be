@@ -14,7 +14,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     const addAlbum = (searchAlbum) => {
       _album = searchAlbum;
       actions.addAlbum(_album);
-    }
+    };
     const addResults = page => actions.releaseResults(_album.id, page);
     const addRelease = release => actions.addRelease(release);
     return {
@@ -40,22 +40,22 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const next = ({ type, data: { page, release } }) => ({
-    results: () => {
-      logger.results({ page });
-      storeTransaction.addResults(page);
-    },
-    release: () => {
-      logger.release({ release });
-      storeTransaction.addRelease(release);
-    },
-  })[type]();
-
-  const findReleases = () => {
-    const { error } = logger;
-    const complete = logger.finish.bind(logger, {});
-    discogs.findReleases(album).subscribe({ next, error, complete });
-  };
+  const observer = ({
+    results, release: logRelease, error, finish,
+  }, transaction) => ({
+    next: ({ type, data: { page, release } }) => ({
+      results: () => {
+        results({ page });
+        transaction.addResults(page);
+      },
+      release: () => {
+        logRelease({ release });
+        transaction.addRelease(release);
+      },
+    })[type](),
+    error,
+    complete: finish.bind(null, {}),
+  });
 
   const getAlbum = (api) => {
     storeTransaction.addSearch(id);
@@ -73,9 +73,9 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       .then(({ body }) => {
         resolve(response());
         album = body;
-        storeTransaction.addAlbum();
+        storeTransaction.addAlbum(album);
         logger = createLogger(album);
-        findReleases();
+        discogs.findReleases(album).subscribe(observer(logger, storeTransaction));
       }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
