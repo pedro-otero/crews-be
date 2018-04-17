@@ -8,7 +8,7 @@ const spotifyErrorMessages = {
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
-  let album;
+  let album, logger;
 
   function response(query) {
     if (typeof query === 'undefined') {
@@ -39,7 +39,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     reject(Error("Server couldn't login to Spotify"));
   });
 
-  const onNext = logger => ({ type, data }) => {
+  const onNext = ({ type, data }) => {
     switch (type) {
       case 'results':
         logger.results({ page: data });
@@ -65,10 +65,10 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     getAlbum(reject).then(({ body }) => {
       album = body;
       resolve(response());
-      const logger = createLogger(album);
+      logger = createLogger(album);
       actions.addAlbum(album);
       discogs.findReleases(album).subscribe(
-        onNext(logger),
+        onNext,
         error => logger.error(error),
         () => logger.finish({})
       );
