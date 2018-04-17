@@ -67,6 +67,9 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
 
   const initLogger = () => {
     logger = createLogger(album);
+  }
+
+  function initListeners() {
     onError = logger.error;
     onFinish = logger.finish.bind(logger, {});
   }
@@ -81,6 +84,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       album = body;
       resolve(response());
       initLogger();
+      initListeners();
       actions.addAlbum(album);
       findReleases();
     }, reason => reject(albumRejection(reason))).catch(reject);
