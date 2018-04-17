@@ -30,47 +30,47 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error("There's something wrong with Spotify");
   };
 
-  const start = () => new Promise((resolve, reject) => {
+  const getAlbum = reject => spotify.then((api) => {
+    actions.addSearch(id);
+    return api.getAlbum(id);
+  }, () => {
+    reject(Error("Server couldn't login to Spotify"));
+  });
 
+  const start = () => new Promise((resolve, reject) => {
     if (search) {
       const query = Query(id, store);
       resolve(response(query));
       return;
     }
-    spotify
-      .then((api) => {
-        actions.addSearch(id);
-        return api.getAlbum(id);
-      }, () => {
-        reject(Error("Server couldn't login to Spotify"));
-      }).then(({ body: album }) => {
-        resolve(response());
-        const logger = createLogger(album);
-        actions.addAlbum(album);
-        let page;
-        discogs.findReleases(album)
-          .subscribe(
-            ({ type, data }) => {
-              switch (type) {
-                case 'results':
-                  page = data;
-                  logger.results({ page });
-                  actions.releaseResults(album.id, data);
-                  break;
-                case 'release':
-                  logger.release({
-                    page, release: data.release, i: data.i,
-                  });
-                  actions.addRelease(data.release);
-                  break;
-                default:
-                  throw Error('This should not happen');
-              }
-            },
-            error => logger.error(error),
-            () => logger.finish({})
-          );
-      }, reason => reject(albumRejection(reason))).catch(reject);
+    getAlbum(reject).then(({ body: album }) => {
+      resolve(response());
+      const logger = createLogger(album);
+      actions.addAlbum(album);
+      let page;
+      discogs.findReleases(album)
+        .subscribe(
+          ({ type, data }) => {
+            switch (type) {
+              case 'results':
+                page = data;
+                logger.results({ page });
+                actions.releaseResults(album.id, data);
+                break;
+              case 'release':
+                logger.release({
+                  page, release: data.release, i: data.i,
+                });
+                actions.addRelease(data.release);
+                break;
+              default:
+                throw Error('This should not happen');
+            }
+          },
+          error => logger.error(error),
+          () => logger.finish({})
+        );
+    }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
   return { start };
