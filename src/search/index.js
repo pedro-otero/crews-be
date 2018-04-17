@@ -3,6 +3,21 @@ const Query = require('../redux/view/query');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
+const observer = (logger, transaction) => ({
+  next: ({ type, data: { page, release } }) => ({
+    results: () => {
+      logger.results({ page });
+      transaction.addResults(page);
+    },
+    release: () => {
+      logger.release({ release });
+      transaction.addRelease(release);
+    },
+  })[type](),
+  error: logger.error,
+  complete: logger.finish.bind(logger, {}),
+});
+
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
   let album;
@@ -39,23 +54,6 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     }
     return Error(spotifyErrorMessages.general);
   };
-
-  const observer = ({
-    results, release: logRelease, error, finish,
-  }, transaction) => ({
-    next: ({ type, data: { page, release } }) => ({
-      results: () => {
-        results({ page });
-        transaction.addResults(page);
-      },
-      release: () => {
-        logRelease({ release });
-        transaction.addRelease(release);
-      },
-    })[type](),
-    error,
-    complete: finish.bind(null, {}),
-  });
 
   const getAlbum = (api) => {
     storeTransaction.addSearch(id);
