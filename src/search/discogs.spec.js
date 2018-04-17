@@ -30,13 +30,29 @@ describe('Find releases function', () => {
         .subscribe(this.values.push.bind(this.values), () => assert(false), done);
     });
 
-    it('searches 1st page', function () {
-      assert.deepEqual(this.db.search.getCalls()[0].args[0], {
-        artist: 'Artist',
-        release_title: 'Album',
-        type: 'release',
-        per_page: 100,
-        page: 1,
+    describe('searches 1st page with correct', () => {
+      before(function () {
+        this.args = this.db.search.getCalls()[0].args[0];
+      });
+
+      it('artist', function () {
+        assert.equal(this.args.artist, 'Artist');
+      });
+
+      it('release_title', function () {
+        assert.equal(this.args.release_title, 'Album');
+      });
+
+      it('type', function () {
+        assert.equal(this.args.type, 'release');
+      });
+
+      it('per_page', function () {
+        assert.equal(this.args.per_page, 100);
+      });
+
+      it('page', function () {
+        assert.equal(this.args.page, 1);
       });
     });
 
@@ -44,13 +60,29 @@ describe('Find releases function', () => {
       assert.deepEqual(this.values[0].data.page, firstResults);
     });
 
-    it('searches 2nd page', function () {
-      assert.deepEqual(this.db.search.getCalls()[1].args[0], {
-        artist: 'Artist',
-        release_title: 'Album',
-        type: 'release',
-        per_page: 100,
-        page: 2,
+    describe('searches 2nd page with correct', () => {
+      before(function () {
+        this.args = this.db.search.getCalls()[1].args[0];
+      });
+
+      it('artist', function () {
+        assert.equal(this.args.artist, 'Artist');
+      });
+
+      it('release_title', function () {
+        assert.equal(this.args.release_title, 'Album');
+      });
+
+      it('type', function () {
+        assert.equal(this.args.type, 'release');
+      });
+
+      it('per_page', function () {
+        assert.equal(this.args.per_page, 100);
+      });
+
+      it('page', function () {
+        assert.equal(this.args.page, 2);
       });
     });
 
