@@ -4,7 +4,7 @@ const assert = require('assert');
 const Discogs = require('./discogs.js');
 const mocks = require('./discogs.json');
 
-const { results: [firstResults, secondResults] } = mocks;
+const { results: [firstResults, secondResults], album } = mocks;
 
 describe('Find releases function', () => {
   describe('calls the db and actions functions', () => {
@@ -21,14 +21,9 @@ describe('Find releases function', () => {
           .resolves({ id: 2 }),
       };
       this.discogs = Discogs(this.db);
-      this.discogs.findReleases({
-        name: 'Album',
-        artists: [{
-          name: 'Artist',
-        }],
-        release_date: '2000',
-        album_type: 'album',
-      }).subscribe(this.values.push.bind(this.values), () => assert(false), done);
+      this.discogs
+        .findReleases(album)
+        .subscribe(this.values.push.bind(this.values), () => assert(false), done);
     });
 
     it('search 1st page', function () {

@@ -26,5 +26,15 @@
         }
       ]
     }
-  ]
+  ],
+  "album": {
+    "name": "Album",
+    "artists": [
+      {
+        "name": "Artist"
+      }
+    ],
+    "release_date": "2000",
+    "album_type": "album"
+  }
 }
