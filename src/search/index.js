@@ -2,6 +2,8 @@ const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
+  const search = store.getState().searches.find(item => item.id === id);
+
   function response(query) {
     if (typeof query === 'undefined') {
       return {
@@ -18,7 +20,6 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   }
 
   const start = () => new Promise((resolve, reject) => {
-    const search = store.getState().searches.find(item => item.id === id);
 
     if (search) {
       const query = Query(id, store);
