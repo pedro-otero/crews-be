@@ -18,24 +18,22 @@ const observer = (logger, transaction) => ({
   complete: logger.finish.bind(logger, {}),
 });
 
+const storeTransaction = (id) => {
+  let album;
+  const addSearch = () => actions.addSearch(id);
+  const addAlbum = (searchAlbum) => {
+    album = searchAlbum;
+    actions.addAlbum(album);
+  };
+  const addResults = page => actions.releaseResults(album.id, page);
+  const addRelease = release => actions.addRelease(release);
+  return {
+    addSearch, addAlbum, addResults, addRelease,
+  };
+};
+
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
-  let album;
-  let logger;
-
-  const storeTransaction = (() => {
-    let _album;
-    const addSearch = searchId => actions.addSearch(searchId);
-    const addAlbum = (searchAlbum) => {
-      _album = searchAlbum;
-      actions.addAlbum(_album);
-    };
-    const addResults = page => actions.releaseResults(_album.id, page);
-    const addRelease = release => actions.addRelease(release);
-    return {
-      addSearch, addAlbum, addResults, addRelease,
-    };
-  })();
 
   function response(query) {
     let progress = 0;
@@ -55,25 +53,24 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const getAlbum = (api) => {
-    storeTransaction.addSearch(id);
-    return api.getAlbum(id);
-  };
-
   const start = () => new Promise((resolve, reject) => {
+    const transaction = storeTransaction(id);
     if (search) {
       const query = Query(id, store);
       resolve(response(query));
       return;
     }
     spotify
-      .then(getAlbum, () => reject(Error(spotifyErrorMessages.login)))
+      .then((api) => {
+        transaction.addSearch(id);
+        return api.getAlbum(id);
+      }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         resolve(response());
-        album = body;
-        storeTransaction.addAlbum(album);
-        logger = createLogger(album);
-        discogs.findReleases(album).subscribe(observer(logger, storeTransaction));
+        const album = body;
+        transaction.addAlbum(album);
+        const logger = createLogger(album);
+        discogs.findReleases(album).subscribe(observer(logger, transaction));
       }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
