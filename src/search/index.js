@@ -26,7 +26,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const onNext = ({ type, data: { page, release, i } }) => {
+  const next = ({ type, data: { page, release, i } }) => {
     switch (type) {
       case 'results':
         logger.results({ page });
@@ -41,13 +41,11 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     }
   };
 
-  const findReleases = () => discogs
-    .findReleases(album)
-    .subscribe({
-      next: onNext,
-      error: logger.error,
-      complete: logger.finish.bind(logger, {}),
-    });
+  const findReleases = () => {
+    const { error } = logger;
+    const complete = logger.finish.bind(logger, {});
+    discogs.findReleases(album).subscribe({ next, error, complete });
+  };
 
   const getAlbum = (api) => {
     actions.addSearch(id);
