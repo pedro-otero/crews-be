@@ -14,18 +14,13 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   let onFinish;
 
   function response(query) {
-    if (typeof query === 'undefined') {
-      return {
-        id,
-        progress: 0,
-        bestMatch: null,
-      };
+    let progress = 0;
+    let bestMatch = null;
+    if (query) {
+      progress = query.getProgress();
+      bestMatch = query.getBestMatch();
     }
-    return {
-      id,
-      progress: query.getProgress(),
-      bestMatch: query.getBestMatch(),
-    };
+    return { id, progress, bestMatch };
   }
 
   const albumRejection = (reason) => {
