@@ -65,12 +65,11 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       resolve(response());
       const logger = createLogger(album);
       actions.addAlbum(album);
-      discogs.findReleases(album)
-        .subscribe(
-          onNext(logger, album),
-          error => logger.error(error),
-          () => logger.finish({})
-        );
+      discogs.findReleases(album).subscribe(
+        onNext(logger, album),
+        error => logger.error(error),
+        () => logger.finish({})
+      );
     }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
