@@ -1,10 +1,7 @@
 const { actions } = require('../redux/state');
 const Query = require('../redux/view/query');
 
-const spotifyErrorMessages = {
-  400: 'Spotify album id is invalid',
-  404: 'Album does not exist in Spotify',
-};
+const spotifyErrorMessages = require('./spotify-errors');
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
@@ -22,8 +19,9 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   }
 
   const albumRejection = (reason) => {
-    if (reason.error.status in spotifyErrorMessages) {
-      return Error(spotifyErrorMessages[reason.error.status]);
+    const code = String(reason.error.status);
+    if (code in spotifyErrorMessages.http) {
+      return Error(spotifyErrorMessages.http[code]);
     }
     return Error("There's something wrong with Spotify");
   };
