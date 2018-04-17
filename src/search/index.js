@@ -9,9 +9,13 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   let logger;
 
   const storeTransaction = (() => {
-    const addSearch = () => actions.addSearch(id);
-    const addAlbum = () => actions.addAlbum(album);
-    const addResults = page => actions.releaseResults(album.id, page);
+    let _album;
+    const addSearch = searchId => actions.addSearch(searchId);
+    const addAlbum = (searchAlbum) => {
+      _album = searchAlbum;
+      actions.addAlbum(_album);
+    }
+    const addResults = page => actions.releaseResults(_album.id, page);
     const addRelease = release => actions.addRelease(release);
     return {
       addSearch, addAlbum, addResults, addRelease,
@@ -54,7 +58,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   };
 
   const getAlbum = (api) => {
-    storeTransaction.addSearch();
+    storeTransaction.addSearch(id);
     return api.getAlbum(id);
   };
 
