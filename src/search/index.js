@@ -81,11 +81,11 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       return;
     }
     getAlbum(reject).then(({ body }) => {
-      album = body;
       resolve(response());
+      album = body;
+      actions.addAlbum(album);
       initLogger();
       initListeners();
-      actions.addAlbum(album);
       findReleases();
     }, reason => reject(albumRejection(reason))).catch(reject);
   });
