@@ -3,14 +3,9 @@ const Rx = require('rxjs');
 const order = require('./order');
 
 module.exports = function (db) {
-  const search = async ({
-    name,
-    artists: [{
-      name: artist,
-    }],
-  }, page) => db.search({
-    artist,
-    release_title: name.replace(/(.+) \((.+)\)/, '$1'),
+  const search = async (album, page) => db.search({
+    artist: album.artists[0].name,
+    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
     type: 'release',
     per_page: 100,
     page,
