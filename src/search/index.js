@@ -57,6 +57,12 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     }
   };
 
+  function findReleases() {
+    discogs
+      .findReleases(album)
+      .subscribe(onNext, logger.error, logger.finish.bind(logger, {}));
+  }
+
   const start = () => new Promise((resolve, reject) => {
     if (search) {
       const query = Query(id, store);
@@ -68,9 +74,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       resolve(response());
       logger = createLogger(album);
       actions.addAlbum(album);
-      discogs
-        .findReleases(album)
-        .subscribe(onNext, logger.error, logger.finish.bind(logger, {}));
+      findReleases();
     }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
