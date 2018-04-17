@@ -35,13 +35,6 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     return Error("There's something wrong with Spotify");
   };
 
-  const getAlbum = reject => spotify.then((api) => {
-    actions.addSearch(id);
-    return api.getAlbum(id);
-  }, () => {
-    reject(Error("Server couldn't login to Spotify"));
-  });
-
   const onNext = ({ type, data }) => {
     switch (type) {
       case 'results':
@@ -68,20 +61,29 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
     onFinish = logger.finish.bind(logger, {});
   }
 
+  const getAlbum = (api) => {
+    actions.addSearch(id);
+    return api.getAlbum(id);
+  };
+
+  const failSpotifyLogin = () => Error("Server couldn't login to Spotify");
+
   const start = () => new Promise((resolve, reject) => {
     if (search) {
       const query = Query(id, store);
       resolve(response(query));
       return;
     }
-    getAlbum(reject).then(({ body }) => {
-      resolve(response());
-      album = body;
-      actions.addAlbum(album);
-      logger = createLogger(album);
-      initListeners();
-      findReleases();
-    }, reason => reject(albumRejection(reason))).catch(reject);
+    spotify
+      .then(getAlbum, () => reject(failSpotifyLogin()))
+      .then(({ body }) => {
+        resolve(response());
+        album = body;
+        actions.addAlbum(album);
+        logger = createLogger(album);
+        initListeners();
+        findReleases();
+      }, reason => reject(albumRejection(reason))).catch(reject);
   });
 
   return { start };
