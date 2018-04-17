@@ -41,7 +41,7 @@ describe('Find releases function', () => {
           .onCall(1)
           .resolves({ id: 2 }),
       };
-      this.discogs = new Discogs(this.db);
+      this.discogs = Discogs(this.db);
       this.discogs.findReleases({
         name: 'Album',
         artists: [{

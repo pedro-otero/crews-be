@@ -16,7 +16,7 @@ module.exports = function (db) {
     page,
   });
 
-  this.findReleases = album => Rx.Observable.create((observer) => {
+  const findReleases = album => Rx.Observable.create((observer) => {
     async function getAllReleases(page) {
       const results = order(page.results, album);
       // eslint-disable-next-line no-restricted-syntax
@@ -40,4 +40,6 @@ module.exports = function (db) {
 
     fetch(1);
   });
+
+  return { findReleases };
 };
