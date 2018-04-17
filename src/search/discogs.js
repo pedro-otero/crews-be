@@ -17,7 +17,9 @@ module.exports = function (db) {
   });
 
   const findReleases = album => Rx.Observable.create((observer) => {
-    async function getAllReleases(page) {
+    const fetch = async (p) => {
+      const page = await search(album, p);
+      observer.next({ type: 'results', data: { page } });
       const results = order(page.results, album);
       // eslint-disable-next-line no-restricted-syntax
       for (const result of results) {
@@ -25,12 +27,6 @@ module.exports = function (db) {
         const release = await db.getRelease(result.id);
         observer.next({ type: 'release', data: { release } });
       }
-    }
-
-    const fetch = async (p) => {
-      const page = await search(album, p);
-      observer.next({ type: 'results', data: { page } });
-      await getAllReleases(page);
       if (page.pagination.page < page.pagination.pages) {
         fetch(page.pagination.page + 1);
       } else {
