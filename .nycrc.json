@@ -1,5 +1,9 @@
 {
   "exclude": [
     "app/src/**/*.spec.js"
+  ],
+  "reporter": [
+    "html",
+    "text"
   ]
 }
