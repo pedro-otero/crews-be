@@ -45,7 +45,7 @@ describe('Search function', () => {
           .catch(() => assert(false));
       });
 
-      describe('Discog api throws an exception', function () {
+      describe('Discogs search throws an exception', function () {
         beforeEach(function () {
           const discogs = {
             findReleases: () => Rx.Observable.create(() => {
