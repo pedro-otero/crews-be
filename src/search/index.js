@@ -14,7 +14,10 @@ const observer = (logger, transaction) => ({
       transaction.addRelease(release);
     },
   })[type](),
-  error: logger.error,
+  error: (error) => {
+    logger.error(error);
+    transaction.putError(error);
+  },
   complete: logger.finish.bind(logger, {}),
 });
 
@@ -27,8 +30,9 @@ const storeTransaction = (id) => {
   };
   const addResults = page => actions.releaseResults(album.id, page);
   const addRelease = release => actions.addRelease(release);
+  const putError = error => actions.putError(id, error);
   return {
-    addSearch, addAlbum, addResults, addRelease,
+    addSearch, addAlbum, addResults, addRelease, putError,
   };
 };
 

@@ -3,6 +3,7 @@ const assert = require('assert');
 const Rx = require('rxjs');
 
 const searchAlbum = require('./index');
+const { actions } = require('../redux/state');
 
 describe('Search function', () => {
   before(function () {
@@ -71,6 +72,7 @@ describe('Search function', () => {
 
       describe('Discogs search emits an error', () => {
         beforeEach(function () {
+          actions.putError = sinon.spy();
           const discogs = {
             findReleases: () => Rx.Observable.create((observer) => {
               observer.error('ERROR');
@@ -84,6 +86,16 @@ describe('Search function', () => {
           search.start()
             .then(() => {
               assert(this.errorLogger.calledOnce);
+            })
+            .then(done)
+            .catch(() => assert(false));
+        });
+
+        it('error is added to search', function (done) {
+          const search = this.search(1);
+          search.start()
+            .then(() => {
+              assert(actions.putError.calledOnce);
             })
             .then(done)
             .catch(() => assert(false));
