@@ -31,8 +31,9 @@ const storeTransaction = (id) => {
   const addResults = page => actions.releaseResults(album.id, page);
   const addRelease = release => actions.addRelease(release);
   const putError = error => actions.putError(id, error);
+  const abort = () => actions.removeSearch(id);
   return {
-    addSearch, addAlbum, addResults, addRelease, putError,
+    addSearch, addAlbum, addResults, addRelease, putError, abort,
   };
 };
 
@@ -77,7 +78,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
         discogs.findReleases(album).subscribe(observer(logger, transaction));
       }, (reason) => {
         reject(albumRejection(reason));
-        transaction.putError(reason);
+        transaction.abort();
       }).catch(reject);
   });
 
