@@ -41,6 +41,7 @@ const storeTransaction = (id) => {
     const releases = pages
       .reduce((result, page) => result.concat(page.results.map(r => r.id)), []);
     actions.removeReleases(releases);
+    actions.removeResults(id);
   }
   return {
     addSearch, addAlbum, addResults, addRelease, putError, abort, clear,
