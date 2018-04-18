@@ -94,12 +94,20 @@ describe('Find releases function', () => {
       assert(this.db.getRelease.calledWith(1));
     });
 
+    it('gets release 1 first', function () {
+      assert.equal(this.db.getRelease.getCalls()[0].args[0], 1);
+    });
+
     it('emits release 1', function () {
       assert.equal(this.values[1].data.release.id, 1);
     });
 
     it('gets release 2', function () {
       assert(this.db.getRelease.calledWith(2));
+    });
+
+    it('gets release 2 second', function () {
+      assert.equal(this.db.getRelease.getCalls()[1].args[0], 2);
     });
 
     it('emits release 2', function () {
