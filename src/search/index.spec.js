@@ -4,28 +4,31 @@ const Rx = require('rxjs');
 
 const searchAlbum = require('./index');
 
-const discogs = {
-  findReleases: () => Rx.Observable.create((observer) => {
-    observer.next({});
-    observer.next({});
-    observer.complete();
-  }),
-};
-
-const store = {
-  getState: () => ({ searches: [] }),
-};
-
-const logger = {
-  results: () => {},
-  release: () => {},
-  finish: () => {},
-  error: () => {},
-};
-sinon.spy(logger, 'error');
-const createLogger = () => (logger);
-
 describe('Search function', () => {
+  before(function () {
+    this.discogs = {
+      findReleases: () => Rx.Observable.create((observer) => {
+        observer.next({});
+        observer.next({});
+        observer.complete();
+      }),
+    };
+    this.store = {
+      getState: () => ({ searches: [] }),
+    };
+    this.createLogger = () => {
+      const logger = {
+        results: () => {},
+        release: () => {},
+        finish: () => {},
+        error: () => {},
+      };
+      sinon.spy(logger, 'error');
+      this.errorLogger = logger.error;
+      return logger;
+    };
+  });
+
   describe('Spotify logs in', () => {
     describe('Spotify getAlbum exists', () => {
       beforeEach(function () {
@@ -34,7 +37,7 @@ describe('Search function', () => {
             name: 'Album', artists: [{ name: 'Artist' }],
           }),
         });
-        this.search = searchAlbum(this.spotify, discogs, store, createLogger);
+        this.search = searchAlbum(this.spotify, this.discogs, this.store, this.createLogger);
       });
 
       it('Returns a newly created search', function (done) {
@@ -45,21 +48,21 @@ describe('Search function', () => {
           .catch(() => assert(false));
       });
 
-      describe('Discogs search throws an exception', function () {
+      describe('Discogs search throws an exception', () => {
         beforeEach(function () {
           const discogs = {
             findReleases: () => Rx.Observable.create(() => {
               throw Error();
             }),
           };
-          this.search = searchAlbum(this.spotify, discogs, store, createLogger);
+          this.search = searchAlbum(this.spotify, discogs, this.store, this.createLogger);
         });
 
         it('promise rejects with error', function (done) {
           const search = this.search(1);
           search.start()
             .then(() => {
-              assert(logger.error.calledOnce);
+              assert(this.errorLogger.calledOnce);
             })
             .then(done)
             .catch(() => assert(false));
@@ -76,7 +79,7 @@ describe('Search function', () => {
             },
           }),
         });
-        this.search = searchAlbum(spotify, discogs, store, createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -104,7 +107,7 @@ describe('Search function', () => {
             },
           }),
         });
-        this.search = searchAlbum(spotify, discogs, store, createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -132,7 +135,7 @@ describe('Search function', () => {
             },
           }),
         });
-        this.search = searchAlbum(spotify, discogs, store, createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -152,13 +155,13 @@ describe('Search function', () => {
     });
   });
 
-  it('Spotify login fails', (done) => {
+  it('Spotify login fails', function (done) {
     const spotify = Promise.reject({
       error: {
         status: 500,
       },
     });
-    const func = searchAlbum(spotify, discogs, store, createLogger);
+    const func = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
     const search = func(1);
     search.start()
       .then(() => {
