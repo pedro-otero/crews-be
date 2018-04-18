@@ -36,26 +36,6 @@ describe('Searches reducer', () => {
     });
   });
 
-  describe(PUT_ERRORS, () => {
-    describe('Puts errors in a search errors list', () => {
-      before(function () {
-        this.searches = reduce(this.searches, {
-          type: PUT_ERRORS,
-          id: 'albumId',
-          errors: ['ERROR'],
-        });
-      });
-
-      it('Preserves number of searches', function () {
-        assert.equal(1, this.searches.length);
-      });
-
-      it('Puts error in list', function () {
-        assert.equal('ERROR', this.searches[0].errors[0]);
-      });
-    });
-  });
-
   describe(REMOVE_SEARCH, () => {
     it('Removes searches from state', function () {
       const searches = reduce([{ id: 'albumId' }], {

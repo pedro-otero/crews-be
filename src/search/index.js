@@ -16,7 +16,6 @@ const observer = (logger, transaction) => ({
   })[type](),
   error: (error) => {
     logger.error(error);
-    transaction.putError(error);
     transaction.clear();
   },
   complete: logger.finish.bind(logger, {}),
@@ -35,16 +34,15 @@ const storeTransaction = (id) => {
     pages.push(page);
   };
   const addRelease = release => actions.addRelease(release);
-  const putError = error => actions.putError(id, error);
   const abort = () => actions.removeSearch(id);
   const clear = () => {
     const releases = pages
       .reduce((result, page) => result.concat(page.results.map(r => r.id)), []);
     actions.removeReleases(releases);
     actions.removeResults(id);
-  }
+  };
   return {
-    addSearch, addAlbum, addResults, addRelease, putError, abort, clear,
+    addSearch, addAlbum, addResults, addRelease, abort, clear,
   };
 };
 

@@ -3,7 +3,6 @@ const {
   ADD_ALBUM,
   ADD_RELEASE,
   ADD_RELEASE_RESULTS,
-  PUT_ERRORS,
   REMOVE_SEARCH,
   REMOVE_RELEASE_RESULTS,
   REMOVE_RELEASES,
@@ -30,12 +29,6 @@ const releaseResults = (album, page) => ({
   page,
 });
 
-const putError = (id, error) => ({
-  type: PUT_ERRORS,
-  id,
-  errors: [error],
-});
-
 const removeSearch = (id) => ({
   type: REMOVE_SEARCH,
   id,
@@ -56,7 +49,6 @@ module.exports = {
   addAlbum,
   addRelease,
   releaseResults,
-  putError,
   removeSearch,
   removeResults,
   removeReleases,
