@@ -32,4 +32,6 @@ const api = new Promise((resolve, reject) => {
   });
 });
 
-module.exports = api;
+module.exports = {
+  getApi: () =>  api,
+};

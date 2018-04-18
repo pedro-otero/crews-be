@@ -74,7 +74,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
       resolve(response(query));
       return;
     }
-    spotify
+    spotify.getApi()
       .then((api) => {
         transaction.addSearch(id);
         return api.getAlbum(id);
