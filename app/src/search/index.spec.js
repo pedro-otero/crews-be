@@ -33,11 +33,13 @@ describe('Search function', () => {
   describe('Spotify logs in', () => {
     describe('Spotify getAlbum exists', () => {
       beforeEach(function () {
-        this.spotify = Promise.resolve({
-          getAlbum: sinon.stub().resolves({
-            name: 'Album', artists: [{ name: 'Artist' }],
+        this.spotify = {
+          getApi: () => Promise.resolve({
+            getAlbum: sinon.stub().resolves({
+              name: 'Album', artists: [{ name: 'Artist' }],
+            }),
           }),
-        });
+        };
         this.search = searchAlbum(this.spotify, this.discogs, this.store, this.createLogger);
       });
 
@@ -117,13 +119,15 @@ describe('Search function', () => {
     describe('Spotify album does not exist', () => {
       beforeEach(function () {
         actions.removeSearch = sinon.spy();
-        const spotify = Promise.resolve({
-          getAlbum: () => Promise.reject({
-            error: {
-              status: 404,
-            },
+        const spotify = {
+          getApi: () => Promise.resolve({
+            getAlbum: () => Promise.reject({
+              error: {
+                status: 404,
+              },
+            }),
           }),
-        });
+        };
         this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
@@ -156,13 +160,15 @@ describe('Search function', () => {
     describe('Spotify id is invalid', () => {
       beforeEach(function () {
         actions.removeSearch = sinon.spy();
-        const spotify = Promise.resolve({
-          getAlbum: () => Promise.reject({
-            error: {
-              status: 400,
-            },
+        const spotify = {
+          getApi: () => Promise.resolve({
+            getAlbum: () => Promise.reject({
+              error: {
+                status: 400,
+              },
+            }),
           }),
-        });
+        };
         this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
@@ -194,13 +200,15 @@ describe('Search function', () => {
 
     describe('Fails for some other reason', () => {
       beforeEach(function () {
-        const spotify = Promise.resolve({
-          getAlbum: () => Promise.reject({
-            error: {
-              status: 500,
-            },
+        const spotify = {
+          getApi: () => Promise.resolve({
+            getAlbum: () => Promise.reject({
+              error: {
+                status: 500,
+              },
+            }),
           }),
-        });
+        };
         this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
       });
 
@@ -222,11 +230,13 @@ describe('Search function', () => {
   });
 
   it('Spotify login fails', function (done) {
-    const spotify = Promise.reject({
-      error: {
-        status: 500,
-      },
-    });
+    const spotify = {
+      getApi: () => Promise.reject({
+        error: {
+          status: 500,
+        },
+      }),
+    };
     const func = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
     const search = func(1);
     search.start()
