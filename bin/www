@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const debug = require('debug')('main');
-const app = require('../app');
+const app = require('../index');
 
 app.set('port', process.env.PORT || 3000);
 
