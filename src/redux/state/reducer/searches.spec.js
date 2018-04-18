@@ -2,6 +2,7 @@ const assert = require('assert');
 
 const {
   ADD_SEARCH,
+  PUT_ERRORS,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -31,6 +32,26 @@ describe('Searches reducer', () => {
       let searches = reduce([], add('album'));
       searches = reduce(searches, add('otherAlbum'));
       assert.equal(2, searches.length);
+    });
+  });
+
+  describe(PUT_ERRORS, () => {
+    describe('Puts errors in a search errors list', function () {
+      before(function () {
+        this.searches = reduce(this.searches, {
+          type: PUT_ERRORS,
+          id: 'albumId',
+          errors: ['ERROR']
+        });
+      });
+
+      it('Preserves number of searches', function () {
+        assert.equal(1, this.searches.length);
+      });
+
+      it('Puts error in list', function () {
+        assert.equal('ERROR', this.searches[0].errors[0]);
+      });
     });
   });
 
