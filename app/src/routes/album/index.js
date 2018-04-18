@@ -9,9 +9,9 @@ const func = router.get('/:spotifyAlbumId', (req, res) => {
   } = req;
 
   const search = searchAlbum(spotifyAlbumId);
-  search.start().then(
-    data => res.status(200).json(data),
-    error => res.status(404).json(error));
+  search.start().then(data =>
+    res.status(200).json(data), error =>
+    res.status(404).json(error));
 });
 
 module.exports = func;
