@@ -68,6 +68,27 @@ describe('Search function', () => {
             .catch(() => assert(false));
         });
       });
+
+      describe('Discogs search emits an error', () => {
+        beforeEach(function () {
+          const discogs = {
+            findReleases: () => Rx.Observable.create((observer) => {
+              observer.error('ERROR');
+            }),
+          };
+          this.search = searchAlbum(this.spotify, discogs, this.store, this.createLogger);
+        });
+
+        it('promise rejects with error', function (done) {
+          const search = this.search(1);
+          search.start()
+            .then(() => {
+              assert(this.errorLogger.calledOnce);
+            })
+            .then(done)
+            .catch(() => assert(false));
+        });
+      });
     });
 
     describe('Spotify album does not exist', () => {
