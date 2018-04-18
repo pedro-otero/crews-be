@@ -33,5 +33,5 @@ const api = new Promise((resolve, reject) => {
 });
 
 module.exports = {
-  getApi: () =>  api,
+  getApi: () => api,
 };
