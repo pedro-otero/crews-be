@@ -3,6 +3,7 @@ const assert = require('assert');
 const {
   ADD_SEARCH,
   PUT_ERRORS,
+  REMOVE_SEARCH,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -28,7 +29,7 @@ describe('Searches reducer', () => {
       assert.equal(0, this.searches[0].errors.length);
     });
 
-    it('Adds another search retaining the previous one', function () {
+    it('Adds another search retaining the previous one', () => {
       let searches = reduce([], add('album'));
       searches = reduce(searches, add('otherAlbum'));
       assert.equal(2, searches.length);
@@ -36,12 +37,12 @@ describe('Searches reducer', () => {
   });
 
   describe(PUT_ERRORS, () => {
-    describe('Puts errors in a search errors list', function () {
+    describe('Puts errors in a search errors list', () => {
       before(function () {
         this.searches = reduce(this.searches, {
           type: PUT_ERRORS,
           id: 'albumId',
-          errors: ['ERROR']
+          errors: ['ERROR'],
         });
       });
 
@@ -52,6 +53,16 @@ describe('Searches reducer', () => {
       it('Puts error in list', function () {
         assert.equal('ERROR', this.searches[0].errors[0]);
       });
+    });
+  });
+
+  describe(REMOVE_SEARCH, () => {
+    it('Removes searches from state', function () {
+      const searches = reduce([{ id: 'albumId' }], {
+        type: REMOVE_SEARCH,
+        id: 'albumId',
+      });
+      assert.equal(0, searches.length);
     });
   });
 
