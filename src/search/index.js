@@ -30,7 +30,7 @@ const storeTransaction = (id) => {
     album = searchAlbum;
     actions.addAlbum(album);
   };
-  const addResults = page => {
+  const addResults = (page) => {
     actions.releaseResults(album.id, page);
     pages.push(page);
   };
