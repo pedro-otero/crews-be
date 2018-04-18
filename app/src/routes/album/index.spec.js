@@ -13,4 +13,14 @@ describe('Albums endpoint', () => {
     const request = Request(app);
     request.get('/data/album/1').expect(200, done);
   });
+
+  it('returns 404', (done) => {
+    const app = express();
+    app.locals.searchAlbum = () => ({
+      start: () => Promise.reject({ status: 404 }),
+    });
+    app.use('/data/album', route);
+    const request = Request(app);
+    request.get('/data/album/1').expect(404, done);
+  });
 });
