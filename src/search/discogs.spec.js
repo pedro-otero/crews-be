@@ -83,32 +83,80 @@ describe('Find releases function', () => {
       });
     });
 
-    it('emits second page of results', function () {
-      assert.deepEqual(this.values[2].data.page, secondResults);
+    describe('emits pages of results', () => {
+      before(function () {
+        this.results = this.values.filter(v => v.type === 'results');
+      });
+
+      it('first', function () {
+        assert.deepEqual(this.results[0].data.page, firstResults);
+      });
+
+      it('second', function () {
+        assert.deepEqual(this.results[1].data.page, secondResults);
+      });
     });
 
-    it('gets release 1', function () {
-      assert(this.db.getRelease.calledWith(1));
+    describe('emits releases', () => {
+      before(function () {
+        this.releases = this.values.filter(v => v.type === 'release');
+      });
+
+      it('4', function () {
+        assert.equal(this.releases[0].data.release.id, 4);
+      });
+
+      it('1', function () {
+        assert.equal(this.releases[1].data.release.id, 1);
+      });
+
+      it('2', function () {
+        assert.equal(this.releases[2].data.release.id, 2);
+      });
+
+      it('3', function () {
+        assert.equal(this.releases[3].data.release.id, 3);
+      });
     });
 
-    it('gets release 1 first', function () {
-      assert.equal(this.db.getRelease.getCalls()[0].args[0], 1);
+    describe('gets releases', () => {
+      it('1', function () {
+        assert(this.db.getRelease.calledWith(1));
+      });
+
+      it('2', function () {
+        assert(this.db.getRelease.calledWith(2));
+      });
+
+      it('3', function () {
+        assert(this.db.getRelease.calledWith(3));
+      });
+
+      it('4', function () {
+        assert(this.db.getRelease.calledWith(4));
+      });
+
+      it('4', function () {
+        assert.equal(this.db.getRelease.getCalls().length, 4);
+      });
     });
 
-    it('emits release 1', function () {
-      assert.equal(this.values[1].data.release.id, 1);
-    });
+    describe('gets releases in correct order', () => {
+      it('1st: [id=4]', function () {
+        assert.equal(this.db.getRelease.getCalls()[0].args[0], 4);
+      });
 
-    it('gets release 2', function () {
-      assert(this.db.getRelease.calledWith(2));
-    });
+      it('2nd: [id=1]', function () {
+        assert.equal(this.db.getRelease.getCalls()[1].args[0], 1);
+      });
 
-    it('gets release 2 second', function () {
-      assert.equal(this.db.getRelease.getCalls()[1].args[0], 2);
-    });
+      it('3rd: [id=2]', function () {
+        assert.equal(this.db.getRelease.getCalls()[2].args[0], 2);
+      });
 
-    it('emits release 2', function () {
-      assert.equal(this.values[3].data.release.id, 2);
+      it('4th: [id=3]', function () {
+        assert.equal(this.db.getRelease.getCalls()[3].args[0], 3);
+      });
     });
   });
 
