@@ -133,6 +133,7 @@ describe('Search function', () => {
 
     describe('Spotify id is invalid', () => {
       beforeEach(function () {
+        actions.putError = sinon.spy();
         const spotify = Promise.resolve({
           getAlbum: () => Promise.reject({
             error: {
@@ -156,6 +157,16 @@ describe('Search function', () => {
             assert(false);
             done();
           });
+      });
+
+      it('error is added to search', function (done) {
+        const search = this.search(1);
+        search.start()
+          .then(() => assert(false), () => {
+            assert(actions.putError.calledOnce);
+          })
+          .then(done)
+          .catch(() => assert(false));
       });
     });
 

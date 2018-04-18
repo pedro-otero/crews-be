@@ -75,7 +75,10 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
         transaction.addAlbum(album);
         const logger = createLogger(album);
         discogs.findReleases(album).subscribe(observer(logger, transaction));
-      }, reason => reject(albumRejection(reason))).catch(reject);
+      }, (reason) => {
+        reject(albumRejection(reason));
+        transaction.putError(reason);
+      }).catch(reject);
   });
 
   return { start };
