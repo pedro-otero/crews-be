@@ -1,13 +1,6 @@
-const SpotifyWebApi = require('spotify-web-api-node');
 const winston = require('winston');
 
 const spotifyConfig = require('../../../spotify-config.json');
-
-const spotifyApi = new SpotifyWebApi({
-  clientId: spotifyConfig.keys.consumer,
-  clientSecret: spotifyConfig.keys.secret,
-  redirectUri: spotifyConfig.urls.redirect,
-});
 
 const { printf, combine } = winston.format;
 const logger = winston.createLogger({
@@ -18,20 +11,28 @@ const logger = winston.createLogger({
   ],
 });
 
-const api = new Promise((resolve, reject) => {
-  spotifyApi.clientCredentialsGrant().then((response) => {
-    if (response.statusCode === 200) {
-      const token = response.body.access_token;
-      spotifyApi.setAccessToken(token);
-      logger.info('Spotify client authenticated succesfully');
-      resolve(spotifyApi);
-    } else {
-      logger.error(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
-      reject(response);
-    }
+module.exports = (SpotifyWebApi) => {
+  const spotifyApi = new SpotifyWebApi({
+    clientId: spotifyConfig.keys.consumer,
+    clientSecret: spotifyConfig.keys.secret,
+    redirectUri: spotifyConfig.urls.redirect,
   });
-});
 
-module.exports = {
-  getApi: () => api,
+  const api = new Promise((resolve, reject) => {
+    spotifyApi.clientCredentialsGrant().then((response) => {
+      if (response.statusCode === 200) {
+        const token = response.body.access_token;
+        spotifyApi.setAccessToken(token);
+        logger.info('Spotify client authenticated succesfully');
+        resolve(spotifyApi);
+      } else {
+        logger.error(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
+        reject(response);
+      }
+    });
+  });
+
+  return {
+    getApi: () => api,
+  };
 };
