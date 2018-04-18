@@ -17,23 +17,33 @@ const observer = (logger, transaction) => ({
   error: (error) => {
     logger.error(error);
     transaction.putError(error);
+    transaction.clear();
   },
   complete: logger.finish.bind(logger, {}),
 });
 
 const storeTransaction = (id) => {
   let album;
+  const pages = [];
   const addSearch = () => actions.addSearch(id);
   const addAlbum = (searchAlbum) => {
     album = searchAlbum;
     actions.addAlbum(album);
   };
-  const addResults = page => actions.releaseResults(album.id, page);
+  const addResults = page => {
+    actions.releaseResults(album.id, page);
+    pages.push(page);
+  };
   const addRelease = release => actions.addRelease(release);
   const putError = error => actions.putError(id, error);
   const abort = () => actions.removeSearch(id);
+  const clear = () => {
+    const releases = pages
+      .reduce((result, page) => result.concat(page.results.map(r => r.id)), []);
+    actions.removeReleases(releases);
+  }
   return {
-    addSearch, addAlbum, addResults, addRelease, putError, abort,
+    addSearch, addAlbum, addResults, addRelease, putError, abort, clear,
   };
 };
 

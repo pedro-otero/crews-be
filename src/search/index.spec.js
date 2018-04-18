@@ -72,7 +72,7 @@ describe('Search function', () => {
 
       describe('Discogs search emits an error', () => {
         beforeEach(function () {
-          actions.putError = sinon.spy();
+          actions.removeReleases = sinon.spy();
           const discogs = {
             findReleases: () => Rx.Observable.create((observer) => {
               observer.error('ERROR');
@@ -91,11 +91,11 @@ describe('Search function', () => {
             .catch(() => assert(false));
         });
 
-        it('error is added to search', function (done) {
+        it('search releases are removed', function (done) {
           const search = this.search(1);
           search.start()
             .then(() => {
-              assert(actions.putError.calledOnce);
+              assert(actions.removeReleases.calledOnce);
             })
             .then(done)
             .catch(() => assert(false));

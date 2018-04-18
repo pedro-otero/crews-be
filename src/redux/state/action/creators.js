@@ -5,6 +5,7 @@ const {
   ADD_RELEASE_RESULTS,
   PUT_ERRORS,
   REMOVE_SEARCH,
+  REMOVE_RELEASES,
 } = require('./constants');
 
 const addSearch = id => ({
@@ -39,6 +40,11 @@ const removeSearch = (id) => ({
   id,
 });
 
+const removeReleases = (releases) => ({
+  type: REMOVE_RELEASES,
+  releases,
+});
+
 module.exports = {
   addSearch,
   addAlbum,
@@ -46,4 +52,5 @@ module.exports = {
   releaseResults,
   putError,
   removeSearch,
+  removeReleases,
 };
