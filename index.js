@@ -5,8 +5,6 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
-const searchAlbum = require('./src/search');
-
 const routes = require('./routes/index');
 const users = require('./routes/users');
 const albums = require('./routes/album');
@@ -26,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* App locals setup */
 
-app.locals.searchAlbum = require('./src/setup');
+app.locals.searchAlbum = require('./app/src/setup');
 
 app.use('/', routes);
 app.use('/users', users);

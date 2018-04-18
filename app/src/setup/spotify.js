@@ -1,7 +1,7 @@
 const SpotifyWebApi = require('spotify-web-api-node');
 const winston = require('winston');
 
-const spotifyConfig = require('../../spotify-config.json');
+const spotifyConfig = require('../../../spotify-config.json');
 
 const spotifyApi = new SpotifyWebApi({
   clientId: spotifyConfig.keys.consumer,
