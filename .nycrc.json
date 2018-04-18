@@ -6,5 +6,6 @@
     "html",
     "text"
   ],
-  "report-dir": "app/coverage"
+  "report-dir": "app/coverage",
+  "temp-directory": "app/coverage/.nyc_output"
 }
