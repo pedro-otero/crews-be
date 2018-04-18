@@ -39,10 +39,28 @@
   },
   "releases": [
     {
-      "id": 1
+      "id": 1,
+      "title": "Artist - Album",
+      "format": "LP",
+      "year": "1999"
     },
     {
-      "id": 2
+      "id": 2,
+      "title": "Artist - Album",
+      "format": null,
+      "year": "1999"
+    },
+    {
+      "id": 3,
+      "title": "Artist - Album",
+      "format": "album",
+      "year": "2000"
+    },
+    {
+      "id": 4,
+      "title": "Artist - Album",
+      "format": ["album", "LP"],
+      "year": "2000"
     }
   ]
 }
