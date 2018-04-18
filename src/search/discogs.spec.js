@@ -7,7 +7,7 @@ const mocks = require('./discogs.json');
 const {
   results: [firstResults, secondResults],
   album,
-  releases: [r1, r2],
+  releases,
 } = mocks;
 
 describe('Find releases function', () => {
@@ -19,10 +19,7 @@ describe('Find releases function', () => {
           .onCall(0).resolves(firstResults)
           .onCall(1)
           .resolves(secondResults),
-        getRelease: sinon.stub()
-          .onCall(0).resolves(r1)
-          .onCall(1)
-          .resolves(r2),
+        getRelease: sinon.spy(wantedId => releases.find(({ id }) => id === wantedId)),
       };
       this.discogs = Discogs(this.db);
       this.discogs
