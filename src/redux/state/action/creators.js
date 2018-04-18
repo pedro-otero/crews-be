@@ -3,6 +3,7 @@ const {
   ADD_ALBUM,
   ADD_RELEASE,
   ADD_RELEASE_RESULTS,
+  PUT_ERRORS,
 } = require('./constants');
 
 const addSearch = id => ({
@@ -26,9 +27,16 @@ const releaseResults = (album, page) => ({
   page,
 });
 
+const putError = (id, error) => ({
+  type: PUT_ERRORS,
+  id,
+  errors: [error],
+});
+
 module.exports = {
   addSearch,
   addAlbum,
   addRelease,
   releaseResults,
+  putError,
 };
