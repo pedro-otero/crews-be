@@ -7,7 +7,7 @@ module.exports = (state = [], {
 }) => {
   switch (type) {
     case ADD_SEARCH:
-      return state.concat({ id, status: 'ADDED' });
+      return state.concat({ id });
     default:
       return state;
   }

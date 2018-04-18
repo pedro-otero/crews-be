@@ -23,10 +23,6 @@ describe('Searches reducer', () => {
       assert.equal('albumId', this.searches[0].id);
     });
 
-    it('Creates a request with status ADDED', function () {
-      assert.equal('ADDED', this.searches[0].status);
-    });
-
     it('Adds another search retaining the previous one', function () {
       let searches = reduce([], add('album'));
       searches = reduce(searches, add('otherAlbum'));
