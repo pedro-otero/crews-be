@@ -51,4 +51,30 @@ describe('Search state view', () => {
     const album = query.getAlbum();
     assert(album);
   });
+
+  describe('gets search query object', () => {
+    before(function () {
+      const store = {
+        getState: () => ({
+          results: [{
+            album: 1,
+            page: {
+              pagination: {
+                page: 1,
+                pages: 2,
+                items: 4,
+              },
+            },
+          }],
+          releases: [],
+        }),
+      };
+      const query = Query(1, store);
+      this.result = query.get();
+    });
+
+    it('progress', function () {
+      assert.equal(0, this.result.progress);
+    });
+  });
 });

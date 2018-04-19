@@ -29,6 +29,15 @@ module.exports = function (albumId, store) {
     return [release];
   }, []);
 
+  const getProgress = () => {
+    const total = state()
+      .results
+      .filter(result => result.album === albumId && result.page.pagination.page === 1)[0]
+      .page.pagination.items;
+    const soFar = getRetrievedReleases().length;
+    return Math.round((soFar / total) * 100);
+  };
+
   return {
     getAlbum,
 
@@ -40,13 +49,10 @@ module.exports = function (albumId, store) {
 
     getAllMatches: () => orderReleases().map(release => buildAlbum(getAlbum(), release)),
 
-    getProgress: () => {
-      const total = state()
-        .results
-        .filter(result => result.album === albumId && result.page.pagination.page === 1)[0]
-        .page.pagination.items;
-      const soFar = getRetrievedReleases().length;
-      return Math.round((soFar / total) * 100);
-    },
+    getProgress,
+
+    get: () => ({
+      progress: getProgress(),
+    }),
   };
 };
