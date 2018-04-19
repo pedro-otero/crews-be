@@ -12,16 +12,17 @@ const logger = winston.createLogger({
 });
 
 module.exports = (SpotifyWebApi) => {
+  let token;
   const spotifyApi = new SpotifyWebApi({
     clientId: spotifyConfig.keys.consumer,
     clientSecret: spotifyConfig.keys.secret,
     redirectUri: spotifyConfig.urls.redirect,
   });
 
-  const promise = new Promise((resolve, reject) => {
+  const promise = () => new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
-        const token = response.body.access_token;
+        token = response.body.access_token;
         spotifyApi.setAccessToken(token);
         logger.info('Spotify client authenticated succesfully');
         resolve(spotifyApi);
@@ -34,7 +35,11 @@ module.exports = (SpotifyWebApi) => {
 
   return {
     getApi: () => new Promise(((resolve, reject) => {
-      promise.then(resolve, reject).catch(reject);
+      if (token) {
+        resolve(spotifyApi);
+      } else {
+        promise().then(resolve, reject).catch(reject);
+      }
     })),
   };
 };

@@ -46,5 +46,18 @@ describe('Spotify module', () => {
         assert(true);
       }).then(done);
     });
+
+    it('can retry to login', (done) => {
+      const spotify = Spotify(function () {
+        this.setAccessToken = () => {};
+        this.clientCredentialsGrant = sinon.stub()
+          .onCall(0).rejects({ error: 'ERROR' })
+          .onCall(1)
+          .resolves(ok);
+      });
+      spotify.getApi().then(() => assert(false), (e) => {
+        spotify.getApi().then(assert).then(done);
+      });
+    });
   });
 });
