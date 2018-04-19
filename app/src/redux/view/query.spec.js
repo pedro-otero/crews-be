@@ -92,5 +92,24 @@ describe('Search state view', () => {
       const query = Query(1, store);
       assert.equal(0, query.get().progress);
     });
+
+    it('partial, one page, 50%', function () {
+      const store = this.mockStore({
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 1,
+              items: 2,
+            },
+            results: [{ id: 1 }, { id: 2 }],
+          },
+        }],
+        releases: [{ id: 1 }],
+      });
+      const query = Query(1, store);
+      assert.equal(50, query.get().progress);
+    });
   });
 });
