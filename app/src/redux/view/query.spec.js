@@ -72,7 +72,7 @@ describe('Search state view', () => {
         releases: [],
       });
       const query = Query(1, store);
-      assert.equal(0, query.get().progress);
+      assert.equal(query.get().progress, 0);
     });
 
     it('progress 0 because of no search results', function () {
@@ -90,7 +90,7 @@ describe('Search state view', () => {
         releases: [],
       });
       const query = Query(1, store);
-      assert.equal(0, query.get().progress);
+      assert.equal(query.get().progress, 0);
     });
 
     it('partial, one page, 50%', function () {
@@ -109,7 +109,7 @@ describe('Search state view', () => {
         releases: [{ id: 1 }],
       });
       const query = Query(1, store);
-      assert.equal(50, query.get().progress);
+      assert.equal(query.get().progress, 50);
     });
 
     it('partial, two pages, one fully loaded, 40%', function () {
@@ -140,7 +140,7 @@ describe('Search state view', () => {
         releases: [{ id: 1 }, { id: 2 }],
       });
       const query = Query(1, store);
-      assert.equal(67, query.get().progress);
+      assert.equal(query.get().progress, 67);
     });
 
     it('partial, two pages, one fully loaded, second partially, 75%', function () {
@@ -171,7 +171,7 @@ describe('Search state view', () => {
         releases: [{ id: 1 }, { id: 2 }, { id: 3 }],
       });
       const query = Query(1, store);
-      assert.equal(75, query.get().progress);
+      assert.equal(query.get().progress, 75);
     });
   });
 });
