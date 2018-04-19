@@ -54,27 +54,25 @@ describe('Search state view', () => {
 
   describe('gets search query object', () => {
     before(function () {
-      const store = {
-        getState: () => ({
-          results: [{
-            album: 1,
-            page: {
-              pagination: {
-                page: 1,
-                pages: 2,
-                items: 4,
-              },
-            },
-          }],
-          releases: [],
-        }),
-      };
-      const query = Query(1, store);
-      this.result = query.get();
+      this.mockStore = state => ({ getState: () => state });
     });
 
     it('progress', function () {
-      assert.equal(0, this.result.progress);
+      const store = this.mockStore({
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 2,
+              items: 4,
+            },
+          },
+        }],
+        releases: [],
+      });
+      const query = Query(1, store);
+      assert.equal(0, query.get().progress);
     });
   });
 });
