@@ -111,5 +111,67 @@ describe('Search state view', () => {
       const query = Query(1, store);
       assert.equal(50, query.get().progress);
     });
+
+    it('partial, two pages, one fully loaded, 40%', function () {
+      const store = this.mockStore({
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 2,
+              items: 3,
+            },
+            results: [{ id: 1 }, { id: 2 }],
+          },
+        }, {
+          album: 1,
+          page: {
+            pagination: {
+              pagination: {
+                page: 2,
+                pages: 2,
+                items: 3,
+              },
+            },
+            results: [{ id: 3 }],
+          },
+        }],
+        releases: [{ id: 1 }, { id: 2 }],
+      });
+      const query = Query(1, store);
+      assert.equal(67, query.get().progress);
+    });
+
+    it('partial, two pages, one fully loaded, second partially, 75%', function () {
+      const store = this.mockStore({
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 2,
+              items: 4,
+            },
+            results: [{ id: 1 }, { id: 2 }],
+          },
+        }, {
+          album: 1,
+          page: {
+            pagination: {
+              pagination: {
+                page: 2,
+                pages: 2,
+                items: 4,
+              },
+            },
+            results: [{ id: 3 }, { id: 4 }],
+          },
+        }],
+        releases: [{ id: 1 }, { id: 2 }, { id: 3 }],
+      });
+      const query = Query(1, store);
+      assert.equal(75, query.get().progress);
+    });
   });
 });
