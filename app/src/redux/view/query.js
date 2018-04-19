@@ -45,13 +45,7 @@ module.exports = function (albumId, store) {
   return {
     getAlbum,
 
-    getReleaseSearchResults: () => releaseResults(),
-
-    getRetrievedReleases,
-
     getBestMatch: () => buildAlbum(getAlbum(), orderReleases()[0]),
-
-    getAllMatches: () => orderReleases().map(release => buildAlbum(getAlbum(), release)),
 
     getProgress,
 
