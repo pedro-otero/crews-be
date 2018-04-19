@@ -45,12 +45,9 @@ module.exports = function (albumId, store) {
   return {
     getAlbum,
 
-    getBestMatch: () => buildAlbum(getAlbum(), orderReleases()[0]),
-
-    getProgress,
-
     get: () => ({
       progress: getProgress(),
+      bestMatch: buildAlbum(getAlbum(), orderReleases()[0]),
     }),
   };
 };

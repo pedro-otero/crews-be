@@ -50,13 +50,14 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const search = store.getState().searches.find(item => item.id === id);
 
   function response(query) {
-    let progress = 0;
-    let bestMatch = null;
     if (query) {
-      progress = query.getProgress();
-      bestMatch = query.getBestMatch();
+      return {
+        id,
+        progress: query.get().progress,
+        bestMatch: query.get().bestMatch,
+      };
     }
-    return { id, progress, bestMatch };
+    return { id, progress: 0, bestMatch: null };
   }
 
   const albumRejection = (reason) => {
