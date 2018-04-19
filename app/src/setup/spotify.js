@@ -18,7 +18,7 @@ module.exports = (SpotifyWebApi) => {
     redirectUri: spotifyConfig.urls.redirect,
   });
 
-  const api = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
         const token = response.body.access_token;
@@ -33,6 +33,8 @@ module.exports = (SpotifyWebApi) => {
   });
 
   return {
-    getApi: () => api,
+    getApi: () => new Promise(((resolve, reject) => {
+      promise.then(resolve, reject).catch(reject);
+    })),
   };
 };

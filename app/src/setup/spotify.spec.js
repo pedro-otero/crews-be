@@ -1,18 +1,21 @@
 const assert = require('assert');
+const sinon = require('sinon');
 
 const Spotify = require('./spotify');
+
+const ok = {
+  statusCode: 200,
+  body: {
+    access_token: 'x',
+  },
+};
 
 describe('Spotify module', () => {
   describe('#getAPi', () => {
     it('resolves with logged in api', (done) => {
       const spotify = Spotify(function () {
         this.setAccessToken = () => {};
-        this.clientCredentialsGrant = () => Promise.resolve({
-          statusCode: 200,
-          body: {
-            access_token: 'x',
-          },
-        });
+        this.clientCredentialsGrant = () => Promise.resolve(ok);
       });
       spotify.getApi().then(assert).then(done);
     });
