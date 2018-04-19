@@ -31,6 +31,11 @@ module.exports = (SpotifyWebApi) => {
     return false;
   };
 
+  const deactivateIntent = reject => (error) => {
+    reject(error);
+    activeIntent = null;
+  };
+
   const login = () => new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
@@ -45,13 +50,7 @@ module.exports = (SpotifyWebApi) => {
         reject(response);
       }
       activeIntent = null;
-    }, (error) => {
-      reject(error);
-      activeIntent = null;
-    }).catch((error) => {
-      reject(error);
-      activeIntent = null;
-    });
+    }, deactivateIntent(reject)).catch(deactivateIntent(reject));
   });
 
   activeIntent = login();
