@@ -173,5 +173,36 @@ describe('Search state view', () => {
       const query = Query(1, store);
       assert.equal(query.get().progress, 75);
     });
+
+    it('full', function () {
+      const store = this.mockStore({
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 2,
+              items: 4,
+            },
+            results: [{ id: 1 }, { id: 2 }],
+          },
+        }, {
+          album: 1,
+          page: {
+            pagination: {
+              pagination: {
+                page: 2,
+                pages: 2,
+                items: 4,
+              },
+            },
+            results: [{ id: 3 }, { id: 4 }],
+          },
+        }],
+        releases: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+      });
+      const query = Query(1, store);
+      assert.equal(query.get().progress, 100);
+    });
   });
 });
