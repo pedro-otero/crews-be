@@ -13,6 +13,8 @@ const logger = winston.createLogger({
 
 module.exports = (SpotifyWebApi) => {
   let token;
+  let lastLogin;
+  let expiresIn;
   const spotifyApi = new SpotifyWebApi({
     clientId: spotifyConfig.keys.consumer,
     clientSecret: spotifyConfig.keys.secret,
@@ -23,6 +25,8 @@ module.exports = (SpotifyWebApi) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
         token = response.body.access_token;
+        lastLogin = new Date();
+        expiresIn = response.body.expires_in;
         spotifyApi.setAccessToken(token);
         logger.info('Spotify client authenticated succesfully');
         resolve(spotifyApi);
