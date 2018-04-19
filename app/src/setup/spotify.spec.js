@@ -25,5 +25,12 @@ describe('Spotify module', () => {
       });
       spotify.getApi().then(() => assert(false), assert).then(done);
     });
+
+    it('rejects with error', (done) => {
+      const spotify = Spotify(function () {
+        this.clientCredentialsGrant = () => Promise.reject({});
+      });
+      spotify.getApi().then(() => assert(false), assert).then(done);
+    });
   });
 });
