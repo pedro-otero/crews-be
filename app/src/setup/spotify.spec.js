@@ -73,5 +73,18 @@ describe('Spotify module', () => {
         spotify.getApi().then(assert).then(done);
       }, () => assert(false));
     });
+
+    it('attaches new api requests to an active login promise', (done) => {
+      const setTokenSpy = sinon.spy();
+      const spotify = Spotify(function () {
+        this.setAccessToken = setTokenSpy;
+        this.clientCredentialsGrant = () => Promise.resolve(ok);
+      });
+      Promise.all([1, 2, 3, 4, 5].map(() => spotify.getApi()))
+        .then(() => {
+          assert(setTokenSpy.calledOnce);
+          done();
+        });
+    });
   });
 });

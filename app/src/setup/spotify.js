@@ -15,6 +15,7 @@ module.exports = (SpotifyWebApi) => {
   let token;
   let lastLogin;
   let expiresIn;
+  let activeIntent;
 
   const spotifyApi = new SpotifyWebApi({
     clientId: spotifyConfig.keys.consumer,
@@ -30,7 +31,7 @@ module.exports = (SpotifyWebApi) => {
     return false;
   };
 
-  const promise = () => new Promise((resolve, reject) => {
+  const login = () => new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
         token = response.body.access_token;
@@ -43,15 +44,27 @@ module.exports = (SpotifyWebApi) => {
         logger.error(`ERROR AUTHENTICATING ${JSON.stringify(response)}`);
         reject(response);
       }
-    }, reject).catch(reject);
+      activeIntent = null;
+    }, (error) => {
+      reject(error);
+      activeIntent = null;
+    }).catch((error) => {
+      reject(error);
+      activeIntent = null;
+    });
   });
+
+  activeIntent = login();
 
   return {
     getApi: () => new Promise(((resolve, reject) => {
       if (loggedIn()) {
         resolve(spotifyApi);
       } else {
-        promise().then(resolve, reject).catch(reject);
+        if (!activeIntent) {
+          activeIntent = login();
+        }
+        activeIntent.then(resolve, reject).catch(reject);
       }
     })),
   };
