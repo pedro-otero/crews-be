@@ -43,10 +43,8 @@ module.exports = function (albumId, store) {
   };
 
   return {
-    get: () => ({
-      id: albumId,
-      progress: getProgress(),
-      bestMatch: buildAlbum(getAlbum(), orderReleases()[0]),
-    }),
+    id: albumId,
+    progress: getProgress(),
+    bestMatch: buildAlbum(getAlbum(), orderReleases()[0]),
   };
 };
