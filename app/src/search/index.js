@@ -51,11 +51,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
 
   function response(query) {
     if (query) {
-      return {
-        id,
-        progress: query.get().progress,
-        bestMatch: query.get().bestMatch,
-      };
+      return query.get();
     }
     return { id, progress: 0, bestMatch: null };
   }
