@@ -15,11 +15,14 @@ module.exports = (SpotifyWebApi) => {
   let token;
   let lastLogin;
   let expiresIn;
+
   const spotifyApi = new SpotifyWebApi({
     clientId: spotifyConfig.keys.consumer,
     clientSecret: spotifyConfig.keys.secret,
     redirectUri: spotifyConfig.urls.redirect,
   });
+
+  const loggedIn = () => !!token;
 
   const promise = () => new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
@@ -39,7 +42,7 @@ module.exports = (SpotifyWebApi) => {
 
   return {
     getApi: () => new Promise(((resolve, reject) => {
-      if (token) {
+      if (loggedIn()) {
         resolve(spotifyApi);
       } else {
         promise().then(resolve, reject).catch(reject);
