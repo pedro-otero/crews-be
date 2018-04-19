@@ -7,6 +7,7 @@ const ok = {
   statusCode: 200,
   body: {
     access_token: 'x',
+    expires_in: 0,
   },
 };
 
@@ -58,6 +59,19 @@ describe('Spotify module', () => {
       spotify.getApi().then(() => assert(false), () => {
         spotify.getApi().then(assert).then(done);
       });
+    });
+
+    it('logins again if token expired', (done) => {
+      const spotify = Spotify(function () {
+        this.setAccessToken = () => {};
+        this.clientCredentialsGrant = sinon.stub()
+          .onCall(0).resolves(ok)
+          .onCall(1)
+          .resolves(ok);
+      });
+      spotify.getApi().then(() => {
+        spotify.getApi().then(assert).then(done);
+      }, () => assert(false));
     });
   });
 });

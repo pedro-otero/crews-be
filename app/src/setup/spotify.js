@@ -22,14 +22,20 @@ module.exports = (SpotifyWebApi) => {
     redirectUri: spotifyConfig.urls.redirect,
   });
 
-  const loggedIn = () => !!token;
+  const loggedIn = () => {
+    if (token) {
+      const now = new Date().getTime();
+      return (now - lastLogin) < expiresIn;
+    }
+    return false;
+  };
 
   const promise = () => new Promise((resolve, reject) => {
     spotifyApi.clientCredentialsGrant().then((response) => {
       if (response.statusCode === 200) {
         token = response.body.access_token;
-        lastLogin = new Date();
-        expiresIn = response.body.expires_in;
+        lastLogin = new Date().getTime();
+        expiresIn = response.body.expires_in * 1000;
         spotifyApi.setAccessToken(token);
         logger.info('Spotify client authenticated succesfully');
         resolve(spotifyApi);
