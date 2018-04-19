@@ -55,7 +55,7 @@ describe('Spotify module', () => {
           .onCall(1)
           .resolves(ok);
       });
-      spotify.getApi().then(() => assert(false), (e) => {
+      spotify.getApi().then(() => assert(false), () => {
         spotify.getApi().then(assert).then(done);
       });
     });

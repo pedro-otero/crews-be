@@ -27,7 +27,7 @@ module.exports = (SpotifyWebApi) => {
         logger.info('Spotify client authenticated succesfully');
         resolve(spotifyApi);
       } else {
-        logger.error(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
+        logger.error(`ERROR AUTHENTICATING ${JSON.stringify(response)}`);
         reject(response);
       }
     }, reject).catch(reject);
