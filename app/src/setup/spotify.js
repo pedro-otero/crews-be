@@ -29,7 +29,7 @@ module.exports = (SpotifyWebApi) => {
         logger.error(`ERRROR AUTHENTICATING ${JSON.stringify(response)}`);
         reject(response);
       }
-    }, reject);
+    }, reject).catch(reject);
   });
 
   return {
