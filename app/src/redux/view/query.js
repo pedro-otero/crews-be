@@ -43,8 +43,6 @@ module.exports = function (albumId, store) {
   };
 
   return {
-    getAlbum,
-
     get: () => ({
       id: albumId,
       progress: getProgress(),
