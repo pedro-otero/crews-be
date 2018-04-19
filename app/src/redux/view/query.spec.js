@@ -3,7 +3,6 @@ const assert = require('assert');
 const Query = require('./query');
 
 describe('Search state view', () => {
-
   describe('gets search query object', () => {
     before(function () {
       this.mockStore = state => ({ getState: () => state });
@@ -11,6 +10,10 @@ describe('Search state view', () => {
 
     it('progress 0 because of no retrieved releases', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 1,
           page: {
@@ -29,6 +32,10 @@ describe('Search state view', () => {
 
     it('progress 0 because of no search results', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 2,
           page: {
@@ -47,6 +54,10 @@ describe('Search state view', () => {
 
     it('partial, one page, 50%', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 1,
           page: {
@@ -58,7 +69,7 @@ describe('Search state view', () => {
             results: [{ id: 1 }, { id: 2 }],
           },
         }],
-        releases: [{ id: 1 }],
+        releases: [{ id: 1, tracklist: [] }],
       });
       const query = Query(1, store);
       assert.equal(query.get().progress, 50);
@@ -66,6 +77,10 @@ describe('Search state view', () => {
 
     it('partial, two pages, one fully loaded, 40%', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 1,
           page: {
@@ -89,7 +104,7 @@ describe('Search state view', () => {
             results: [{ id: 3 }],
           },
         }],
-        releases: [{ id: 1 }, { id: 2 }],
+        releases: [{ id: 1, tracklist: [] }, { id: 2, tracklist: [] }],
       });
       const query = Query(1, store);
       assert.equal(query.get().progress, 67);
@@ -97,6 +112,10 @@ describe('Search state view', () => {
 
     it('partial, two pages, one fully loaded, second partially, 75%', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 1,
           page: {
@@ -120,7 +139,10 @@ describe('Search state view', () => {
             results: [{ id: 3 }, { id: 4 }],
           },
         }],
-        releases: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        releases: [
+          { id: 1, tracklist: [] },
+          { id: 2, tracklist: [] },
+          { id: 3, tracklist: [] }],
       });
       const query = Query(1, store);
       assert.equal(query.get().progress, 75);
@@ -128,6 +150,10 @@ describe('Search state view', () => {
 
     it('full', function () {
       const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [] },
+        }],
         results: [{
           album: 1,
           page: {
@@ -151,7 +177,11 @@ describe('Search state view', () => {
             results: [{ id: 3 }, { id: 4 }],
           },
         }],
-        releases: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+        releases: [
+          { id: 1, tracklist: [] },
+          { id: 2, tracklist: [] },
+          { id: 3, tracklist: [] },
+          { id: 4, tracklist: [] }],
       });
       const query = Query(1, store);
       assert.equal(query.get().progress, 100);
