@@ -57,10 +57,28 @@ describe('Search state view', () => {
       this.mockStore = state => ({ getState: () => state });
     });
 
-    it('progress', function () {
+    it('progress 0 because of no retrieved releases', function () {
       const store = this.mockStore({
         results: [{
           album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 2,
+              items: 4,
+            },
+          },
+        }],
+        releases: [],
+      });
+      const query = Query(1, store);
+      assert.equal(0, query.get().progress);
+    });
+
+    it('progress 0 because of no search results', function () {
+      const store = this.mockStore({
+        results: [{
+          album: 2,
           page: {
             pagination: {
               page: 1,

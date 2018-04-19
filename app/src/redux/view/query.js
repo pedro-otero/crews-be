@@ -30,6 +30,12 @@ module.exports = function (albumId, store) {
   }, []);
 
   const getProgress = () => {
+    const pages = state()
+      .results
+      .filter(result => result.album === albumId);
+    if (!pages.length) {
+      return 0;
+    }
     const total = state()
       .results
       .filter(result => result.album === albumId && result.page.pagination.page === 1)[0]
