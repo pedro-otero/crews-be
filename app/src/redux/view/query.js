@@ -16,11 +16,9 @@ module.exports = function (albumId, store) {
   const state = () => store.getState();
   const album = state().albums.find(item => item.id === albumId);
 
-  const releaseResults = () => state().results
+  const getRetrievedReleases = () => state().results
     .filter(result => result.album === albumId)
-    .reduce((all, item) => all.concat(item.page.results), []);
-
-  const getRetrievedReleases = () => releaseResults()
+    .reduce((all, item) => all.concat(item.page.results), [])
     .map(result => state().releases
       .find(item => item.id === result.id))
     .filter(item => !!item);
