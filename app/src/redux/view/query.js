@@ -15,19 +15,13 @@ module.exports = function (albumId, store) {
 
   const getAlbum = () => state().albums.find(album => album.id === albumId);
 
-  const orderReleases = () => getRetrievedReleases().reduce((all, release) => {
-    if (all.length) {
-      const current = compareTracklist(getAlbum().tracks.items, release.tracklist);
-      const first = compareTracklist(getAlbum().tracks.items, all[0].tracklist);
-      if (current > first) {
-        return [release, ...all];
-      } else if (current > 0) {
-        return all.concat(release);
-      }
-      return all;
-    }
-    return [release];
-  }, []);
+  const orderReleases = () => getRetrievedReleases().sort((a, b) => {
+    const scores = {
+      a: compareTracklist(getAlbum().tracks.items, a.tracklist),
+      b: compareTracklist(getAlbum().tracks.items, b.tracklist),
+    };
+    return scores.b - scores.a;
+  });
 
   const getProgress = () => {
     const pages = state()
