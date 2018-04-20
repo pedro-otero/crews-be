@@ -13,19 +13,17 @@ const compareTracklist = (spotify, discogs) => {
 };
 
 module.exports = function (id, store) {
-  const state = () => store.getState();
-  const album = state().albums.find(item => item.id === id);
+  const { results, albums, releases } = store.getState();
 
-  const retrievedReleases = state().results
+  const retrievedReleases = results
     .filter(result => result.album === id)
     .reduce((all, item) => all.concat(item.page.results), [])
-    .map(result => state().releases
+    .map(result => releases
       .find(item => item.id === result.id))
     .filter(item => !!item);
 
   const progress = (() => {
-    const pages = state()
-      .results
+    const pages = results
       .filter(result => result.album === id);
     if (!pages.length) {
       return 0;
@@ -37,13 +35,15 @@ module.exports = function (id, store) {
   })();
 
   const bestMatch = (() => {
+    const album = albums.find(item => item.id === id);
+    const { tracks: { items: tracks } } = album;
     const ordered = retrievedReleases.sort((a, b) => {
       const scores = {
-        a: compareTracklist(album.tracks.items, a.tracklist),
-        b: compareTracklist(album.tracks.items, b.tracklist),
+        a: compareTracklist(tracks, a.tracklist),
+        b: compareTracklist(tracks, b.tracklist),
       };
       return scores.b - scores.a;
-    }).filter(release => compareTracklist(album.tracks.items, release.tracklist) !== 0);
+    }).filter(({ tracklist }) => compareTracklist(tracks, tracklist) !== 0);
     if (ordered.length === 0) {
       return null;
     }
