@@ -12,7 +12,7 @@ const compareTracklist = (spotify, discogs) => {
     .reduce((sum, current, i, array) => sum + (current / array.length), 0);
 };
 
-module.exports = function (id, store) {
+module.exports = store => function (id) {
   const { results, albums, releases } = store.getState();
   const pages = results.filter(result => result.album === id);
 

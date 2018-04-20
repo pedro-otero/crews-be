@@ -27,7 +27,7 @@ describe('Search state view', () => {
         }],
         releases: [],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 0);
     });
 
@@ -50,7 +50,7 @@ describe('Search state view', () => {
         }],
         releases: [],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 0);
     });
 
@@ -73,7 +73,7 @@ describe('Search state view', () => {
         }],
         releases: [{ id: 1, tracklist: [] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 50);
     });
 
@@ -108,7 +108,7 @@ describe('Search state view', () => {
         }],
         releases: [{ id: 1, tracklist: [] }, { id: 2, tracklist: [] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 67);
     });
 
@@ -146,7 +146,7 @@ describe('Search state view', () => {
           { id: 2, tracklist: [] },
           { id: 3, tracklist: [] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 75);
     });
 
@@ -185,7 +185,7 @@ describe('Search state view', () => {
           { id: 3, tracklist: [] },
           { id: 4, tracklist: [] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.progress, 100);
     });
 
@@ -213,7 +213,7 @@ describe('Search state view', () => {
           },
           { id: 2, tracklist: [{ title: 'track', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
     });
 
@@ -241,7 +241,7 @@ describe('Search state view', () => {
           },
           { id: 2, tracklist: [{ title: 'track 1', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
       });
-      const query = Query(1, store);
+      const query = Query(store)(1);
       assert.equal(query.bestMatch, null);
     });
   });

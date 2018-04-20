@@ -47,6 +47,7 @@ const storeTransaction = (id) => {
 };
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
+  const getQuery = Query(store);
   const search = store.getState().searches.find(item => item.id === id);
 
   function response(query) {
@@ -67,7 +68,7 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
   const start = () => new Promise((resolve, reject) => {
     const transaction = storeTransaction(id);
     if (search) {
-      const query = Query(id, store);
+      const query = getQuery(id);
       resolve(response(query));
       return;
     }
