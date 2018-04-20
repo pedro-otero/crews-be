@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const users = require('./routes/users');
 const albums = require('./app/src/routes/album/index');
+const existingSearch = require('./app/src/routes/album/existing');
 
 const app = express();
 
@@ -25,9 +26,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* App locals setup */
 
 app.locals.searchAlbum = require('./app/src/setup');
+app.locals.getQuery = require('./app/src/setup/get-query');
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/data/album', existingSearch);
 app.use('/data/album', albums);
 
 // / catch 404 and forwarding to error handler
