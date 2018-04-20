@@ -21,4 +21,15 @@ describe('Existing search middleware', () => {
     const request = Request(app);
     request.get('/data/album/2').expect(500, done);
   });
+
+  it('invokes next middleware if query is not found', (done) => {
+    const app = express();
+    app.use('/data/album', route);
+    app.use('/data/album', (req, res) => {
+      res.status(200).send('NEXT CALLED');
+    });
+    app.locals.getQuery = (() => null);
+    const request = Request(app);
+    request.get('/data/album/2').expect('NEXT CALLED', done);
+  });
 });
