@@ -2,8 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-const func = getQuery => router.get('/:spotifyAlbumId', (req, res) => {
+module.exports = router.get('/:spotifyAlbumId', (req, res) => {
   const {
+    app: {
+      locals: { getQuery },
+    },
     params: { spotifyAlbumId },
   } = req;
 
@@ -16,5 +19,3 @@ const func = getQuery => router.get('/:spotifyAlbumId', (req, res) => {
     res.status(500).json(error);
   }
 });
-
-module.exports = func;
