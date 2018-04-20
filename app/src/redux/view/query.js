@@ -4,7 +4,7 @@ const buildAlbum = require('./build');
 
 const compareTracklist = (spotify, discogs) => {
   if (discogs.length !== spotify.length) {
-    return false;
+    return 0;
   }
   return spotify
     .map(track => track.name)
@@ -43,14 +43,11 @@ module.exports = function (id, store) {
         b: compareTracklist(album.tracks.items, b.tracklist),
       };
       return scores.b - scores.a;
-    });
+    }).filter(release => compareTracklist(album.tracks.items, release.tracklist) !== 0);
     if (ordered.length === 0) {
       return null;
     }
     const first = ordered[0];
-    if (album.tracks.items.length !== first.tracklist.length) {
-      return null;
-    }
     return buildAlbum(album, first);
   })();
 
