@@ -12,19 +12,31 @@ const compareTracklist = (spotify, discogs) => {
     .reduce((sum, current, i, array) => sum + (current / array.length), 0);
 };
 
-module.exports = function (albumId, store) {
+module.exports = function (id, store) {
   const state = () => store.getState();
-  const album = state().albums.find(item => item.id === albumId);
+  const album = state().albums.find(item => item.id === id);
 
-  const getRetrievedReleases = () => state().results
-    .filter(result => result.album === albumId)
+  const retrievedReleases = state().results
+    .filter(result => result.album === id)
     .reduce((all, item) => all.concat(item.page.results), [])
     .map(result => state().releases
       .find(item => item.id === result.id))
     .filter(item => !!item);
 
+  const progress = (() => {
+    const pages = state()
+      .results
+      .filter(result => result.album === id);
+    if (!pages.length) {
+      return 0;
+    }
+    const total = pages.filter(result => result.page.pagination.page === 1)[0]
+      .page.pagination.items;
+    const soFar = retrievedReleases.length;
+    return Math.round((soFar / total) * 100);
+  })();
 
-  const orderReleases = () => getRetrievedReleases().sort((a, b) => {
+  const orderReleases = () => retrievedReleases.sort((a, b) => {
     const scores = {
       a: compareTracklist(album.tracks.items, a.tracklist),
       b: compareTracklist(album.tracks.items, b.tracklist),
@@ -32,20 +44,7 @@ module.exports = function (albumId, store) {
     return scores.b - scores.a;
   });
 
-  const getProgress = () => {
-    const pages = state()
-      .results
-      .filter(result => result.album === albumId);
-    if (!pages.length) {
-      return 0;
-    }
-    const total = pages.filter(result => result.page.pagination.page === 1)[0]
-      .page.pagination.items;
-    const soFar = getRetrievedReleases().length;
-    return Math.round((soFar / total) * 100);
-  };
-
-  const getBestMatch = () => {
+  const bestMatch = (() => {
     const ordered = orderReleases();
     if (ordered.length === 0) {
       return null;
@@ -55,11 +54,7 @@ module.exports = function (albumId, store) {
       return null;
     }
     return buildAlbum(album, first);
-  };
+  })();
 
-  return {
-    id: albumId,
-    progress: getProgress(),
-    bestMatch: getBestMatch(),
-  };
+  return { id, progress, bestMatch };
 };
