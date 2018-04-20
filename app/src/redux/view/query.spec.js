@@ -214,5 +214,33 @@ describe('Search state view', () => {
       const query = Query(1, store);
       assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
     });
+
+    it('safely finds no match', function () {
+      const store = this.mockStore({
+        albums: [{
+          id: 1,
+          tracks: { items: [{ name: 'track 1' }, { name: 'track 2' }] },
+        }],
+        results: [{
+          album: 1,
+          page: {
+            pagination: {
+              page: 1,
+              pages: 1,
+              items: 2,
+            },
+            results: [{ id: 1 }, { id: 2 }],
+          },
+        }],
+        releases: [
+          {
+            id: 1,
+            tracklist: [{ title: 'track 1' }],
+          },
+          { id: 2, tracklist: [{ title: 'track 1', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
+      });
+      const query = Query(1, store);
+      assert.equal(query.bestMatch, null);
+    });
   });
 });

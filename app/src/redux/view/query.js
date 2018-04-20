@@ -52,7 +52,11 @@ module.exports = function (albumId, store) {
     if (ordered.length === 0) {
       return null;
     }
-    return buildAlbum(getAlbum(), orderReleases()[0]);
+    const first = ordered[0];
+    if (getAlbum().tracks.items.length !== first.tracklist.length) {
+      return null;
+    }
+    return buildAlbum(getAlbum(), first);
   };
 
   return {
