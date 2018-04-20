@@ -10,6 +10,7 @@ describe('Search state view', () => {
 
     it('progress 0 because of no retrieved releases', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -33,6 +34,7 @@ describe('Search state view', () => {
 
     it('progress 0 because of no search results', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -56,6 +58,7 @@ describe('Search state view', () => {
 
     it('partial, one page, 50%', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -79,6 +82,7 @@ describe('Search state view', () => {
 
     it('partial, two pages, one fully loaded, 40%', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -114,6 +118,7 @@ describe('Search state view', () => {
 
     it('partial, two pages, one fully loaded, second partially, 75%', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -152,6 +157,7 @@ describe('Search state view', () => {
 
     it('full', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [] },
@@ -191,6 +197,7 @@ describe('Search state view', () => {
 
     it('picks the best match', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [{ name: 'track' }] },
@@ -219,6 +226,7 @@ describe('Search state view', () => {
 
     it('safely finds no match', function () {
       const store = this.mockStore({
+        searches: [{ id: 1 }],
         albums: [{
           id: 1,
           tracks: { items: [{ name: 'track 1' }, { name: 'track 2' }] },
@@ -243,6 +251,12 @@ describe('Search state view', () => {
       });
       const query = Query(store)(1);
       assert.equal(query.bestMatch, null);
+    });
+
+    it('returns null if there is no album data', function () {
+      const store = this.mockStore({ albums: [], searches: [] });
+      const query = Query(store)(1);
+      assert(query === null);
     });
   });
 });
