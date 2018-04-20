@@ -36,16 +36,14 @@ module.exports = function (id, store) {
     return Math.round((soFar / total) * 100);
   })();
 
-  const orderReleases = () => retrievedReleases.sort((a, b) => {
-    const scores = {
-      a: compareTracklist(album.tracks.items, a.tracklist),
-      b: compareTracklist(album.tracks.items, b.tracklist),
-    };
-    return scores.b - scores.a;
-  });
-
   const bestMatch = (() => {
-    const ordered = orderReleases();
+    const ordered = retrievedReleases.sort((a, b) => {
+      const scores = {
+        a: compareTracklist(album.tracks.items, a.tracklist),
+        b: compareTracklist(album.tracks.items, b.tracklist),
+      };
+      return scores.b - scores.a;
+    });
     if (ordered.length === 0) {
       return null;
     }
