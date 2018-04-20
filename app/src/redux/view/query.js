@@ -14,17 +14,14 @@ const compareTracklist = (spotify, discogs) => {
 
 module.exports = function (id, store) {
   const { results, albums, releases } = store.getState();
+  const pages = results.filter(result => result.album === id);
 
-  const retrievedReleases = results
-    .filter(result => result.album === id)
+  const retrievedReleases = pages
     .reduce((all, item) => all.concat(item.page.results), [])
-    .map(result => releases
-      .find(item => item.id === result.id))
-    .filter(item => !!item);
+    .filter(release => releases.map(r => r.id).includes(release.id))
+    .map(release => releases.find(r => r.id === release.id));
 
   const progress = (() => {
-    const pages = results
-      .filter(result => result.album === id);
     if (!pages.length) {
       return 0;
     }
