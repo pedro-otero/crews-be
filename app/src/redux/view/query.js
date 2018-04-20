@@ -47,9 +47,17 @@ module.exports = function (albumId, store) {
     return Math.round((soFar / total) * 100);
   };
 
+  const getBestMatch = () => {
+    const ordered = orderReleases();
+    if (ordered.length === 0) {
+      return null;
+    }
+    return buildAlbum(getAlbum(), orderReleases()[0]);
+  };
+
   return {
     id: albumId,
     progress: getProgress(),
-    bestMatch: buildAlbum(getAlbum(), orderReleases()[0]),
+    bestMatch: getBestMatch(),
   };
 };
