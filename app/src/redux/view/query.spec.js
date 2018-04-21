@@ -5,7 +5,7 @@ const Query = require('./query');
 describe('Search state view', () => {
   describe('gets search query object', () => {
     it('progress 0 because of no retrieved releases', function () {
-      const query = Query(this.store)('query-progress-0');
+      const query = Query(this.store)('query-progress-0-no-retrieved-releases');
       assert.equal(query.progress, 0);
     });
 

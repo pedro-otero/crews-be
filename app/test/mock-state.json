@@ -1,11 +1,11 @@
 {
-  "searches": [{ "id": "query-progress-0" }],
+  "searches": [{ "id": "query-progress-0-no-retrieved-releases" }],
   "albums": [{
-    "id": "query-progress-0",
+    "id": "query-progress-0-no-retrieved-releases",
     "tracks": { "items": [] }
   }],
   "results": [{
-    "album": "query-progress-0",
+    "album": "query-progress-0-no-retrieved-releases",
     "page": {
       "pagination": {
         "page": 1,
