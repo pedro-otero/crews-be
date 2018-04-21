@@ -4,10 +4,6 @@ const Query = require('./query');
 
 describe('Search state view', () => {
   describe('gets search query object', () => {
-    before(function () {
-      this.mockStore = state => ({ getState: () => state });
-    });
-
     it('progress 0 because of no retrieved releases', function () {
       const store = this.mockStore({
         searches: [{ id: 1 }],
