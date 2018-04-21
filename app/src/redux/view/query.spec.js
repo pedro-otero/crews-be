@@ -10,26 +10,7 @@ describe('Search state view', () => {
     });
 
     it('progress 0 because of no search results', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 2,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [],
-          },
-        }],
-        releases: [],
-      });
-      const query = Query(store)(1);
+      const query = Query(this.store)('progress-0-no-search-results');
       assert.equal(query.progress, 0);
     });
 

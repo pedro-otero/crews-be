@@ -1,7 +1,11 @@
 {
-  "searches": [{ "id": "query-progress-0-no-retrieved-releases" }],
+  "searches": [{ "id": "query-progress-0-no-retrieved-releases" },
+    { "id": "progress-0-no-search-results" }],
   "albums": [{
     "id": "query-progress-0-no-retrieved-releases",
+    "tracks": { "items": [] }
+  },{
+    "id": "progress-0-no-search-results",
     "tracks": { "items": [] }
   }],
   "results": [{
