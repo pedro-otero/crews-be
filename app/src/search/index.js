@@ -3,25 +3,25 @@ const DiscogFinder = require('./discogs');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
-const observer = (logger, transaction) => ({
+const observer = (logger, output) => ({
   next: ({ type, data: { page, release } }) => ({
     results: () => {
       logger.results({ page });
-      transaction.addResults(page);
+      output.addResults(page);
     },
     release: () => {
       logger.release({ release });
-      transaction.addRelease(release);
+      output.addRelease(release);
     },
   })[type](),
   error: (error) => {
     logger.error({ error });
-    transaction.clear();
+    output.clear();
   },
   complete: logger.finish.bind(logger, {}),
 });
 
-const storeTransaction = (id) => {
+const actionsWrapper = (id) => {
   let album;
   const pages = [];
   const addSearch = () => actions.addSearch(id);
@@ -58,21 +58,21 @@ module.exports = (spotify, db, createLogger) => (id) => {
   const discogs = new DiscogFinder(db);
 
   const start = () => new Promise((resolve, reject) => {
-    const transaction = storeTransaction(id);
+    const output = actionsWrapper(id);
     spotify.getApi()
       .then((api) => {
-        transaction.addSearch(id);
+        output.addSearch(id);
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         const album = body;
-        transaction.addAlbum(album);
+        output.addAlbum(album);
         const logger = createLogger(album);
-        discogs.findReleases(album).subscribe(observer(logger, transaction));
+        discogs.findReleases(album).subscribe(observer(logger, output));
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
-        transaction.abort();
+        output.abort();
       }).catch(reject);
   });
 
