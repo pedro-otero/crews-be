@@ -43,7 +43,7 @@ module.exports = function (album) {
     } = pageObject;
     pagesArray.push(pageObject);
     return `${tag(album)} P ${indicator(page, pages)}: ${results.length} items`;
-  }
+  };
 
   const formatFunction = ({
     level,
@@ -51,6 +51,7 @@ module.exports = function (album) {
       page,
       release,
       text,
+      error,
     },
     timestamp,
   }) => {
@@ -64,6 +65,9 @@ module.exports = function (album) {
         break;
       case 'release':
         result += releaseMsg(release);
+        break;
+      case 'error':
+        result += error.stack;
         break;
       default:
         result += text;
