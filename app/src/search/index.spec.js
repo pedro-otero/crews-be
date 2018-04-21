@@ -1,9 +1,13 @@
 const sinon = require('sinon');
 const assert = require('assert');
-const Rx = require('rxjs');
 
 const searchAlbum = require('./index');
 const { actions } = require('../redux/state');
+
+const createWebApiError = (message, statusCode) => Object.assign(Error(message), {
+  name: 'WebapiError',
+  statusCode,
+});
 
 describe('Search function', () => {
   before(function () {
@@ -74,7 +78,7 @@ describe('Search function', () => {
           actions.removeResults = sinon.spy();
           const db = {
             search: () => new Promise((resolve, reject) => {
-              reject('ERROR');
+              reject(Error('ERROR'));
             }),
           };
           this.search = searchAlbum(this.spotify, db, this.createLogger);
@@ -117,11 +121,7 @@ describe('Search function', () => {
         actions.removeSearch = sinon.spy();
         const spotify = {
           getApi: () => Promise.resolve({
-            getAlbum: () => Promise.reject({
-              error: {
-                status: 404,
-              },
-            }),
+            getAlbum: () => Promise.reject(createWebApiError(null, 404)),
           }),
         };
         this.search = searchAlbum(spotify, this.db, this.createLogger);
@@ -158,11 +158,7 @@ describe('Search function', () => {
         actions.removeSearch = sinon.spy();
         const spotify = {
           getApi: () => Promise.resolve({
-            getAlbum: () => Promise.reject({
-              error: {
-                status: 400,
-              },
-            }),
+            getAlbum: () => Promise.reject(createWebApiError(null, 400)),
           }),
         };
         this.search = searchAlbum(spotify, this.db, this.createLogger);
@@ -198,11 +194,7 @@ describe('Search function', () => {
       beforeEach(function () {
         const spotify = {
           getApi: () => Promise.resolve({
-            getAlbum: () => Promise.reject({
-              error: {
-                status: 500,
-              },
-            }),
+            getAlbum: () => Promise.reject(createWebApiError(null, 500)),
           }),
         };
         this.search = searchAlbum(spotify, this.db, this.createLogger);
@@ -227,11 +219,7 @@ describe('Search function', () => {
 
   it('Spotify login fails', function (done) {
     const spotify = {
-      getApi: () => Promise.reject({
-        error: {
-          status: 500,
-        },
-      }),
+      getApi: () => Promise.reject(createWebApiError(null, 500)),
     };
     const func = searchAlbum(spotify, this.db, this.createLogger);
     const search = func(1);
