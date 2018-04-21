@@ -1,7 +1,7 @@
 {
   "searches": [{ "id": "query-progress-0-no-retrieved-releases" },
     { "id": "progress-0-no-search-results" },
-    { "id": "partial-one-page-50%" }],
+    { "id": "partial-one-page-50%" },{ "id": "partial-2p-1-fully-loaded-67%" }],
   "albums": [{
     "id": "query-progress-0-no-retrieved-releases",
     "tracks": { "items": [] }
@@ -10,6 +10,9 @@
     "tracks": { "items": [] }
   },{
     "id": "partial-one-page-50%",
+    "tracks": { "items": [] }
+  },{
+    "id": "partial-2p-1-fully-loaded-67%",
     "tracks": { "items": [] }
   }],
   "results": [{
@@ -32,6 +35,28 @@
       },
       "results": [{ "id": 1 }, { "id": 2 }]
     }
+  },{
+    "album": "partial-2p-1-fully-loaded-67%",
+    "page": {
+      "pagination": {
+        "page": 1,
+        "pages": 2,
+        "items": 3
+      },
+      "results": [{ "id": 3 }, { "id": 4 }]
+    }
+  }, {
+    "album": "partial-2p-1-fully-loaded-67%",
+    "page": {
+      "pagination": {
+        "pagination": {
+          "page": 2,
+          "pages": 2,
+          "items": 3
+        }
+      },
+      "results": [{ "id": 5 }]
+    }
   }],
-  "releases": [{ "id": 1, "tracklist": [] }]
+  "releases": [{ "id": 1, "tracklist": [] },{ "id": 3, "tracklist": [] }, { "id": 4, "tracklist": [] }]
 }

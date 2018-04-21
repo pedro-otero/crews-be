@@ -19,39 +19,8 @@ describe('Search state view', () => {
       assert.equal(query.progress, 50);
     });
 
-    it('partial, two pages, one fully loaded, 40%', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 3,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }, {
-          album: 1,
-          page: {
-            pagination: {
-              pagination: {
-                page: 2,
-                pages: 2,
-                items: 3,
-              },
-            },
-            results: [{ id: 3 }],
-          },
-        }],
-        releases: [{ id: 1, tracklist: [] }, { id: 2, tracklist: [] }],
-      });
-      const query = Query(store)(1);
+    it('partial, two pages, one fully loaded, 67%', function () {
+      const query = Query(this.store)('partial-2p-1-fully-loaded-67%');
       assert.equal(query.progress, 67);
     });
 
