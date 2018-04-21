@@ -1,5 +1,4 @@
 const { actions } = require('../redux/state');
-const Query = require('../redux/view/query');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
@@ -47,16 +46,6 @@ const storeTransaction = (id) => {
 };
 
 module.exports = (spotify, discogs, store, createLogger) => (id) => {
-  const getQuery = Query(store);
-  const search = store.getState().searches.find(item => item.id === id);
-
-  function response(query) {
-    if (query) {
-      return query;
-    }
-    return { id, progress: 0, bestMatch: null };
-  }
-
   const albumRejection = (reason) => {
     const code = String(reason.error.status);
     if (code in spotifyErrorMessages.http) {
@@ -67,18 +56,13 @@ module.exports = (spotify, discogs, store, createLogger) => (id) => {
 
   const start = () => new Promise((resolve, reject) => {
     const transaction = storeTransaction(id);
-    if (search) {
-      const query = getQuery(id);
-      resolve(response(query));
-      return;
-    }
     spotify.getApi()
       .then((api) => {
         transaction.addSearch(id);
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
-        resolve(response());
+        resolve({ id, progress: 0, bestMatch: null });
         const album = body;
         transaction.addAlbum(album);
         const logger = createLogger(album);
