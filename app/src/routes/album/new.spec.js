@@ -1,7 +1,7 @@
 const express = require('express');
 const Request = require('supertest');
 
-const route = require('./index');
+const route = require('./new');
 
 describe('Albums endpoint', () => {
   it('returns 200', (done) => {

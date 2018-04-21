@@ -7,8 +7,8 @@ const bodyParser = require('body-parser');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
-const albums = require('./app/src/routes/album/index');
 const existingSearch = require('./app/src/routes/album/existing');
+const newSearch = require('./app/src/routes/album/new');
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.locals.getQuery = require('./app/src/locals/get-query');
 app.use('/', routes);
 app.use('/users', users);
 app.use('/data/album', existingSearch);
-app.use('/data/album', albums);
+app.use('/data/album', newSearch);
 
 // / catch 404 and forwarding to error handler
 app.use((req, res, next) => {
