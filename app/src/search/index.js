@@ -1,4 +1,5 @@
 const { actions } = require('../redux/state');
+const DiscogFinder = require('./discogs');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
@@ -14,7 +15,7 @@ const observer = (logger, transaction) => ({
     },
   })[type](),
   error: (error) => {
-    logger.error(error);
+    logger.error({ error });
     transaction.clear();
   },
   complete: logger.finish.bind(logger, {}),
@@ -45,7 +46,7 @@ const storeTransaction = (id) => {
   };
 };
 
-module.exports = (spotify, discogs, createLogger) => (id) => {
+module.exports = (spotify, db, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.error.status);
     if (code in spotifyErrorMessages.http) {
@@ -53,6 +54,8 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
     return Error(spotifyErrorMessages.general);
   };
+
+  const discogs = new DiscogFinder(db);
 
   const start = () => new Promise((resolve, reject) => {
     const transaction = storeTransaction(id);
@@ -62,11 +65,11 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
-        resolve({ id, progress: 0, bestMatch: null });
         const album = body;
         transaction.addAlbum(album);
         const logger = createLogger(album);
         discogs.findReleases(album).subscribe(observer(logger, transaction));
+        resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
         transaction.abort();
