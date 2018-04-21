@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /* App locals setup */
 
-app.locals.searchAlbum = require('./app/src/setup');
+app.locals.searchAlbum = require('./app/src/setup/search-album');
 app.locals.getQuery = require('./app/src/setup/get-query');
 
 app.use('/', routes);
