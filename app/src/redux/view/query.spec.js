@@ -93,8 +93,7 @@ describe('Search state view', () => {
     });
 
     it('returns null if there is no album data', function () {
-      const store = this.mockStore({ albums: [], searches: [] });
-      const query = Query(store)(1);
+      const query = Query(this.store)('nothing');
       assert(query === null);
     });
   });
