@@ -35,31 +35,7 @@ describe('Search state view', () => {
     });
 
     it('picks the best match', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [{ name: 'track' }] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 1,
-              items: 2,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }],
-        releases: [
-          {
-            id: 1,
-            tracklist: [{ title: 'similar track' }],
-          },
-          { id: 2, tracklist: [{ title: 'track', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
-      });
-      const query = Query(store)(1);
+      const query = Query(this.store)('query-pick-best-match');
       assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
     });
 

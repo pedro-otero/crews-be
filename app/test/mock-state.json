@@ -1,7 +1,7 @@
 {
   "searches": [{ "id": "query-progress-0-no-retrieved-releases" },
     { "id": "progress-0-no-search-results" },
-    { "id": "partial-one-page-50%" },{ "id": "partial-2p-1-fully-loaded-67%" },{ "id": "partial-2p-1-fully-loaded-second-partially-75%" },{ "id": "full" }],
+    { "id": "partial-one-page-50%" },{ "id": "partial-2p-1-fully-loaded-67%" },{ "id": "partial-2p-1-fully-loaded-second-partially-75%" },{ "id": "full" },{ "id": "query-pick-best-match" }],
   "albums": [{
     "id": "query-progress-0-no-retrieved-releases",
     "tracks": { "items": [] }
@@ -20,6 +20,9 @@
   },{
     "id": "full",
     "tracks": { "items": [] }
+  },{
+    "id": "query-pick-best-match",
+    "tracks": { "items": [{ "name": "track" }] }
   }],
   "results": [{
     "album": "query-progress-0-no-retrieved-releases",
@@ -109,12 +112,26 @@
       },
       "results": [{ "id": 11 }, { "id": 12 }]
     }
+  },{
+    "album": "query-pick-best-match",
+    "page": {
+      "pagination": {
+        "page": 1,
+        "pages": 1,
+        "items": 2
+      },
+      "results": [{ "id": 14 }, { "id": 15 }]
+    }
   }],
   "releases": [{ "id": 1, "tracklist": [] },{ "id": 3, "tracklist": [] }, { "id": 4, "tracklist": [] },{ "id": 6, "tracklist": [] },
     { "id": 7, "tracklist": [] },
-    { "id": 8, "tracklist": [] },
-    { "id": 10, "tracklist": [] },
+    { "id": 8, "tracklist": []},
+    { "id": 10, "tracklist": []},
     { "id": 11, "tracklist": [] },
-    { "id": 12, "tracklist": [] },
-    { "id": 13, "tracklist": [] }]
+    { "id": 12, "tracklist": []},
+    { "id": 13, "tracklist": [] },{
+      "id": 14,
+      "tracklist": [{ "title": "similar track" }]
+    },
+    { "id": 15, "tracklist": [{ "title": "track", "extraartists": [{ "name": "some guy", "role": "Producer" }] }] }]
 }
