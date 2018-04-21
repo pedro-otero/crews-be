@@ -1,11 +1,15 @@
 {
   "searches": [{ "id": "query-progress-0-no-retrieved-releases" },
-    { "id": "progress-0-no-search-results" }],
+    { "id": "progress-0-no-search-results" },
+    { "id": "partial-one-page-50%" }],
   "albums": [{
     "id": "query-progress-0-no-retrieved-releases",
     "tracks": { "items": [] }
   },{
     "id": "progress-0-no-search-results",
+    "tracks": { "items": [] }
+  },{
+    "id": "partial-one-page-50%",
     "tracks": { "items": [] }
   }],
   "results": [{
@@ -18,6 +22,16 @@
       },
       "results": []
     }
+  },{
+    "album": "partial-one-page-50%",
+    "page": {
+      "pagination": {
+        "page": 1,
+        "pages": 1,
+        "items": 2
+      },
+      "results": [{ "id": 1 }, { "id": 2 }]
+    }
   }],
-  "releases": []
+  "releases": [{ "id": 1, "tracklist": [] }]
 }

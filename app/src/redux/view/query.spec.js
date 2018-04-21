@@ -15,26 +15,7 @@ describe('Search state view', () => {
     });
 
     it('partial, one page, 50%', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 1,
-              items: 2,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }],
-        releases: [{ id: 1, tracklist: [] }],
-      });
-      const query = Query(store)(1);
+      const query = Query(this.store)('partial-one-page-50%');
       assert.equal(query.progress, 50);
     });
 
