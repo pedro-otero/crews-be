@@ -2,7 +2,6 @@ const assert = require('assert');
 
 const {
   ADD_SEARCH,
-  PUT_ERRORS,
   REMOVE_SEARCH,
 } = require('../action/constants');
 const reduce = require('./searches');
@@ -37,7 +36,7 @@ describe('Searches reducer', () => {
   });
 
   describe(REMOVE_SEARCH, () => {
-    it('Removes searches from state', function () {
+    it('Removes searches from state', () => {
       const searches = reduce([{ id: 'albumId' }], {
         type: REMOVE_SEARCH,
         id: 'albumId',

@@ -49,5 +49,6 @@ const buildSong = ({ tracklist, extraartists = [] }) => (spotifyTrack, trackInde
 };
 
 module.exports = (spotifyAlbum, discogsRelease) => ({
-  tracks: spotifyAlbum.tracks.items.length ? spotifyAlbum.tracks.items.map(buildSong(discogsRelease)) : [],
+  tracks: spotifyAlbum.tracks.items.length ?
+    spotifyAlbum.tracks.items.map(buildSong(discogsRelease)) : [],
 });

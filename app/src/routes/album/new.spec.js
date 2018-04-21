@@ -17,7 +17,7 @@ describe('Albums endpoint', () => {
   it('returns 404', (done) => {
     const app = express();
     app.locals.searchAlbum = () => ({
-      start: () => Promise.reject({ status: 404 }),
+      start: () => Promise.reject(Object.assign(Error(), { status: 404 })),
     });
     app.use('/data/album', route);
     const request = Request(app);

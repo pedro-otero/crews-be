@@ -29,7 +29,7 @@ describe('Find releases function', () => {
 
     describe('searches 1st page with correct', () => {
       before(function () {
-        this.args = this.db.search.getCalls()[0].args[0];
+        [this.args] = this.db.search.getCalls()[0].args;
       });
 
       it('artist', function () {
@@ -59,7 +59,7 @@ describe('Find releases function', () => {
 
     describe('searches 2nd page with correct', () => {
       before(function () {
-        this.args = this.db.search.getCalls()[1].args[0];
+        [this.args] = this.db.search.getCalls()[1].args;
       });
 
       it('artist', function () {

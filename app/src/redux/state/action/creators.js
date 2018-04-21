@@ -29,17 +29,17 @@ const releaseResults = (album, page) => ({
   page,
 });
 
-const removeSearch = (id) => ({
+const removeSearch = id => ({
   type: REMOVE_SEARCH,
   id,
 });
 
-const removeResults = (id) => ({
+const removeResults = id => ({
   type: REMOVE_RELEASE_RESULTS,
   id,
 });
 
-const removeReleases = (releases) => ({
+const removeReleases = releases => ({
   type: REMOVE_RELEASES,
   releases,
 });

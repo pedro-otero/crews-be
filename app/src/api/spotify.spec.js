@@ -32,7 +32,7 @@ describe('Spotify module', () => {
 
     it('rejects with error', (done) => {
       const spotify = Spotify(function () {
-        this.clientCredentialsGrant = () => Promise.reject({});
+        this.clientCredentialsGrant = () => Promise.reject(Error());
       });
       spotify.getApi().then(() => assert(false), assert).then(done);
     });
