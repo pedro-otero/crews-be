@@ -4,5 +4,4 @@ before('Test globals', function () {
   this.store = {
     getState: () => mockState,
   };
-  this.mockStore = state => ({ getState: () => state });
 });
