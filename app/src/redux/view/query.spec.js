@@ -2,51 +2,42 @@ const assert = require('assert');
 
 const Query = require('./query');
 
-describe('Search state view', () => {
-  describe('gets search query object', () => {
-    it('progress 0 because of no retrieved releases', function () {
-      const query = Query(this.store)('query-progress-0-no-retrieved-releases');
-      assert.equal(query.progress, 0);
-    });
+describe('Query', () => {
+  const test = (id, cause, progress) => {
+    context(cause, () => {
+      before(function () {
+        this.query = Query(this.store)(id);
+      });
 
-    it('progress 0 because of no search results', function () {
-      const query = Query(this.store)('progress-0-no-search-results');
-      assert.equal(query.progress, 0);
-    });
+      it('has correct id', function () {
+        assert.equal(this.query.id, id);
+      });
 
-    it('partial, one page, 50%', function () {
-      const query = Query(this.store)('partial-one-page-50%');
-      assert.equal(query.progress, 50);
+      it(`has progress = ${progress}`, function () {
+        assert.equal(this.query.progress, progress);
+      });
     });
+  };
 
-    it('partial, two pages, one fully loaded, 67%', function () {
-      const query = Query(this.store)('partial-2p-1-fully-loaded-67%');
-      assert.equal(query.progress, 67);
-    });
+  test('query-progress-0-no-retrieved-releases', 'progress 0 because no retrieved releases', 0);
+  test('progress-0-no-search-results', 'progress 0 because of no search results', 0);
+  test('partial-one-page-50%', 'partial, one page, 50%', 50);
+  test('partial-2p-1-fully-loaded-67%', 'partial, two pages, one fully loaded, 67%', 67);
+  test('partial-2p-1-fully-loaded-second-partially-75%', 'partial, two pages, one fully loaded, second partially, 75%', 75);
+  test('full', 'full', 100);
 
-    it('partial, two pages, one fully loaded, second partially, 75%', function () {
-      const query = Query(this.store)('partial-2p-1-fully-loaded-second-partially-75%');
-      assert.equal(query.progress, 75);
-    });
+  it('picks the best match', function () {
+    const query = Query(this.store)('query-pick-best-match');
+    assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
+  });
 
-    it('full', function () {
-      const query = Query(this.store)('full');
-      assert.equal(query.progress, 100);
-    });
+  it('safely finds no match', function () {
+    const query = Query(this.store)('query-no-match');
+    assert.equal(query.bestMatch, null);
+  });
 
-    it('picks the best match', function () {
-      const query = Query(this.store)('query-pick-best-match');
-      assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
-    });
-
-    it('safely finds no match', function () {
-      const query = Query(this.store)('query-no-match');
-      assert.equal(query.bestMatch, null);
-    });
-
-    it('returns null if there is no album data', function () {
-      const query = Query(this.store)('nothing');
-      assert(query === null);
-    });
+  it('returns null if there is no album data', function () {
+    const query = Query(this.store)('nothing');
+    assert(query === null);
   });
 });
