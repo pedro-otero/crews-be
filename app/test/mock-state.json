@@ -1,1 +1,19 @@
-{}
+{
+  "searches": [{ "id": "query-progress-0" }],
+  "albums": [{
+    "id": "query-progress-0",
+    "tracks": { "items": [] }
+  }],
+  "results": [{
+    "album": "query-progress-0",
+    "page": {
+      "pagination": {
+        "page": 1,
+        "pages": 2,
+        "items": 4
+      },
+      "results": []
+    }
+  }],
+  "releases": []
+}

@@ -5,26 +5,7 @@ const Query = require('./query');
 describe('Search state view', () => {
   describe('gets search query object', () => {
     it('progress 0 because of no retrieved releases', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [],
-          },
-        }],
-        releases: [],
-      });
-      const query = Query(store)(1);
+      const query = Query(this.store)('query-progress-0');
       assert.equal(query.progress, 0);
     });
 
