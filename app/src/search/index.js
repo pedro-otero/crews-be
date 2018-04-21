@@ -45,7 +45,7 @@ const storeTransaction = (id) => {
   };
 };
 
-module.exports = (spotify, discogs, store, createLogger) => (id) => {
+module.exports = (spotify, discogs, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.error.status);
     if (code in spotifyErrorMessages.http) {

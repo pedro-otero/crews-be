@@ -14,9 +14,6 @@ describe('Search function', () => {
         observer.complete();
       }),
     };
-    this.store = {
-      getState: () => ({ searches: [] }),
-    };
     this.createLogger = () => {
       const logger = {
         results: () => {},
@@ -40,7 +37,7 @@ describe('Search function', () => {
             }),
           }),
         };
-        this.search = searchAlbum(this.spotify, this.discogs, this.store, this.createLogger);
+        this.search = searchAlbum(this.spotify, this.discogs, this.createLogger);
       });
 
       it('Returns a newly created search', function (done) {
@@ -58,7 +55,7 @@ describe('Search function', () => {
               throw Error();
             }),
           };
-          this.search = searchAlbum(this.spotify, discogs, this.store, this.createLogger);
+          this.search = searchAlbum(this.spotify, discogs, this.createLogger);
         });
 
         it('promise rejects with error', function (done) {
@@ -81,7 +78,7 @@ describe('Search function', () => {
               observer.error('ERROR');
             }),
           };
-          this.search = searchAlbum(this.spotify, discogs, this.store, this.createLogger);
+          this.search = searchAlbum(this.spotify, discogs, this.createLogger);
         });
 
         it('promise rejects with error', function (done) {
@@ -128,7 +125,7 @@ describe('Search function', () => {
             }),
           }),
         };
-        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -169,7 +166,7 @@ describe('Search function', () => {
             }),
           }),
         };
-        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -209,7 +206,7 @@ describe('Search function', () => {
             }),
           }),
         };
-        this.search = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
+        this.search = searchAlbum(spotify, this.discogs, this.createLogger);
       });
 
       it('Returns error with message', function (done) {
@@ -237,7 +234,7 @@ describe('Search function', () => {
         },
       }),
     };
-    const func = searchAlbum(spotify, this.discogs, this.store, this.createLogger);
+    const func = searchAlbum(spotify, this.discogs, this.createLogger);
     const search = func(1);
     search.start()
       .then(() => {
