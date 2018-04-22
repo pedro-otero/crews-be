@@ -5,11 +5,15 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
     position,
     extraartists: extraartists.concat(releaseExtraArtists
       .filter(({ tracks }) => {
-        if (tracks.includes('-')) {
-          const extremes = tracks.split('-').map(n => Number(n));
-          return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
-        }
-        return tracks.split(',').map(t => t.trim()).includes(position);
+        return tracks.split(',').map(t => t.trim()).reduce((accum, val) => {
+          return accum || (() => {
+            if (val.includes('-')) {
+              const extremes = val.split('-').map(n => Number(n));
+              return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
+            }
+            return val.split(',').map(t => t.trim()).includes(position);
+          })();
+        }, false);
       })
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
   })).map(({ extraartists: credits }, i) => ({

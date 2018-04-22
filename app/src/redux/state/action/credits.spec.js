@@ -19,6 +19,11 @@ describe('Credits action creator', () => {
         { id: 'T8' },
         { id: 'T9' },
         { id: 'T10' },
+        { id: 'T11' },
+        { id: 'T12' },
+        { id: 'T13' },
+        { id: 'T14' },
+        { id: 'T15' },
       ],
     },
   };
@@ -42,6 +47,10 @@ describe('Credits action creator', () => {
           tracks: '9, 10',
           name: 'P910',
           role: 'R910',
+        }, {
+          tracks: '11, 13-15',
+          name: 'P111315',
+          role: 'R111315',
         }],
         tracklist: [{
           extraartists: [{
@@ -69,6 +78,16 @@ describe('Credits action creator', () => {
           position: '9',
         }, {
           position: '10',
+        }, {
+          position: '11',
+        }, {
+          position: '12',
+        }, {
+          position: '13',
+        }, {
+          position: '14',
+        }, {
+          position: '15',
         }],
       };
       this.action = create(album, release);
@@ -171,6 +190,40 @@ describe('Credits action creator', () => {
           credit.track === 'T10' &&
           credit.name === 'P910' &&
           credit.role === 'R910'));
+      });
+    });
+
+    describe('extracts mixed range type multi track release credit', () => {
+      it('P111315 worked on T11 as R111315', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T11' &&
+          credit.name === 'P111315' &&
+          credit.role === 'R111315'));
+      });
+
+      it('P111315 worked on T13 as R111315', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T13' &&
+          credit.name === 'P111315' &&
+          credit.role === 'R111315'));
+      });
+
+      it('P111315 worked on T14 as R111315', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T14' &&
+          credit.name === 'P111315' &&
+          credit.role === 'R111315'));
+      });
+
+      it('P111315 worked on T15 as R111315', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T15' &&
+          credit.name === 'P111315' &&
+          credit.role === 'R111315'));
+      });
+
+      it('No one worked on T12', function () {
+        assert(!this.action.credits.find(credit => credit.track === 'T12'));
       });
     });
   });
