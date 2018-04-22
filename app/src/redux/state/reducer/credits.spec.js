@@ -20,4 +20,16 @@ describe('Credit reducer', () => {
       assert.equal(credits[0], 'value');
     });
   });
+
+  it('avoids duplicate credits', () => {
+    const credits = reduce([{
+      name: 'P1', role: 'R1', track: 'T1',
+    }], {
+      type: ADD_CREDITS,
+      credits: [{
+        name: 'P1', role: 'R1', track: 'T1',
+      }],
+    });
+    assert.equal(credits.length, 1);
+  });
 });
