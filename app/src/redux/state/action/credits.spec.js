@@ -30,6 +30,8 @@ describe('Credits action creator', () => {
         { id: 'T19' },
         { id: 'T20' },
         { id: 'T21' },
+        { id: 'T22' },
+        { id: 'T23' },
       ],
     },
   };
@@ -70,6 +72,10 @@ describe('Credits action creator', () => {
           name: 'P21',
           role: 'R21',
           tracks: 'Pos21',
+        }, {
+          name: 'P2223',
+          role: 'R2223',
+          tracks: 'Pos22 to Pos23',
         }],
         tracklist: [{
           extraartists: [{
@@ -119,6 +125,10 @@ describe('Credits action creator', () => {
           position: '20',
         }, {
           position: 'Pos21',
+        }, {
+          position: 'Pos22',
+        }, {
+          position: 'Pos23',
         }],
       };
       this.action = create(album, release);
@@ -300,12 +310,28 @@ describe('Credits action creator', () => {
     // In formats that have 2 sides (cassettes, LPs) or multiple units of the same
     // format type, positions can be described using non numeric strings such as:
     // A1, A2, A3, B1, B2...
-    it('Can work with non numeric positions in release credits', () => {
+    describe('Can work with non numeric positions in release credits', () => {
       it('individually', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T21' &&
         credit.name === 'P21' &&
         credit.role === 'R21'));
+      });
+
+      describe('in a range', () => {
+        it('P2223 worked on T22 as R2223', function () {
+          assert(!!this.action.credits.find(credit =>
+            credit.track === 'T22' &&
+        credit.name === 'P2223' &&
+        credit.role === 'R2223'));
+        });
+
+        it('P2223 worked on T23 as R2223', function () {
+          assert(!!this.action.credits.find(credit =>
+            credit.track === 'T23' &&
+        credit.name === 'P2223' &&
+        credit.role === 'R2223'));
+        });
       });
     });
   });
