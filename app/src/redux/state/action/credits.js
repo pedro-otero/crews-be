@@ -11,10 +11,10 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
       .filter(({ tracks }) => splitTrim(tracks,',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            const extremes = trackString.split('-').map(v => v.trim());
+            const extremes = splitTrim(trackString,'-');
             return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
           } else if (trackString.includes('to')) {
-            const extremes = trackString.split('to').map(v => v.trim());
+            const extremes = splitTrim(trackString,'to');
             return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
           }
           return trackString.split(',').map(t => t.trim()).includes(position);
