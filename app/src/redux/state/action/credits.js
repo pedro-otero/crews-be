@@ -1,6 +1,6 @@
 const { ADD_CREDITS } = require('./constants');
 
-const splitTrim = value => value.split(',').map(v => v.trim());
+const splitTrim = (value,separator) => value.split(separator).map(v => v.trim());
 
 module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
   const translatePosition = position => tracklist.findIndex(t => t.position === position);
@@ -8,7 +8,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
     position,
     extraartists: extraartists.concat(releaseExtraArtists
       .filter(({ tracks, role }) => !!tracks && !!role)
-      .filter(({ tracks }) => splitTrim(tracks)
+      .filter(({ tracks }) => splitTrim(tracks,',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
             const extremes = trackString.split('-').map(v => v.trim());
@@ -23,7 +23,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
   })).map(({ extraartists: credits }, i) => ({
     id: items[i].id,
     credits: credits.reduce((trackCredits, { name, role }) => trackCredits
-      .concat(splitTrim(role).map(r => ({
+      .concat(splitTrim(role,',').map(r => ({
         name,
         role: r,
       }))), []),
