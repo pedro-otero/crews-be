@@ -24,6 +24,11 @@ describe('Credits action creator', () => {
         { id: 'T13' },
         { id: 'T14' },
         { id: 'T15' },
+        { id: 'T16' },
+        { id: 'T17' },
+        { id: 'T18' },
+        { id: 'T19' },
+        { id: 'T20' },
       ],
     },
   };
@@ -56,6 +61,10 @@ describe('Credits action creator', () => {
         }, {
           name: 'P17',
           role: 'R17',
+        }, {
+          name: 'P181920',
+          role: 'R181920',
+          tracks: 'T18 to T20',
         }],
         tracklist: [{
           extraartists: [{
@@ -93,6 +102,16 @@ describe('Credits action creator', () => {
           position: '14',
         }, {
           position: '15',
+        }, {
+          position: '16',
+        }, {
+          position: '17',
+        }, {
+          position: '18',
+        }, {
+          position: '19',
+        }, {
+          position: '20',
         }],
       };
       this.action = create(album, release);
@@ -238,6 +257,14 @@ describe('Credits action creator', () => {
 
     it('Ignores release extra artists without tracks', function () {
       assert(!this.action.credits.find(credit => credit.name === 'P17'));
+    });
+
+    it('No one worked on track 16', function () {
+      assert(!this.action.credits.find(credit => credit.track === 'T16'));
+    });
+
+    it('No one worked on track 17', function () {
+      assert(!this.action.credits.find(credit => credit.track === 'T17'));
     });
   });
 });
