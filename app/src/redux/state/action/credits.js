@@ -6,22 +6,21 @@ const inRange = (position, trackString) => {
     return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
   }
   return trackString.split(',').map(t => t.trim()).includes(position);
-}
+};
+
+const splitTrim = value => value.split(',').map(v => v.trim());
 
 module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
   const temp = tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat(releaseExtraArtists
-      .filter(({ tracks }) => tracks
-        .split(',')
-        .map(t => t.trim())
+      .filter(({ tracks }) => splitTrim(tracks)
         .reduce((accum, trackString) => accum || inRange(position, trackString), false))
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
   })).map(({ extraartists: credits }, i) => ({
     id: items[i].id,
     credits: credits.reduce((trackCredits, { name, role }) => trackCredits
-      .concat(role.split(',').map(r => r
-        .trim()).map(r => ({
+      .concat(splitTrim(role).map(r => ({
         name,
         role: r,
       }))), []),
