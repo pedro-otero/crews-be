@@ -11,7 +11,9 @@ module.exports = (spotifyAlbum, credits) => ({
     producers: trackCredits
       .filter(c => roles.producers.includes(c.role))
       .map(c => c.name),
-    composers: [],
+    composers: trackCredits
+      .filter(c => roles.composers.includes(c.role))
+      .map(c => c.name),
     featured: [],
     credits: trackCredits.reduce((tree, credit) => Object.assign({}, tree, ({
       [credit.name]: (tree[credit.name] || []).concat([credit.role]),
