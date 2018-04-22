@@ -24,7 +24,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
             } else if (trackString.includes('to')) {
               return inRange(trackString, 'to', position);
             }
-            return trackString.split(',').map(t => t.trim()).includes(position);
+            return splitTrim(trackString, ',').includes(position);
           })(), false))
         .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
     })).map(({ extraartists: credits }, i) => ({
