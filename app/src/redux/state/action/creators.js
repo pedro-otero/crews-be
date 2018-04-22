@@ -8,6 +8,8 @@ const {
   REMOVE_RELEASES,
 } = require('./constants');
 
+const addCredits = require('./credits');
+
 const addSearch = id => ({
   type: ADD_SEARCH,
   id,
@@ -52,4 +54,5 @@ module.exports = {
   removeSearch,
   removeResults,
   removeReleases,
+  addCredits,
 };
