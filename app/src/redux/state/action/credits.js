@@ -4,17 +4,17 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
   const temp = tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat(releaseExtraArtists
-      .filter(({ tracks }) => {
-        return tracks.split(',').map(t => t.trim()).reduce((accum, val) => {
-          return accum || (() => {
+      .filter(({ tracks }) => tracks
+        .split(',')
+        .map(t => t.trim())
+        .reduce((accum, val) => accum || (
+          () => {
             if (val.includes('-')) {
               const extremes = val.split('-').map(n => Number(n));
               return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
             }
             return val.split(',').map(t => t.trim()).includes(position);
-          })();
-        }, false);
-      })
+          })(), false))
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
   })).map(({ extraartists: credits }, i) => ({
     id: items[i].id,
