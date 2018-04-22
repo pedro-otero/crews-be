@@ -87,6 +87,10 @@ describe('Credits action creator', () => {
           name: 'P2425',
           role: 'R2425',
           tracks: 'Pos24-Pos25',
+        }, {
+          name: 'P1',
+          role: 'R1',
+          tracks: '19 to Pos21, Pos23, Pos24-Pos25',
         }],
         tracklist: [{
           extraartists: [{
@@ -293,6 +297,31 @@ describe('Credits action creator', () => {
             assert(exists(this.action.credits, 'T25', 'P2425', 'R2425'));
           });
         });
+      });
+    });
+    describe('Can work with mixed multi ranges and position types', () => {
+      it('P1 worked on T19 as R1', function () {
+        assert(exists(this.action.credits, 'T19', 'P1', 'R1'));
+      });
+
+      it('P1 worked on T20 as R1', function () {
+        assert(exists(this.action.credits, 'T20', 'P1', 'R1'));
+      });
+
+      it('P1 worked on T21 as R1', function () {
+        assert(exists(this.action.credits, 'T21', 'P1', 'R1'));
+      });
+
+      it('P1 worked on T23 as R1', function () {
+        assert(exists(this.action.credits, 'T23', 'P1', 'R1'));
+      });
+
+      it('P1 worked on T24 as R1', function () {
+        assert(exists(this.action.credits, 'T24', 'P1', 'R1'));
+      });
+
+      it('P1 worked on T25 as R1', function () {
+        assert(exists(this.action.credits, 'T25', 'P1', 'R1'));
       });
     });
   });
