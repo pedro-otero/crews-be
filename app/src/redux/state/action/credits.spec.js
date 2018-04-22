@@ -32,6 +32,8 @@ describe('Credits action creator', () => {
         { id: 'T21' },
         { id: 'T22' },
         { id: 'T23' },
+        { id: 'T24' },
+        { id: 'T25' },
       ],
     },
   };
@@ -76,6 +78,10 @@ describe('Credits action creator', () => {
           name: 'P2223',
           role: 'R2223',
           tracks: 'Pos22 to Pos23',
+        }, {
+          name: 'P2425',
+          role: 'R2425',
+          tracks: 'Pos24-Pos25',
         }],
         tracklist: [{
           extraartists: [{
@@ -129,6 +135,10 @@ describe('Credits action creator', () => {
           position: 'Pos22',
         }, {
           position: 'Pos23',
+        }, {
+          position: 'Pos24',
+        }, {
+          position: 'Pos25',
         }],
       };
       this.action = create(album, release);
@@ -311,26 +321,44 @@ describe('Credits action creator', () => {
     // format type, positions can be described using non numeric strings such as:
     // A1, A2, A3, B1, B2...
     describe('Can work with non numeric positions in release credits', () => {
-      it('individually', function () {
-        assert(!!this.action.credits.find(credit =>
-          credit.track === 'T21' &&
+      describe('literal', () => {
+        it('individually', function () {
+          assert(!!this.action.credits.find(credit =>
+            credit.track === 'T21' &&
         credit.name === 'P21' &&
         credit.role === 'R21'));
-      });
-
-      describe('in a range', () => {
-        it('P2223 worked on T22 as R2223', function () {
-          assert(!!this.action.credits.find(credit =>
-            credit.track === 'T22' &&
-        credit.name === 'P2223' &&
-        credit.role === 'R2223'));
         });
 
-        it('P2223 worked on T23 as R2223', function () {
-          assert(!!this.action.credits.find(credit =>
-            credit.track === 'T23' &&
+        describe('in a range', () => {
+          it('P2223 worked on T22 as R2223', function () {
+            assert(!!this.action.credits.find(credit =>
+              credit.track === 'T22' &&
         credit.name === 'P2223' &&
         credit.role === 'R2223'));
+          });
+
+          it('P2223 worked on T23 as R2223', function () {
+            assert(!!this.action.credits.find(credit =>
+              credit.track === 'T23' &&
+        credit.name === 'P2223' &&
+        credit.role === 'R2223'));
+          });
+        });
+      });
+
+      describe('hyphenated', () => {
+        it('P2425 worked on T24 as R2425', function () {
+          assert(!!this.action.credits.find(credit =>
+            credit.track === 'T24' &&
+        credit.name === 'P2425' &&
+        credit.role === 'R2425'));
+        });
+
+        it('P2425 worked on T25 as R2425', function () {
+          assert(!!this.action.credits.find(credit =>
+            credit.track === 'T25' &&
+        credit.name === 'P2425' &&
+        credit.role === 'R2425'));
         });
       });
     });

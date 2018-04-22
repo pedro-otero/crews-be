@@ -11,8 +11,8 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
       .filter(({ tracks }) => splitTrim(tracks)
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            const extremes = trackString.split('-').map(n => Number(n));
-            return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
+            const extremes = trackString.split('-').map(v => v.trim());
+            return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
           } else if (trackString.includes('to')) {
             const extremes = trackString.split('to').map(v => v.trim());
             return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
