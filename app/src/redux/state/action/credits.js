@@ -4,7 +4,13 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
   const temp = tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat(releaseExtraArtists
-      .filter(({ tracks }) => tracks === position)
+      .filter(({ tracks }) => {
+        if (tracks.includes('-')) {
+          const extremes = tracks.split('-').map(n => Number(n));
+          return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
+        }
+        return tracks === position;
+      })
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
   })).map(({ extraartists: credits }, i) => ({
     id: items[i].id,

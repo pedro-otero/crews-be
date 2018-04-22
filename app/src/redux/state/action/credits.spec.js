@@ -8,7 +8,16 @@ const create = require('./credits');
 describe('Credits action creator', () => {
   const album = {
     tracks: {
-      items: [{ id: 'T1' }, { id: 'T2' }, { id: 'T3' }, { id: 'T4' }],
+      items: [
+        { id: 'T1' },
+        { id: 'T2' },
+        { id: 'T3' },
+        { id: 'T4' },
+        { id: 'T5' },
+        { id: 'T6' },
+        { id: 'T7' },
+        { id: 'T8' },
+      ],
     },
   };
 
@@ -23,6 +32,10 @@ describe('Credits action creator', () => {
           tracks: '4',
           name: 'P4',
           role: 'R41, R42',
+        }, {
+          tracks: '5-7',
+          name: 'P567',
+          role: 'R51',
         }],
         tracklist: [{
           extraartists: [{
@@ -38,6 +51,14 @@ describe('Credits action creator', () => {
           position: '3',
         }, {
           position: '4',
+        }, {
+          position: '5',
+        }, {
+          position: '6',
+        }, {
+          position: '7',
+        }, {
+          position: '8',
         }],
       };
       this.action = create(album, release);
@@ -97,6 +118,33 @@ describe('Credits action creator', () => {
           credit.track === 'T4' &&
           credit.name === 'P4' &&
           credit.role === 'R42'));
+      });
+    });
+
+    describe('extracts hyphen-rage multi track release credit', () => {
+      it('extracts hyphen-rage multi track release credit', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T5' &&
+          credit.name === 'P567' &&
+          credit.role === 'R51'));
+      });
+
+      it('extracts hyphen-rage multi track release credit', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T6' &&
+          credit.name === 'P567' &&
+          credit.role === 'R51'));
+      });
+
+      it('extracts hyphen-rage multi track release credit', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T7' &&
+          credit.name === 'P567' &&
+          credit.role === 'R51'));
+      });
+
+      it('extracts hyphen-rage multi track release credit', function () {
+        assert(!this.action.credits.find(credit => credit.track === 'T8'));
       });
     });
   });
