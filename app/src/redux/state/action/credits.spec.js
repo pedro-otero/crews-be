@@ -269,12 +269,12 @@ describe('Credits action creator', () => {
     // format type, positions can be described using non numeric strings such as:
     // A1, A2, A3, B1, B2...
     describe('Can work with non numeric positions in release credits', () => {
-      describe('literal', () => {
-        it('individually', function () {
-          assert(exists(this.action.credits, 'T21', 'P21', 'R21'));
-        });
+      it('individually', function () {
+        assert(exists(this.action.credits, 'T21', 'P21', 'R21'));
+      });
 
-        describe('in a range', () => {
+      describe('in a range', () => {
+        describe('literal', () => {
           it('P2223 worked on T22 as R2223', function () {
             assert(exists(this.action.credits, 'T22', 'P2223', 'R2223'));
           });
@@ -283,15 +283,15 @@ describe('Credits action creator', () => {
             assert(exists(this.action.credits, 'T23', 'P2223', 'R2223'));
           });
         });
-      });
 
-      describe('hyphenated', () => {
-        it('P2425 worked on T24 as R2425', function () {
-          assert(exists(this.action.credits, 'T24', 'P2425', 'R2425'));
-        });
+        describe('hyphenated', () => {
+          it('P2425 worked on T24 as R2425', function () {
+            assert(exists(this.action.credits, 'T24', 'P2425', 'R2425'));
+          });
 
-        it('P2425 worked on T25 as R2425', function () {
-          assert(exists(this.action.credits, 'T25', 'P2425', 'R2425'));
+          it('P2425 worked on T25 as R2425', function () {
+            assert(exists(this.action.credits, 'T25', 'P2425', 'R2425'));
+          });
         });
       });
     });
