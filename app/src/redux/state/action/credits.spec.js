@@ -51,6 +51,8 @@ describe('Credits action creator', () => {
           tracks: '11, 13-15',
           name: 'P111315',
           role: 'R111315',
+        }, {
+          name: 'P16',
         }],
         tracklist: [{
           extraartists: [{
@@ -225,6 +227,10 @@ describe('Credits action creator', () => {
       it('No one worked on T12', function () {
         assert(!this.action.credits.find(credit => credit.track === 'T12'));
       });
+    });
+
+    it('Ignores release extra artists without role nor tracks', function () {
+      assert(!this.action.credits.find(credit => credit.name === 'P16'));
     });
   });
 });

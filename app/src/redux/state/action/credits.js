@@ -14,6 +14,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
   const temp = tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat(releaseExtraArtists
+      .filter(({ tracks, role }) => !!tracks && !!role)
       .filter(({ tracks }) => splitTrim(tracks)
         .reduce((accum, trackString) => accum || inRange(position, trackString), false))
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
