@@ -9,7 +9,7 @@ describe('Credits action creator', () => {
   const exists = (credits, track, name, role) => credits.find(credit =>
     credit.track === track &&
     credit.name === name &&
-    credit.role === role)
+    credit.role === role);
 
   const album = {
     tracks: {
