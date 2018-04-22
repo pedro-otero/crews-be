@@ -4,6 +4,10 @@ const splitTrim = (value,separator) => value.split(separator).map(v => v.trim())
 
 module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
   const translatePosition = position => tracklist.findIndex(t => t.position === position);
+  const inRange=(trackString,separator,position)=> {
+    const extremes = splitTrim(trackString,separator);
+    return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
+  };
   const temp = tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat(releaseExtraArtists
@@ -11,11 +15,9 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
       .filter(({ tracks }) => splitTrim(tracks,',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            const extremes = splitTrim(trackString,'-');
-            return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
+            return inRange(trackString,'-',position);
           } else if (trackString.includes('to')) {
-            const extremes = splitTrim(trackString,'to');
-            return (translatePosition(extremes[0]) <= translatePosition(position)) && (translatePosition(position) <= translatePosition(extremes[1]));
+            return inRange(trackString,'to',position);
           }
           return trackString.split(',').map(t => t.trim()).includes(position);
         })(), false))
