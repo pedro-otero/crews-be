@@ -83,14 +83,14 @@ describe('Credits action creator', () => {
     });
 
     describe('extracts multi role track credit', () => {
-      it('extracts multi role track credit', function () {
+      it('P2 worked on T2 as R21', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T2' &&
         credit.name === 'P2' &&
         credit.role === 'R21'));
       });
 
-      it('extracts multi role track credit', function () {
+      it('P2 worked on T2 as R22', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T2' &&
         credit.name === 'P2' &&
@@ -106,14 +106,14 @@ describe('Credits action creator', () => {
     });
 
     describe('extracts multi role release credit', () => {
-      it('extracts multi role release credit', function () {
+      it('P4 worked on T4 as R41', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T4' &&
           credit.name === 'P4' &&
           credit.role === 'R41'));
       });
 
-      it('extracts multi role release credit', function () {
+      it('P4 worked on T4 as R42', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T4' &&
           credit.name === 'P4' &&
@@ -122,28 +122,28 @@ describe('Credits action creator', () => {
     });
 
     describe('extracts hyphen-rage multi track release credit', () => {
-      it('extracts hyphen-rage multi track release credit', function () {
+      it('P567 worked on T5 as R51', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T5' &&
           credit.name === 'P567' &&
           credit.role === 'R51'));
       });
 
-      it('extracts hyphen-rage multi track release credit', function () {
+      it('P567 worked on T6 as R51', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T6' &&
           credit.name === 'P567' &&
           credit.role === 'R51'));
       });
 
-      it('extracts hyphen-rage multi track release credit', function () {
+      it('P567 worked on T7 as R51', function () {
         assert(!!this.action.credits.find(credit =>
           credit.track === 'T7' &&
           credit.name === 'P567' &&
           credit.role === 'R51'));
       });
 
-      it('extracts hyphen-rage multi track release credit', function () {
+      it('No one worked on T8', function () {
         assert(!this.action.credits.find(credit => credit.track === 'T8'));
       });
     });
