@@ -63,6 +63,10 @@ describe('Build', () => {
         name: 'P1',
         role: 'R1',
         track: 'T1',
+      }, {
+        name: 'P1',
+        role: 'Producer',
+        track: 'T1',
       }];
       const album = {
         tracks: {
@@ -77,6 +81,10 @@ describe('Build', () => {
 
     it('has P1 as R1 of T1', function () {
       assert.equal(this.bundle.tracks[0].credits.P1[0], 'R1');
+    });
+
+    it('has P1 as Producer of T1', function () {
+      assert.equal(this.bundle.tracks[0].producers[0], 'P1');
     });
   });
 });

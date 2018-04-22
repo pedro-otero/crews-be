@@ -8,7 +8,9 @@ module.exports = (spotifyAlbum, credits) => ({
   })).map(({ id, title, trackCredits }) => ({
     id,
     title,
-    producers: [],
+    producers: trackCredits
+      .filter(c => roles.producers.includes(c.role))
+      .map(c => c.name),
     composers: [],
     featured: [],
     credits: trackCredits.reduce((tree, credit) => Object.assign({}, tree, ({
