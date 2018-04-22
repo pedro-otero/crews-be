@@ -1,17 +1,26 @@
 const { ADD_CREDITS } = require('./constants');
 
-module.exports = ({ tracks: { items } }, { tracklist }) => {
-  const credits = items.reduce((all, { id: track }, i) => all
-    .concat(tracklist[i].extraartists
-      .reduce((trackCredits, { name, role }) => trackCredits
-        .concat(role.split(',').map(r => r
-          .trim()).map(r => ({
-          track,
-          name,
-          role: r,
-        }))), [])), []);
+module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
+  const temp = tracklist.map(({ position, extraartists = [] }) => ({
+    position,
+    extraartists: extraartists.concat(releaseExtraArtists
+      .filter(({ tracks }) => tracks === position)
+      .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
+  })).map(({ extraartists: credits }, i) => ({
+    id: items[i].id,
+    credits: credits.reduce((trackCredits, { name, role }) => trackCredits
+      .concat(role.split(',').map(r => r
+        .trim()).map(r => ({
+        name,
+        role: r,
+      }))), []),
+  })).reduce(
+    (accum, { id, credits }) =>
+      accum.concat(credits
+        .map(({ name, role }) => ({ track: id, name, role }))),
+    []);
   return {
     type: ADD_CREDITS,
-    credits,
+    credits: temp,
   };
 };

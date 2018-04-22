@@ -8,13 +8,18 @@ const create = require('./credits');
 describe('Credits action creator', () => {
   const album = {
     tracks: {
-      items: [{ id: 'T1' }, { id: 'T2' }],
+      items: [{ id: 'T1' }, { id: 'T2' }, { id: 'T3' }],
     },
   };
 
   describe('adds credits', () => {
     before(function () {
       const release = {
+        extraartists: [{
+          tracks: '3',
+          name: 'P3',
+          role: 'R3',
+        }],
         tracklist: [{
           extraartists: [{
             name: 'P1',
@@ -25,6 +30,8 @@ describe('Credits action creator', () => {
             name: 'P2',
             role: 'R21, R22',
           }],
+        }, {
+          position: '3',
         }],
       };
       this.action = create(album, release);
@@ -32,6 +39,13 @@ describe('Credits action creator', () => {
 
     it('type', function () {
       assert.equal(this.action.type, ADD_CREDITS);
+    });
+
+    it('extracts single role track credit', function () {
+      assert(!!this.action.credits.find(credit =>
+        credit.track === 'T1' &&
+        credit.name === 'P1' &&
+        credit.role === 'R1'));
     });
 
     it('extracts single role track credit', function () {
@@ -55,6 +69,13 @@ describe('Credits action creator', () => {
         credit.name === 'P2' &&
         credit.role === 'R22'));
       });
+    });
+
+    it('extracts single role release credit', function () {
+      assert(!!this.action.credits.find(credit =>
+        credit.track === 'T3' &&
+        credit.name === 'P3' &&
+        credit.role === 'R3'));
     });
   });
 });
