@@ -33,7 +33,7 @@ const actionsWrapper = (id) => {
     actions.releaseResults(album.id, page);
     pages.push(page);
   };
-  const addRelease = release => actions.addRelease(release);
+  const addRelease = release => actions.addCredits(album, release);
   const abort = () => actions.removeSearch(id);
   const clear = () => {
     const releases = pages
