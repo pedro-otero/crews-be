@@ -6,11 +6,18 @@ const {
 const reduce = require('./credits');
 
 describe('Credit reducer', () => {
-  it('adds credits', () => {
+  describe('adds credits', () => {
     const credits = reduce([], {
       type: ADD_CREDITS,
       credits: ['value'],
     });
-    assert.equal(credits.length, 1);
+
+    it('test length', () => {
+      assert.equal(credits.length, 1);
+    });
+
+    it('test value', () => {
+      assert.equal(credits[0], 'value');
+    });
   });
 });
