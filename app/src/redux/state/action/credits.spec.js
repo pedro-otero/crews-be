@@ -29,6 +29,7 @@ describe('Credits action creator', () => {
         { id: 'T18' },
         { id: 'T19' },
         { id: 'T20' },
+        { id: 'T21' },
       ],
     },
   };
@@ -65,6 +66,10 @@ describe('Credits action creator', () => {
           name: 'P181920',
           role: 'R181920',
           tracks: '18 to 20',
+        }, {
+          name: 'P21',
+          role: 'R21',
+          tracks: 'Pos21',
         }],
         tracklist: [{
           extraartists: [{
@@ -112,6 +117,8 @@ describe('Credits action creator', () => {
           position: '19',
         }, {
           position: '20',
+        }, {
+          position: 'Pos21',
         }],
       };
       this.action = create(album, release);
@@ -287,6 +294,18 @@ describe('Credits action creator', () => {
           credit.track === 'T20' &&
           credit.name === 'P181920' &&
           credit.role === 'R181920'));
+      });
+    });
+
+    // In formats that have 2 sides (cassettes, LPs) or multiple units of the same
+    // format type, positions can be described using non numeric strings such as:
+    // A1, A2, A3, B1, B2...
+    it('Can work with non numeric positions in release credits', () => {
+      it('individually', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T21' &&
+        credit.name === 'P21' &&
+        credit.role === 'R21'));
       });
     });
   });
