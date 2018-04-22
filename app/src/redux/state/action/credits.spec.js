@@ -64,7 +64,7 @@ describe('Credits action creator', () => {
         }, {
           name: 'P181920',
           role: 'R181920',
-          tracks: 'T18 to T20',
+          tracks: '18 to 20',
         }],
         tracklist: [{
           extraartists: [{
@@ -265,6 +265,29 @@ describe('Credits action creator', () => {
 
     it('No one worked on track 17', function () {
       assert(!this.action.credits.find(credit => credit.track === 'T17'));
+    });
+
+    describe('extracts literal (with to) range type multi track release credit', () => {
+      it('P181920 worked on T18 as R181920', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T18' &&
+          credit.name === 'P181920' &&
+          credit.role === 'R181920'));
+      });
+
+      it('P181920 worked on T19 as R181920', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T19' &&
+          credit.name === 'P181920' &&
+          credit.role === 'R181920'));
+      });
+
+      it('P181920 worked on T20 as R181920', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T20' &&
+          credit.name === 'P181920' &&
+          credit.role === 'R181920'));
+      });
     });
   });
 });
