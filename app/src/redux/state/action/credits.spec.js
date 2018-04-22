@@ -8,7 +8,7 @@ const create = require('./credits');
 describe('Credits action creator', () => {
   const album = {
     tracks: {
-      items: [{ id: 'T1' }, { id: 'T2' }, { id: 'T3' }],
+      items: [{ id: 'T1' }, { id: 'T2' }, { id: 'T3' }, { id: 'T4' }],
     },
   };
 
@@ -19,6 +19,10 @@ describe('Credits action creator', () => {
           tracks: '3',
           name: 'P3',
           role: 'R3',
+        }, {
+          tracks: '4',
+          name: 'P4',
+          role: 'R41, R42',
         }],
         tracklist: [{
           extraartists: [{
@@ -32,6 +36,8 @@ describe('Credits action creator', () => {
           }],
         }, {
           position: '3',
+        }, {
+          position: '4',
         }],
       };
       this.action = create(album, release);
@@ -76,6 +82,22 @@ describe('Credits action creator', () => {
         credit.track === 'T3' &&
         credit.name === 'P3' &&
         credit.role === 'R3'));
+    });
+
+    describe('extracts multi role release credit', () => {
+      it('extracts multi role release credit', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T4' &&
+          credit.name === 'P4' &&
+          credit.role === 'R41'));
+      });
+
+      it('extracts multi role release credit', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T4' &&
+          credit.name === 'P4' &&
+          credit.role === 'R42'));
+      });
     });
   });
 });
