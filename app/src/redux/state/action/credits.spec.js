@@ -17,6 +17,8 @@ describe('Credits action creator', () => {
         { id: 'T6' },
         { id: 'T7' },
         { id: 'T8' },
+        { id: 'T9' },
+        { id: 'T10' },
       ],
     },
   };
@@ -36,6 +38,10 @@ describe('Credits action creator', () => {
           tracks: '5-7',
           name: 'P567',
           role: 'R51',
+        }, {
+          tracks: '9, 10',
+          name: 'P910',
+          role: 'R910',
         }],
         tracklist: [{
           extraartists: [{
@@ -59,6 +65,10 @@ describe('Credits action creator', () => {
           position: '7',
         }, {
           position: '8',
+        }, {
+          position: '9',
+        }, {
+          position: '10',
         }],
       };
       this.action = create(album, release);
@@ -145,6 +155,22 @@ describe('Credits action creator', () => {
 
       it('No one worked on T8', function () {
         assert(!this.action.credits.find(credit => credit.track === 'T8'));
+      });
+    });
+
+    describe('extracts comma separated multi track release credit', () => {
+      it('P910 worked on T9 as R910', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T9' &&
+          credit.name === 'P910' &&
+          credit.role === 'R910'));
+      });
+
+      it('P920 worked on T10 as R910', function () {
+        assert(!!this.action.credits.find(credit =>
+          credit.track === 'T10' &&
+          credit.name === 'P910' &&
+          credit.role === 'R910'));
       });
     });
   });

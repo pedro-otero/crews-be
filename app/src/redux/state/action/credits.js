@@ -9,7 +9,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
           const extremes = tracks.split('-').map(n => Number(n));
           return (extremes[0] <= Number(position)) && (Number(position) <= extremes[1]);
         }
-        return tracks === position;
+        return tracks.split(',').map(t => t.trim()).includes(position);
       })
       .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
   })).map(({ extraartists: credits }, i) => ({
