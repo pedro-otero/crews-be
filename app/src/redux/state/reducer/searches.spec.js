@@ -20,11 +20,11 @@ describe('Searches reducer', () => {
       assert.equal(1, this.searches.length);
     });
 
-    it('Creates a request with the same id as the album', function () {
+    it('Creates a search with the same id as the album', function () {
       assert.equal('albumId', this.searches[0].id);
     });
 
-    it('Creates a request with empty errors list', function () {
+    it('Creates a search with empty errors list', function () {
       assert.equal(0, this.searches[0].errors.length);
     });
 
