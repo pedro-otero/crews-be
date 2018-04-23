@@ -3,6 +3,7 @@ const assert = require('assert');
 const {
   ADD_SEARCH,
   SET_LAST_SEARCH_PAGE,
+  SET_LAST_RELEASE,
 } = require('./constants');
 const create = require('./searches');
 
@@ -60,6 +61,24 @@ describe('Searches action creators', () => {
 
     it('sets lastSearchPage.releases', function () {
       assert.equal(this.action.lastSearchPage.releases[0], 1);
+    });
+  });
+
+  context('creates setLastRelease action', () => {
+    before(function () {
+      this.action = create.setLastRelease(1, { id: 2 });
+    });
+
+    it('sets SET_LAST_RELEASE as type', function () {
+      assert.equal(this.action.type, SET_LAST_RELEASE);
+    });
+
+    it('sets the id', function () {
+      assert.equal(this.action.id, 1);
+    });
+
+    it('sets lastRelease', function () {
+      assert.equal(this.action.lastRelease, 2);
     });
   });
 });
