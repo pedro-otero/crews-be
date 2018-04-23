@@ -195,35 +195,6 @@ describe('Search state view', () => {
       assert.equal(query.progress, 100);
     });
 
-    it('picks the best match', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [{ name: 'track' }] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 1,
-              items: 2,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }],
-        releases: [
-          {
-            id: 1,
-            tracklist: [{ title: 'similar track' }],
-          },
-          { id: 2, tracklist: [{ title: 'track', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
-      });
-      const query = Query(store)(1);
-      assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
-    });
-
     it('safely finds no match', function () {
       const store = this.mockStore({
         searches: [{ id: 1 }],
@@ -250,7 +221,7 @@ describe('Search state view', () => {
           { id: 2, tracklist: [{ title: 'track 1', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
       });
       const query = Query(store)(1);
-      assert.equal(query.bestMatch, null);
+      assert(query.bestMatch);
     });
 
     it('returns null if there is no album data', function () {
