@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 const { ADD_SEARCH } = require('./constants');
-const create = require('./creators');
+const create = require('./searches');
 
 describe('Searches action creators', () => {
   context('creates add search action', () => {
