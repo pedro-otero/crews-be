@@ -64,15 +64,15 @@ describe('Build', () => {
         role: 'R1',
         track: 'T1',
       }, {
-        name: 'P1',
+        name: 'P2',
         role: 'Producer',
         track: 'T1',
       }, {
-        name: 'P1',
+        name: 'P4',
         role: 'Written-By',
         track: 'T1',
       }, {
-        name: 'P1',
+        name: 'P3',
         role: 'feat.',
         track: 'T1',
       }];
@@ -91,16 +91,28 @@ describe('Build', () => {
       assert.equal(this.bundle.tracks[0].credits.P1[0], 'R1');
     });
 
-    it('has P1 as Producer of T1', function () {
-      assert.equal(this.bundle.tracks[0].producers[0], 'P1');
+    it('has P2 as Producer of T1', function () {
+      assert.equal(this.bundle.tracks[0].producers[0], 'P2');
     });
 
-    it('has P1 as Composer of T1', function () {
-      assert.equal(this.bundle.tracks[0].composers[0], 'P1');
+    it('has P4 as Composer of T1', function () {
+      assert.equal(this.bundle.tracks[0].composers[0], 'P4');
     });
 
-    it('has P1 as featured artist of T1', function () {
-      assert.equal(this.bundle.tracks[0].featured[0], 'P1');
+    it('has P3 as featured artist of T1', function () {
+      assert.equal(this.bundle.tracks[0].featured[0], 'P3');
+    });
+
+    it('does not put P2 (producer) in the general credits list', function () {
+      assert(!Object.keys(this.bundle.tracks[0].credits).includes('P2'));
+    });
+
+    it('does not put P2 (featured artist) in the general credits list', function () {
+      assert(!Object.keys(this.bundle.tracks[0].credits).includes('P3'));
+    });
+
+    it('does not put P4 (composer) in the general credits list', function () {
+      assert(!Object.keys(this.bundle.tracks[0].credits).includes('P4'));
     });
   });
 });
