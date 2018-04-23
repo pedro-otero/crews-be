@@ -4,6 +4,7 @@ const {
   ADD_SEARCH,
   REMOVE_SEARCH,
   SET_LAST_SEARCH_PAGE,
+  SET_LAST_RELEASE,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -54,6 +55,31 @@ describe('Searches reducer', () => {
 
     it('Leaves other search unmodified', function () {
       assert(!this.searches[1].lastSearchPage);
+    });
+  });
+
+  describe(SET_LAST_RELEASE, () => {
+    before(function () {
+      this.searches = reduce([
+        { id: 'albumId' },
+        { id: 'otherAlbum' },
+      ], {
+        type: SET_LAST_RELEASE,
+        id: 'albumId',
+        lastRelease: 'dummy',
+      });
+    });
+
+    it('keeps the searches length', function () {
+      assert.equal(this.searches.length, 2);
+    });
+
+    it('Sets the last search page retrieved', function () {
+      assert.equal(this.searches[0].lastRelease, 'dummy');
+    });
+
+    it('Leaves other search unmodified', function () {
+      assert(!this.searches[1].lastRelease);
     });
   });
 

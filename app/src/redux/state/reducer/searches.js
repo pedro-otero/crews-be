@@ -2,10 +2,11 @@ const {
   ADD_SEARCH,
   REMOVE_SEARCH,
   SET_LAST_SEARCH_PAGE,
+  SET_LAST_RELEASE,
 } = require('../action/constants');
 
 module.exports = (state = [], {
-  type, id, lastSearchPage,
+  type, id, lastSearchPage, lastRelease,
 }) => {
   switch (type) {
     case ADD_SEARCH: {
@@ -14,6 +15,11 @@ module.exports = (state = [], {
     case SET_LAST_SEARCH_PAGE: {
       return [
         Object.assign({}, state.find(search => search.id === id), { lastSearchPage }),
+      ].concat(state.filter(search => search.id !== id));
+    }
+    case SET_LAST_RELEASE: {
+      return [
+        Object.assign({}, state.find(search => search.id === id), { lastRelease }),
       ].concat(state.filter(search => search.id !== id));
     }
     case REMOVE_SEARCH: {
