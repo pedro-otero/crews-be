@@ -3,6 +3,7 @@ const assert = require('assert');
 const {
   ADD_SEARCH,
   REMOVE_SEARCH,
+  SET_LAST_SEARCH_PAGE,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -29,6 +30,41 @@ describe('Searches reducer', () => {
       searches = reduce(searches, add('otherAlbum'));
       assert.equal(2, searches.length);
     });
+  });
+
+  describe(SET_LAST_SEARCH_PAGE, () => {
+    before(function () {
+      this.searches = reduce([
+        { id: 'albumId' },
+        { id: 'otherAlbum' },
+      ], {
+        type: SET_LAST_SEARCH_PAGE,
+        id: 'albumId',
+        lastSearchPage: 'dummy',
+      });
+    });
+
+    it('keeps the searches length', function () {
+      assert.equal(this.searches.length, 2);
+    });
+
+    it('Sets the last search page retrieved', function () {
+      assert.equal(this.searches[0].lastSearchPage, 'dummy');
+    });
+
+    it('Leaves other search unmodified', function () {
+      assert(!this.searches[1].lastSearchPage);
+    });
+  });
+
+  it('returns default state', () => {
+    const searches = reduce(undefined, { type: 'nada' });
+    assert(!searches.length);
+  });
+
+  it('returns default state', () => {
+    const searches = reduce(undefined, { type: 'nada' });
+    assert(!searches.length);
   });
 
   describe(REMOVE_SEARCH, () => {
