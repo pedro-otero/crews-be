@@ -14,7 +14,7 @@ const compareTracklist = (spotify, discogs) => {
 
 module.exports = store => function (id) {
   const {
-    searches, results, albums, releases,
+    searches, results, albums, releases, credits,
   } = store.getState();
 
   const search = searches.find(item => item.id === id);
@@ -40,18 +40,9 @@ module.exports = store => function (id) {
 
   const bestMatch = (() => {
     const { tracks: { items: tracks } } = album;
-    const ordered = retrievedReleases.sort((a, b) => {
-      const scores = {
-        a: compareTracklist(tracks, a.tracklist),
-        b: compareTracklist(tracks, b.tracklist),
-      };
-      return scores.b - scores.a;
-    }).filter(({ tracklist }) => compareTracklist(tracks, tracklist) !== 0);
-    if (ordered.length === 0) {
-      return null;
-    }
-    const first = ordered[0];
-    return buildAlbum(album, first);
+    const albumCredits = credits
+      .filter(credit => tracks.map(track => track.id).includes(credit.track));
+    return buildAlbum(album, albumCredits);
   })();
 
   return { id, progress, bestMatch };
