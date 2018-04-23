@@ -14,28 +14,24 @@ const compareTracklist = (spotify, discogs) => {
 
 module.exports = store => function (id) {
   const {
-    searches, results, albums, releases, credits,
+    searches, albums, credits,
   } = store.getState();
 
   const search = searches.find(item => item.id === id);
   if (!search) { return null; }
 
   const album = albums.find(item => item.id === id);
-  const pages = results.filter(result => result.album === id);
-
-  const retrievedReleases = pages
-    .reduce((all, item) => all.concat(item.page.results), [])
-    .filter(release => releases.map(r => r.id).includes(release.id))
-    .map(release => releases.find(r => r.id === release.id));
 
   const progress = (() => {
-    if (!pages.length) {
+    const { lastSearchPage, lastRelease } = search;
+    if (!lastSearchPage) {
       return 0;
     }
-    const total = pages.filter(result => result.page.pagination.page === 1)[0]
-      .page.pagination.items;
-    const soFar = retrievedReleases.length;
-    return Math.round((soFar / total) * 100);
+    const {
+      page, items, perPage, releases,
+    } = lastSearchPage;
+    const soFar = ((page - 1) * perPage) + (releases.indexOf(lastRelease) + 1);
+    return Math.round((soFar / items) * 100);
   })();
 
   const bestMatch = (() => {
