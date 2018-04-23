@@ -2,232 +2,42 @@ const assert = require('assert');
 
 const Query = require('./query');
 
-describe('Search state view', () => {
-  describe('gets search query object', () => {
-    before(function () {
-      this.mockStore = state => ({ getState: () => state });
-    });
-
-    it('progress 0 because of no retrieved releases', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [],
-          },
-        }],
-        releases: [],
+describe('Query', () => {
+  const test = (id, cause, progress) => {
+    context(cause, () => {
+      before(function () {
+        this.query = Query(this.store)(id);
       });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 0);
-    });
 
-    it('progress 0 because of no search results', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 2,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [],
-          },
-        }],
-        releases: [],
+      it('has correct id', function () {
+        assert.equal(this.query.id, id);
       });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 0);
-    });
 
-    it('partial, one page, 50%', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 1,
-              items: 2,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }],
-        releases: [{ id: 1, tracklist: [] }],
+      it(`has progress = ${progress}`, function () {
+        assert.equal(this.query.progress, progress);
       });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 50);
     });
+  };
 
-    it('partial, two pages, one fully loaded, 40%', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 3,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }, {
-          album: 1,
-          page: {
-            pagination: {
-              pagination: {
-                page: 2,
-                pages: 2,
-                items: 3,
-              },
-            },
-            results: [{ id: 3 }],
-          },
-        }],
-        releases: [{ id: 1, tracklist: [] }, { id: 2, tracklist: [] }],
-      });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 67);
-    });
+  test('query-progress-0-no-retrieved-releases', 'progress 0 because no retrieved releases', 0);
+  test('progress-0-no-search-results', 'progress 0 because of no search results', 0);
+  test('partial-one-page-50%', 'partial, one page, 50%', 50);
+  test('partial-2p-1-fully-loaded-67%', 'partial, two pages, one fully loaded, 67%', 67);
+  test('partial-2p-1-fully-loaded-second-partially-75%', 'partial, two pages, one fully loaded, second partially, 75%', 75);
+  test('full', 'full', 100);
 
-    it('partial, two pages, one fully loaded, second partially, 75%', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }, {
-          album: 1,
-          page: {
-            pagination: {
-              pagination: {
-                page: 2,
-                pages: 2,
-                items: 4,
-              },
-            },
-            results: [{ id: 3 }, { id: 4 }],
-          },
-        }],
-        releases: [
-          { id: 1, tracklist: [] },
-          { id: 2, tracklist: [] },
-          { id: 3, tracklist: [] }],
-      });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 75);
-    });
+  it('picks the best match', function () {
+    const query = Query(this.store)('query-pick-best-match');
+    assert.equal(query.bestMatch.tracks[0].producers[0], 'some guy');
+  });
 
-    it('full', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 2,
-              items: 4,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }, {
-          album: 1,
-          page: {
-            pagination: {
-              pagination: {
-                page: 2,
-                pages: 2,
-                items: 4,
-              },
-            },
-            results: [{ id: 3 }, { id: 4 }],
-          },
-        }],
-        releases: [
-          { id: 1, tracklist: [] },
-          { id: 2, tracklist: [] },
-          { id: 3, tracklist: [] },
-          { id: 4, tracklist: [] }],
-      });
-      const query = Query(store)(1);
-      assert.equal(query.progress, 100);
-    });
+  it('safely finds no match', function () {
+    const query = Query(this.store)('query-no-match');
+    assert.equal(query.bestMatch, null);
+  });
 
-    it('safely finds no match', function () {
-      const store = this.mockStore({
-        searches: [{ id: 1 }],
-        albums: [{
-          id: 1,
-          tracks: { items: [{ name: 'track 1' }, { name: 'track 2' }] },
-        }],
-        results: [{
-          album: 1,
-          page: {
-            pagination: {
-              page: 1,
-              pages: 1,
-              items: 2,
-            },
-            results: [{ id: 1 }, { id: 2 }],
-          },
-        }],
-        releases: [
-          {
-            id: 1,
-            tracklist: [{ title: 'track 1' }],
-          },
-          { id: 2, tracklist: [{ title: 'track 1', extraartists: [{ name: 'some guy', role: 'Producer' }] }] }],
-      });
-      const query = Query(store)(1);
-      assert(query.bestMatch);
-    });
-
-    it('returns null if there is no album data', function () {
-      const store = this.mockStore({ albums: [], searches: [] });
-      const query = Query(store)(1);
-      assert(query === null);
-    });
+  it('returns null if there is no album data', function () {
+    const query = Query(this.store)('nothing');
+    assert(query === null);
   });
 });
