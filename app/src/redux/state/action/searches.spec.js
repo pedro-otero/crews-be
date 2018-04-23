@@ -6,8 +6,13 @@ const create = require('./creators');
 describe('Searches action creators', () => {
   context('creates add search action', () => {
     const action = create.addSearch(1);
+
     it('sets ADD_SEARCH type', () => {
       assert.equal(action.type, ADD_SEARCH);
+    });
+
+    it('sets id', () => {
+      assert.equal(action.id, 1);
     });
   });
 });
