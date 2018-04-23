@@ -24,10 +24,6 @@ describe('Searches reducer', () => {
       assert.equal('albumId', this.searches[0].id);
     });
 
-    it('Creates a search with empty errors list', function () {
-      assert.equal(0, this.searches[0].errors.length);
-    });
-
     it('Adds another search retaining the previous one', () => {
       let searches = reduce([], add('album'));
       searches = reduce(searches, add('otherAlbum'));
