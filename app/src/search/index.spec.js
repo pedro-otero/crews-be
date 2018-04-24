@@ -119,6 +119,10 @@ describe('Search function', () => {
     });
 
     it('logs the 4 releases', function () {
+      assert.equal(this.logger.results.callCount, 2);
+    });
+
+    it('logs the 2 search pages', function () {
       assert.equal(this.logger.release.callCount, 4);
     });
   });
