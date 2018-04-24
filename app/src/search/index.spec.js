@@ -32,6 +32,7 @@ describe('Search function', () => {
     describe('Spotify getAlbum exists', () => {
       beforeEach(function (done) {
         actions.addSearch = sinon.spy();
+        actions.addAlbum = sinon.spy();
         this.spotify = {
           getApi: () => Promise.resolve({
             getAlbum: sinon.stub().resolves({
@@ -55,6 +56,10 @@ describe('Search function', () => {
 
       it('Adds search to state', () => {
         assert(actions.addSearch.calledOnce);
+      });
+
+      it('Adds album to state', () => {
+        assert(actions.addAlbum.calledOnce);
       });
 
       describe('Discogs search throws an exception', () => {
