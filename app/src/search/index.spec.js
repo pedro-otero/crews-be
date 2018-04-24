@@ -74,8 +74,7 @@ describe('Search function', () => {
 
       describe('Discogs search emits an error', () => {
         beforeEach(function () {
-          actions.removeReleases = sinon.spy();
-          actions.removeResults = sinon.spy();
+          actions.clearSearch = sinon.spy();
           const db = {
             search: () => new Promise((resolve, reject) => {
               reject(Error('ERROR'));
@@ -94,21 +93,11 @@ describe('Search function', () => {
             .catch(() => assert(false));
         });
 
-        it('search results are removed', function (done) {
+        it('search is cleared', function (done) {
           const search = this.search(1);
           search.start()
             .then(() => {
-              assert(actions.removeResults.calledOnce);
-            })
-            .then(done)
-            .catch(() => assert(false));
-        });
-
-        it('search releases are removed', function (done) {
-          const search = this.search(1);
-          search.start()
-            .then(() => {
-              assert(actions.removeReleases.calledOnce);
+              assert(actions.clearSearch.calledOnce);
             })
             .then(done)
             .catch(() => assert(false));

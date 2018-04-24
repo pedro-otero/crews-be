@@ -7,11 +7,11 @@ const observer = (logger, output) => ({
   next: ({ type, data: { page, release } }) => ({
     results: () => {
       logger.results({ page });
-      output.addResults(page);
+      output.setLastSearchResults(page);
     },
     release: () => {
       logger.release({ release });
-      output.addRelease(release);
+      output.sendRelease(release);
     },
   })[type](),
   error: (error) => {
@@ -29,24 +29,20 @@ const actionsWrapper = (id) => {
     album = searchAlbum;
     actions.addAlbum(album);
   };
-  const addResults = (page) => {
+  const setLastSearchResults = (page) => {
     actions.releaseResults(album.id, page);
     pages.push(page);
   };
-  const addRelease = (release) => {
+  const sendRelease = (release) => {
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
+      actions.setLastRelease(album.id, release);
     }
   };
   const abort = () => actions.removeSearch(id);
-  const clear = () => {
-    const releases = pages
-      .reduce((result, page) => result.concat(page.results.map(r => r.id)), []);
-    actions.removeReleases(releases);
-    actions.removeResults(id);
-  };
+  const clear = () => actions.clearSearch(id);
   return {
-    addSearch, addAlbum, addResults, addRelease, abort, clear,
+    addSearch, addAlbum, setLastSearchResults, sendRelease, abort, clear,
   };
 };
 
