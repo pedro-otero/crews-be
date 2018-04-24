@@ -35,6 +35,7 @@ describe('Search function', () => {
         finish: () => sinon.stub(),
         error: () => sinon.stub(),
       };
+      actions.addSearch = sinon.stub();
       searchAlbum(this.spotify, this.db, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -44,6 +45,16 @@ describe('Search function', () => {
 
     it('Calls spotify module\'s getApi', function () {
       assert(this.spotify.getApi.calledOnce);
+    });
+
+    describe('Adds search to state', () => {
+      it('only once', () => {
+        assert(actions.addSearch.calledOnce);
+      });
+
+      it('with id A1', () => {
+        assert.equal(actions.addSearch.getCalls()[0].args[0], 'A1');
+      });
     });
 
     it('Calls spotify module\'s getAlbum only once', function () {
