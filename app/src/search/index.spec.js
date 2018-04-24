@@ -54,6 +54,9 @@ describe('Search function', () => {
       };
       actions.addSearch = sinon.stub();
       actions.addAlbum = sinon.stub();
+      actions.setLastRelease = sinon.stub();
+      actions.setLastSearchPage = sinon.stub();
+      actions.addCredits = sinon.stub();
       searchAlbum(this.spotify, this.db, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -122,8 +125,20 @@ describe('Search function', () => {
       assert.equal(this.logger.results.callCount, 2);
     });
 
+    it('sets the 4 releases as last release', () => {
+      assert.equal(actions.setLastRelease.callCount, 4);
+    });
+
+    it('gets credits for the 4 releases', () => {
+      assert.equal(actions.addCredits.callCount, 4);
+    });
+
     it('logs the 2 search pages', function () {
-      assert.equal(this.logger.release.callCount, 4);
+      assert.equal(this.logger.results.callCount, 2);
+    });
+
+    it('sets the 4 releases as last release', () => {
+      assert.equal(actions.setLastSearchPage.callCount, 2);
     });
   });
 
