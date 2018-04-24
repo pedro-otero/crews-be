@@ -1,7 +1,5 @@
 const {
   ADD_ALBUM,
-  ADD_RELEASE,
-  ADD_RELEASE_RESULTS,
   REMOVE_SEARCH,
   REMOVE_RELEASE_RESULTS,
   REMOVE_RELEASES,
@@ -13,17 +11,6 @@ const searches = require('./searches');
 const addAlbum = album => ({
   type: ADD_ALBUM,
   album,
-});
-
-const addRelease = release => ({
-  type: ADD_RELEASE,
-  release,
-});
-
-const releaseResults = (album, page) => ({
-  type: ADD_RELEASE_RESULTS,
-  album,
-  page,
 });
 
 const removeSearch = id => ({
@@ -43,8 +30,6 @@ const removeReleases = releases => ({
 
 module.exports = Object.assign({}, searches, {
   addAlbum,
-  addRelease,
-  releaseResults,
   removeSearch,
   removeResults,
   removeReleases,

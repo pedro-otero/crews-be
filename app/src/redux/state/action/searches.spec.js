@@ -4,6 +4,7 @@ const {
   ADD_SEARCH,
   SET_LAST_SEARCH_PAGE,
   SET_LAST_RELEASE,
+  CLEAR_SEARCH,
 } = require('./constants');
 const create = require('./searches');
 
@@ -79,6 +80,20 @@ describe('Searches action creators', () => {
 
     it('sets lastRelease', function () {
       assert.equal(this.action.lastRelease, 2);
+    });
+  });
+
+  context('creates the clear search action', () => {
+    before(function () {
+      this.action = create.clearSearch(1);
+    });
+
+    it('sets CLEAR_SEARCH as type', function () {
+      assert.equal(this.action.type, CLEAR_SEARCH);
+    });
+
+    it('sets the id', function () {
+      assert.equal(this.action.id, 1);
     });
   });
 });
