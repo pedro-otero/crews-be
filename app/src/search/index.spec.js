@@ -10,6 +10,43 @@ const createWebApiError = (message, statusCode) => Object.assign(Error(message),
 });
 
 describe('Search function', () => {
+  context('Nothing fails', () => {
+    beforeEach(function (done) {
+      this.db = {
+        search: sinon.stub()
+          .onCall(0).resolves({ page: 1, pages: 2, results: [{ id: 1 }, { id: 2 }] })
+          .onCall(1)
+          .resolves({ page: 2, pages: 2, results: [{ id: 3 }, { id: 4 }] }),
+        getRelease: sinon.stub().callsFake(id => Promise.resolve({ id })),
+      };
+      this.spotifyApi = {
+        getAlbum: sinon.stub().resolves({
+          body: {
+            name: 'Album', artists: [{ name: 'Artist' }],
+          },
+        }),
+      };
+      this.spotify = {
+        getApi: sinon.stub().resolves(this.spotifyApi),
+      };
+      this.logger = {
+        results: () => sinon.stub(),
+        release: () => sinon.stub(),
+        finish: () => sinon.stub(),
+        error: () => sinon.stub(),
+      };
+      searchAlbum(this.spotify, this.db, () => this.logger)(1)
+        .start()
+        .then((result) => { this.searchResult = result; })
+        .then(done)
+        .catch(() => done('FAILED!'));
+    });
+
+    it('Calls spotify module\'s getApi', function () {
+      assert(this.spotify.getApi.calledOnce);
+    });
+  });
+
   describe('Spotify logs in', () => {
     describe('Spotify getAlbum exists', () => {
       beforeEach(function (done) {
