@@ -140,6 +140,20 @@ describe('Search function', () => {
     it('sets the 4 releases as last release', () => {
       assert.equal(actions.setLastSearchPage.callCount, 2);
     });
+
+    describe('Returns a newly created search', () => {
+      it('with correct id', function () {
+        assert.equal('A1', this.searchResult.id);
+      });
+
+      it('with progress 0', function () {
+        assert.equal(0, this.searchResult.progress);
+      });
+
+      it('with null bestMatch', function () {
+        assert.equal(null, this.searchResult.bestMatch);
+      });
+    });
   });
 
   describe('Spotify logs in', () => {
