@@ -9,59 +9,71 @@ const createWebApiError = (message, statusCode) => Object.assign(Error(message),
   statusCode,
 });
 
+function setup(done) {
+  const blankRelease = id => ({ id, tracklist: [] });
+  const pages = [{
+    pagination: {
+      page: 1,
+      pages: 2,
+    },
+    results: [{ id: 1 }, { id: 2 }],
+  }, {
+    pagination: {
+      page: 2,
+      pages: 2,
+    },
+    results: [{ id: 3 }, { id: 4 }],
+  }];
+  this.db = {
+    search: sinon.stub()
+      .onCall(0).resolves(pages[0])
+      .onCall(1)
+      .resolves(pages[1]),
+    getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+  };
+  this.spotifyApi = {
+    getAlbum: sinon.stub().resolves({
+      body: {
+        id: 'A1',
+        name: 'Album',
+        artists: [{ name: 'Artist' }],
+        tracks: { items: [] },
+      },
+    }),
+  };
+  this.spotify = {
+    getApi: sinon.stub().resolves(this.spotifyApi),
+  };
+  this.logger = {
+    results: sinon.stub(),
+    release: sinon.stub(),
+    finish: sinon.stub().callsFake(() => done()),
+    error: sinon.stub(),
+  };
+  actions.addSearch = sinon.stub();
+  actions.addAlbum = sinon.stub();
+  actions.setLastRelease = sinon.stub();
+  actions.setLastSearchPage = sinon.stub();
+  actions.addCredits = sinon.stub();
+  searchAlbum(this.spotify, this.db, () => this.logger)('A1')
+    .start()
+    .then((result) => { this.searchResult = result; })
+    .catch(() => done('FAILED!'));
+}
+
+function resetActionStubs() {
+  [
+    'addSearch',
+    'addAlbum',
+    'setLastRelease',
+    'setLastSearchPage',
+    'addCredits',
+  ].forEach(action => actions[action].reset());
+}
+
 describe('Search function', () => {
   context('Nothing fails', () => {
-    beforeEach(function (done) {
-      const blankRelease = id => ({ id, tracklist: [] });
-      const pages = [{
-        pagination: {
-          page: 1,
-          pages: 2,
-        },
-        results: [{ id: 1 }, { id: 2 }],
-      }, {
-        pagination: {
-          page: 2,
-          pages: 2,
-        },
-        results: [{ id: 3 }, { id: 4 }],
-      }];
-      this.db = {
-        search: sinon.stub()
-          .onCall(0).resolves(pages[0])
-          .onCall(1)
-          .resolves(pages[1]),
-        getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
-      };
-      this.spotifyApi = {
-        getAlbum: sinon.stub().resolves({
-          body: {
-            id: 'A1',
-            name: 'Album',
-            artists: [{ name: 'Artist' }],
-            tracks: { items: [] },
-          },
-        }),
-      };
-      this.spotify = {
-        getApi: sinon.stub().resolves(this.spotifyApi),
-      };
-      this.logger = {
-        results: sinon.stub(),
-        release: sinon.stub(),
-        finish: sinon.stub().callsFake(() => done()),
-        error: sinon.stub(),
-      };
-      actions.addSearch = sinon.stub();
-      actions.addAlbum = sinon.stub();
-      actions.setLastRelease = sinon.stub();
-      actions.setLastSearchPage = sinon.stub();
-      actions.addCredits = sinon.stub();
-      searchAlbum(this.spotify, this.db, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(() => done('FAILED!'));
-    });
+    beforeEach(setup);
 
     it('Calls spotify module\'s getApi', function () {
       assert(this.spotify.getApi.calledOnce);
@@ -154,6 +166,8 @@ describe('Search function', () => {
         assert.equal(null, this.searchResult.bestMatch);
       });
     });
+
+    afterEach(resetActionStubs);
   });
 
   describe('Spotify logs in', () => {
