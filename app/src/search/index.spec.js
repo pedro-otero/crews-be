@@ -10,30 +10,12 @@ const createWebApiError = (message, statusCode) => Object.assign(Error(message),
 });
 
 describe('Search function', () => {
-  before(function () {
-    this.db = {
-      search: () => ({}),
-      getRelease: () => ({}),
-    };
-    this.createLogger = () => {
-      const logger = {
-        results: () => {},
-        release: () => {},
-        finish: () => {},
-        error: () => {},
-      };
-      sinon.spy(logger, 'error');
-      this.errorLogger = logger.error;
-      return logger;
-    };
-  });
-
   describe('Spotify logs in', () => {
     describe('Spotify getAlbum exists', () => {
       beforeEach(function (done) {
         actions.addSearch = sinon.spy();
         actions.addAlbum = sinon.spy();
-        this.spotify = {
+        const spotify = {
           getApi: () => Promise.resolve({
             getAlbum: sinon.stub().resolves({
               body: {
@@ -42,7 +24,13 @@ describe('Search function', () => {
             }),
           }),
         };
-        this.search = searchAlbum(this.spotify, this.db, this.createLogger);
+        const createLogger = () => ({
+          results: () => {},
+          release: () => {},
+          finish: () => {},
+          error: () => {},
+        });
+        this.search = searchAlbum(spotify, null, createLogger);
         const search = this.search(1);
         search.start()
           .then((result) => { this.searchResult = result; })
@@ -63,55 +51,84 @@ describe('Search function', () => {
       });
 
       describe('Discogs search throws an exception', () => {
-        beforeEach(function () {
+        beforeEach(function (done) {
+          const createLogger = () => {
+            const logger = {
+              results: () => {},
+              release: () => {},
+              finish: () => {},
+              error: () => {},
+            };
+            sinon.spy(logger, 'error');
+            this.errorLogger = logger.error;
+            return logger;
+          };
           const db = {
             search: () => new Promise(() => {
               throw Error();
             }),
           };
-          this.search = searchAlbum(this.spotify, db, this.createLogger);
-        });
-
-        it('promise rejects with error', function (done) {
+          const spotify = {
+            getApi: () => Promise.resolve({
+              getAlbum: sinon.stub().resolves({
+                body: {
+                  name: 'Album', artists: [{ name: 'Artist' }],
+                },
+              }),
+            }),
+          };
+          this.search = searchAlbum(spotify, db, createLogger);
           const search = this.search(1);
           search.start()
-            .then(() => {
-              assert(this.errorLogger.calledOnce);
-            })
-            .then(done)
-            .catch(() => assert(false));
+            .then(() => done())
+            .catch(() => done(Error('FAILED')));
+        });
+
+        it('Error logger is called', function () {
+          assert(this.errorLogger.calledOnce);
         });
       });
 
       describe('Discogs search emits an error', () => {
-        beforeEach(function () {
+        before(function (done) {
           actions.clearSearch = sinon.spy();
           const db = {
             search: () => new Promise((resolve, reject) => {
               reject(Error('ERROR'));
             }),
           };
-          this.search = searchAlbum(this.spotify, db, this.createLogger);
+          const createLogger = () => {
+            const logger = {
+              results: () => {},
+              release: () => {},
+              finish: () => {},
+              error: () => {},
+            };
+            sinon.spy(logger, 'error');
+            this.errorLogger = logger.error;
+            return logger;
+          };
+          const spotify = {
+            getApi: () => Promise.resolve({
+              getAlbum: sinon.stub().resolves({
+                body: {
+                  name: 'Album', artists: [{ name: 'Artist' }],
+                },
+              }),
+            }),
+          };
+          searchAlbum(spotify, db, createLogger)(1)
+            .start()
+            .then(() => done())
+            .catch(() => done(Error('FAILED')));
         });
 
-        it('promise rejects with error', function (done) {
-          const search = this.search(1);
-          search.start()
-            .then(() => {
-              assert(this.errorLogger.calledOnce);
-            })
-            .then(done)
-            .catch(() => assert(false));
+        it('Error logger is called', function () {
+          assert(this.errorLogger.calledOnce);
         });
 
-        it('search is cleared', function (done) {
-          const search = this.search(1);
-          search.start()
-            .then(() => {
-              assert(actions.clearSearch.calledOnce);
-            })
-            .then(done)
-            .catch(() => assert(false));
+        it('search is cleared', () => {
+          assert(actions.clearSearch.calledOnce);
         });
       });
     });
@@ -221,7 +238,11 @@ describe('Search function', () => {
     const spotify = {
       getApi: () => Promise.reject(createWebApiError(null, 500)),
     };
-    const func = searchAlbum(spotify, this.db, this.createLogger);
+    const db = {
+      search: () => ({}),
+      getRelease: () => ({}),
+    };
+    const func = searchAlbum(spotify, db, this.createLogger);
     const search = func(1);
     search.start()
       .then(() => {
