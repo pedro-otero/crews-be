@@ -139,7 +139,7 @@ describe('Search function', () => {
             getAlbum: () => Promise.reject(createWebApiError(null, 404)),
           }),
         };
-        searchAlbum(spotify, this.db, this.createLogger)(1)
+        searchAlbum(spotify, null, this.createLogger)(1)
           .start()
           .then(() => done(Error('FAILED')), (err) => {
             this.errorMessage = err.message;
@@ -164,7 +164,7 @@ describe('Search function', () => {
             getAlbum: () => Promise.reject(createWebApiError(null, 400)),
           }),
         };
-        this.search = searchAlbum(spotify, this.db, this.createLogger);
+        this.search = searchAlbum(spotify, null, this.createLogger);
         const search = this.search(1);
         search.start()
           .then(() => done(Error('FAILED!')), () => {
