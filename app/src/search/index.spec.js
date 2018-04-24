@@ -36,6 +36,7 @@ describe('Search function', () => {
         error: () => sinon.stub(),
       };
       actions.addSearch = sinon.stub();
+      actions.addAlbum = sinon.stub();
       searchAlbum(this.spotify, this.db, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -64,6 +65,10 @@ describe('Search function', () => {
 
       it('with id A1', function () {
         assert.equal(this.spotifyApi.getAlbum.getCalls()[0].args[0], 'A1');
+      });
+
+      it('adds it to state', () => {
+        assert.equal(actions.addAlbum.getCalls()[0].args[0].id, 'A1');
       });
     });
   });
