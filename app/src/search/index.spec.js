@@ -101,6 +101,22 @@ describe('Search function', () => {
       it('search for page 2', function () {
         assert.equal(this.db.search.getCalls()[1].args[0].page, 2);
       });
+
+      it('gets release 1', function () {
+        assert.equal(this.db.getRelease.getCalls()[0].args[0], 1);
+      });
+
+      it('gets release 2', function () {
+        assert.equal(this.db.getRelease.getCalls()[1].args[0], 2);
+      });
+
+      it('gets release 3', function () {
+        assert.equal(this.db.getRelease.getCalls()[2].args[0], 3);
+      });
+
+      it('gets release 4', function () {
+        assert.equal(this.db.getRelease.getCalls()[3].args[0], 4);
+      });
     });
   });
 
