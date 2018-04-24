@@ -22,7 +22,7 @@ describe('Search function', () => {
       this.spotifyApi = {
         getAlbum: sinon.stub().resolves({
           body: {
-            name: 'Album', artists: [{ name: 'Artist' }],
+            id: 'A1', name: 'Album', artists: [{ name: 'Artist' }],
           },
         }),
       };
@@ -35,7 +35,7 @@ describe('Search function', () => {
         finish: () => sinon.stub(),
         error: () => sinon.stub(),
       };
-      searchAlbum(this.spotify, this.db, () => this.logger)(1)
+      searchAlbum(this.spotify, this.db, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
         .then(done)
@@ -44,6 +44,14 @@ describe('Search function', () => {
 
     it('Calls spotify module\'s getApi', function () {
       assert(this.spotify.getApi.calledOnce);
+    });
+
+    it('Calls spotify module\'s getAlbum only once', function () {
+      assert(this.spotifyApi.getAlbum.calledOnce);
+    });
+
+    it('Calls spotify module\'s getAlbum for album A1', function () {
+      assert.equal(this.spotifyApi.getAlbum.getCalls()[0].args[0], 'A1');
     });
   });
 
