@@ -47,17 +47,16 @@ describe('Search function', () => {
         getApi: sinon.stub().resolves(this.spotifyApi),
       };
       this.logger = {
-        results: () => sinon.stub(),
-        release: () => sinon.stub(),
-        finish: () => sinon.stub(),
-        error: () => sinon.stub(),
+        results: sinon.stub(),
+        release: sinon.stub(),
+        finish: sinon.stub().callsFake(() => done()),
+        error: sinon.stub(),
       };
       actions.addSearch = sinon.stub();
       actions.addAlbum = sinon.stub();
       searchAlbum(this.spotify, this.db, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
-        .then(done)
         .catch(() => done('FAILED!'));
     });
 
@@ -117,6 +116,10 @@ describe('Search function', () => {
       it('gets release 4', function () {
         assert.equal(this.db.getRelease.getCalls()[3].args[0], 4);
       });
+    });
+
+    it('logs the 4 releases', function () {
+      assert.equal(this.logger.release.callCount, 4);
     });
   });
 
