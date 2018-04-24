@@ -12,17 +12,34 @@ const createWebApiError = (message, statusCode) => Object.assign(Error(message),
 describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
+      const blankRelease = id => ({ id, tracklist: [] });
+      const pages = [{
+        pagination: {
+          page: 1,
+          pages: 2,
+        },
+        results: [{ id: 1 }, { id: 2 }],
+      }, {
+        pagination: {
+          page: 2,
+          pages: 2,
+        },
+        results: [{ id: 3 }, { id: 4 }],
+      }];
       this.db = {
         search: sinon.stub()
-          .onCall(0).resolves({ page: 1, pages: 2, results: [{ id: 1 }, { id: 2 }] })
+          .onCall(0).resolves(pages[0])
           .onCall(1)
-          .resolves({ page: 2, pages: 2, results: [{ id: 3 }, { id: 4 }] }),
-        getRelease: sinon.stub().callsFake(id => Promise.resolve({ id })),
+          .resolves(pages[1]),
+        getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
       };
       this.spotifyApi = {
         getAlbum: sinon.stub().resolves({
           body: {
-            id: 'A1', name: 'Album', artists: [{ name: 'Artist' }],
+            id: 'A1',
+            name: 'Album',
+            artists: [{ name: 'Artist' }],
+            tracks: { items: [] },
           },
         }),
       };
@@ -69,6 +86,20 @@ describe('Search function', () => {
 
       it('adds it to state', () => {
         assert.equal(actions.addAlbum.getCalls()[0].args[0].id, 'A1');
+      });
+    });
+
+    describe('Calls database methods', () => {
+      it('search 2 times', function () {
+        assert(this.db.search.calledTwice);
+      });
+
+      it('search for page 1', function () {
+        assert.equal(this.db.search.getCalls()[0].args[0].page, 1);
+      });
+
+      it('search for page 2', function () {
+        assert.equal(this.db.search.getCalls()[1].args[0].page, 2);
       });
     });
   });
