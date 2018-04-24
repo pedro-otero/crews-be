@@ -30,9 +30,8 @@ describe('Search function', () => {
           finish: () => {},
           error: () => {},
         });
-        this.search = searchAlbum(spotify, null, createLogger);
-        const search = this.search(1);
-        search.start()
+        searchAlbum(spotify, null, createLogger)(1)
+          .start()
           .then((result) => { this.searchResult = result; })
           .then(done)
           .catch(() => done('FAILED'));
@@ -77,9 +76,8 @@ describe('Search function', () => {
               }),
             }),
           };
-          this.search = searchAlbum(spotify, db, createLogger);
-          const search = this.search(1);
-          search.start()
+          searchAlbum(spotify, db, createLogger)(1)
+            .start()
             .then(() => done())
             .catch(() => done(Error('FAILED')));
         });
@@ -134,44 +132,32 @@ describe('Search function', () => {
     });
 
     describe('Spotify album does not exist', () => {
-      beforeEach(function () {
+      beforeEach(function (done) {
         actions.removeSearch = sinon.spy();
         const spotify = {
           getApi: () => Promise.resolve({
             getAlbum: () => Promise.reject(createWebApiError(null, 404)),
           }),
         };
-        this.search = searchAlbum(spotify, this.db, this.createLogger);
-      });
-
-      it('Returns error with message', function (done) {
-        const search = this.search(1);
-        search.start()
-          .then(() => {
-            assert(false);
-          }, (err) => {
-            assert.equal(err.message, 'Album does not exist in Spotify');
-          })
-          .then(done)
-          .catch(() => {
-            assert(false);
+        searchAlbum(spotify, this.db, this.createLogger)(1)
+          .start()
+          .then(() => done(Error('FAILED')), (err) => {
+            this.errorMessage = err.message;
             done();
-          });
+          }).catch(() => done(Error('FAILED')));
       });
 
-      it('search is aborted', function (done) {
-        const search = this.search(1);
-        search.start()
-          .then(() => assert(false), () => {
-            assert(actions.removeSearch.calledOnce);
-          })
-          .then(done)
-          .catch(() => assert(false));
+      it('Returns error with message', function () {
+        assert.equal(this.errorMessage, 'Album does not exist in Spotify');
+      });
+
+      it('search is aborted', () => {
+        assert(actions.removeSearch.calledOnce);
       });
     });
 
     describe('Spotify id is invalid', () => {
-      beforeEach(function () {
+      beforeEach(function (done) {
         actions.removeSearch = sinon.spy();
         const spotify = {
           getApi: () => Promise.resolve({
@@ -179,31 +165,21 @@ describe('Search function', () => {
           }),
         };
         this.search = searchAlbum(spotify, this.db, this.createLogger);
-      });
-
-      it('Returns error with message', function (done) {
         const search = this.search(1);
         search.start()
-          .then(() => {
-            assert(false);
-          }, (err) => {
-            assert.equal(err.message, 'Spotify album id is invalid');
-          })
-          .then(done)
-          .catch(() => {
-            assert(false);
+          .then(() => done(Error('FAILED!')), () => {
+            this.errorMessage = 'Spotify album id is invalid';
             done();
-          });
+          })
+          .catch(() => done(Error('FAILED!')));
       });
 
-      it('search is aborted', function (done) {
-        const search = this.search(1);
-        search.start()
-          .then(() => assert(false), () => {
-            assert(actions.removeSearch.calledOnce);
-          })
-          .then(done)
-          .catch(() => assert(false));
+      it('Returns error with message', function () {
+        assert.equal(this.errorMessage, 'Spotify album id is invalid');
+      });
+
+      it('search is aborted', () => {
+        assert(actions.removeSearch.calledOnce);
       });
     });
 
