@@ -30,7 +30,7 @@ const actionsWrapper = (id) => {
     actions.addAlbum(album);
   };
   const setLastSearchResults = (page) => {
-    actions.releaseResults(album.id, page);
+    actions.setLastSearchPage(album.id, page);
     pages.push(page);
   };
   const sendRelease = (release) => {
