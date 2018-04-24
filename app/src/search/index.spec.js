@@ -30,7 +30,8 @@ describe('Search function', () => {
 
   describe('Spotify logs in', () => {
     describe('Spotify getAlbum exists', () => {
-      beforeEach(function () {
+      beforeEach(function (done) {
+        actions.addSearch = sinon.spy();
         this.spotify = {
           getApi: () => Promise.resolve({
             getAlbum: sinon.stub().resolves({
@@ -41,14 +42,19 @@ describe('Search function', () => {
           }),
         };
         this.search = searchAlbum(this.spotify, this.db, this.createLogger);
-      });
-
-      it('Returns a newly created search', function (done) {
         const search = this.search(1);
         search.start()
-          .then(result => assert.equal(1, result.id))
+          .then((result) => { this.searchResult = result; })
           .then(done)
-          .catch(() => assert(false));
+          .catch(() => done('FAILED'));
+      });
+
+      it('Returns a newly created search', function () {
+        assert.equal(1, this.searchResult.id);
+      });
+
+      it('Adds search to state', () => {
+        assert(actions.addSearch.calledOnce);
       });
 
       describe('Discogs search throws an exception', () => {
