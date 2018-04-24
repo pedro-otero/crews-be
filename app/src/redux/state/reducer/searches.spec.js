@@ -5,6 +5,7 @@ const {
   REMOVE_SEARCH,
   SET_LAST_SEARCH_PAGE,
   SET_LAST_RELEASE,
+  CLEAR_SEARCH,
 } = require('../action/constants');
 const reduce = require('./searches');
 
@@ -100,6 +101,27 @@ describe('Searches reducer', () => {
         id: 'albumId',
       });
       assert.equal(0, searches.length);
+    });
+  });
+
+  describe(CLEAR_SEARCH, () => {
+    before(function () {
+      this.searches = reduce([{ id: 'albumId', lastSearchPage: 'dummy1', lastRelease: 'dummy2' }], {
+        type: CLEAR_SEARCH,
+        id: 'albumId',
+      });
+    });
+
+    it('Keeps the search in state', function () {
+      assert.equal(1, this.searches.length);
+    });
+
+    it('Deletes lastSearchPage value', function () {
+      assert.equal(null, this.searches[0].lastSearchPage);
+    });
+
+    it('Deletes lastRelease value', function () {
+      assert.equal(null, this.searches[0].lastRelease);
     });
   });
 
