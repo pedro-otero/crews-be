@@ -57,12 +57,14 @@ describe('Search function', () => {
       });
     });
 
-    it('Calls spotify module\'s getAlbum only once', function () {
-      assert(this.spotifyApi.getAlbum.calledOnce);
-    });
+    describe('Gets album', () => {
+      it('only once', function () {
+        assert(this.spotifyApi.getAlbum.calledOnce);
+      });
 
-    it('Calls spotify module\'s getAlbum for album A1', function () {
-      assert.equal(this.spotifyApi.getAlbum.getCalls()[0].args[0], 'A1');
+      it('with id A1', function () {
+        assert.equal(this.spotifyApi.getAlbum.getCalls()[0].args[0], 'A1');
+      });
     });
   });
 
