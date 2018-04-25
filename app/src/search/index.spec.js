@@ -273,7 +273,7 @@ describe('Search function', () => {
       assert.equal(this.db.search.getCalls().length, 3);
     });
 
-    it('search is NOT cleare', () => {
+    it('search is NOT cleared', () => {
       assert.equal(actions.clearSearch.getCalls().length, 0);
     });
 
