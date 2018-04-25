@@ -4,52 +4,6 @@ const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
-function DiscogsFinder(db) {
-  const search = (album, page) => db.search({
-    artist: album.artists[0].name,
-    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
-    type: 'release',
-    per_page: 100,
-    page,
-  });
-
-  const findReleases = album => Rx.Observable.create((observer) => {
-    const fetch = async (p) => {
-      try {
-        search(album, p).then(async (page) => {
-          observer.next({ type: 'results', data: { page } });
-          // eslint-disable-next-line no-restricted-syntax
-          for (const result of page.results) {
-            try {
-              // eslint-disable-next-line no-await-in-loop
-              const release = await db.getRelease(result.id);
-              observer.next({ type: 'release', data: { release } });
-            } catch (error) {
-              observer.error(error);
-              return;
-            }
-          }
-          if (page.pagination.page < page.pagination.pages) {
-            fetch(page.pagination.page + 1);
-          } else {
-            observer.complete();
-          }
-        }, (error) => {
-          observer.error(error);
-        }).catch((error) => {
-          observer.error(error);
-        });
-      } catch (error) {
-        observer.error(error);
-      }
-    };
-
-    fetch(1);
-  });
-
-  return { findReleases };
-}
-
 const observer = (logger, output) => ({
   next: ({ type, data: { page, release } }) => ({
     results: () => {
@@ -102,7 +56,47 @@ module.exports = (spotify, db, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const discogs = new DiscogsFinder(db);
+  const search = (album, page) => db.search({
+    artist: album.artists[0].name,
+    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
+    type: 'release',
+    per_page: 100,
+    page,
+  });
+
+  const findReleases = album => Rx.Observable.create((rxObserver) => {
+    const fetch = async (p) => {
+      try {
+        search(album, p).then(async (page) => {
+          rxObserver.next({ type: 'results', data: { page } });
+          // eslint-disable-next-line no-restricted-syntax
+          for (const result of page.results) {
+            try {
+              // eslint-disable-next-line no-await-in-loop
+              const release = await db.getRelease(result.id);
+              rxObserver.next({ type: 'release', data: { release } });
+            } catch (error) {
+              rxObserver.error(error);
+              return;
+            }
+          }
+          if (page.pagination.page < page.pagination.pages) {
+            fetch(page.pagination.page + 1);
+          } else {
+            rxObserver.complete();
+          }
+        }, (error) => {
+          rxObserver.error(error);
+        }).catch((error) => {
+          rxObserver.error(error);
+        });
+      } catch (error) {
+        rxObserver.error(error);
+      }
+    };
+
+    fetch(1);
+  });
 
   const start = () => new Promise((resolve, reject) => {
     const output = actionsWrapper(id);
@@ -115,7 +109,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
         const album = body;
         output.addAlbum(album);
         const logger = createLogger(album);
-        discogs.findReleases(album).subscribe(observer(logger, output));
+        findReleases(album).subscribe(observer(logger, output));
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
