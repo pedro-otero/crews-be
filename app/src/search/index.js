@@ -46,6 +46,10 @@ const actionsWrapper = (id) => {
   };
 };
 
+function isTimeout(error) {
+  return error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT';
+}
+
 module.exports = (spotify, db, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -78,7 +82,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
               const release = await db.getRelease(result.id);
               searchObserver.release(release);
             } catch (error) {
-              if (error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT') {
+              if (isTimeout(error)) {
                 searchObserver.timeout(error);
                 results.unshift(result);
               } else {
@@ -95,7 +99,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
             searchObserver.complete();
           }
         }, (error) => {
-          if (error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT') {
+          if (isTimeout(error)) {
             searchObserver.timeout(error);
             fetch();
           } else {
