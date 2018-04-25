@@ -69,16 +69,24 @@ module.exports = (spotify, db, createLogger) => (id) => {
       try {
         search(album, p).then(async (page) => {
           searchObserver.results(page);
+          const results = [...page.results];
+          let result = results.shift();
           // eslint-disable-next-line no-restricted-syntax
-          for (const result of page.results) {
+          while (result) {
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await db.getRelease(result.id);
               searchObserver.release(release);
             } catch (error) {
-              searchObserver.error(error);
-              return;
+              if (error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT') {
+                searchObserver.timeout(error);
+                results.unshift(result);
+              } else {
+                searchObserver.error(error);
+                return;
+              }
             }
+            result = results.shift();
           }
           if (page.pagination.page < page.pagination.pages) {
             p = page.pagination.page + 1;

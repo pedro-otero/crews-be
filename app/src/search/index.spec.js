@@ -280,6 +280,43 @@ describe('Search function', () => {
     afterEach(resetActionStubs);
   });
 
+  describe('Discogs release retrieval rejects because of timeout', () => {
+    beforeEach(function (done) {
+      setup(this);
+      const releaseStub = sinon.stub().onCall(0).rejects({
+        code: 'ETIMEDOUT',
+        errno: 'ETIMEDOUT',
+      });
+      [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
+      this.db = {
+        search: sinon.stub()
+          .onCall(0).resolves(pages[0])
+          .onCall(1)
+          .resolves(pages[1]),
+        getRelease: releaseStub,
+      };
+      this.logger.finish = sinon.stub().callsFake(() => done());
+      searchAlbum(this.spotify, this.db, () => this.logger)('A1')
+        .start()
+        .then((result) => { this.searchResult = result; })
+        .catch(done);
+    });
+
+    it('Error logger is called', function () {
+      assert(this.logger.error.calledOnce);
+    });
+
+    it('getRelease is called 5 times', function () {
+      assert.equal(this.db.getRelease.getCalls().length, 5);
+    });
+
+    it('search is NOT cleared', () => {
+      assert.equal(actions.clearSearch.getCalls().length, 0);
+    });
+
+    afterEach(resetActionStubs);
+  });
+
   describe('Spotify album does not exist', () => {
     beforeEach(function (done) {
       setup(this);
