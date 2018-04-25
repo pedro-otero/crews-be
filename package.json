@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "nyc mocha ./app/src *.spec.js --recursive",
+    "test": "nyc mocha ./app/src/**/*.spec.js --recursive",
     "lint": "eslint app/src"
   },
   "dependencies": {

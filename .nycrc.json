@@ -1,4 +1,7 @@
 {
+  "include":[
+    "app/src/**/*.js"
+  ],
   "exclude": [
     "app/src/**/*.spec.js"
   ],
@@ -7,5 +10,6 @@
     "text"
   ],
   "report-dir": "app/coverage",
-  "temp-directory": "app/coverage/.nyc_output"
+  "temp-directory": "app/coverage/.nyc_output",
+  "all": true
 }
