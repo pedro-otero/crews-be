@@ -1,20 +1,16 @@
-const Rx = require('rxjs');
-
 const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
 const observer = (logger, output) => ({
-  next: ({ type, data: { page, release } }) => ({
-    results: () => {
-      logger.results({ page });
-      output.setLastSearchResults(page);
-    },
-    release: () => {
-      logger.release({ release });
-      output.sendRelease(release);
-    },
-  })[type](),
+  results: (page) => {
+    logger.results({ page });
+    output.setLastSearchResults(page);
+  },
+  release: (release) => {
+    logger.release({ release });
+    output.sendRelease(release);
+  },
   error: (error) => {
     logger.error({ error });
     output.clear();
@@ -64,39 +60,39 @@ module.exports = (spotify, db, createLogger) => (id) => {
     page,
   });
 
-  const findReleases = album => Rx.Observable.create((rxObserver) => {
+  const findReleases = (album, searchObserver) => {
     const fetch = async (p) => {
       try {
         search(album, p).then(async (page) => {
-          rxObserver.next({ type: 'results', data: { page } });
+          searchObserver.results(page);
           // eslint-disable-next-line no-restricted-syntax
           for (const result of page.results) {
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await db.getRelease(result.id);
-              rxObserver.next({ type: 'release', data: { release } });
+              searchObserver.release(release);
             } catch (error) {
-              rxObserver.error(error);
+              searchObserver.error(error);
               return;
             }
           }
           if (page.pagination.page < page.pagination.pages) {
             fetch(page.pagination.page + 1);
           } else {
-            rxObserver.complete();
+            searchObserver.complete();
           }
         }, (error) => {
-          rxObserver.error(error);
+          searchObserver.error(error);
         }).catch((error) => {
-          rxObserver.error(error);
+          searchObserver.error(error);
         });
       } catch (error) {
-        rxObserver.error(error);
+        searchObserver.error(error);
       }
     };
 
     fetch(1);
-  });
+  };
 
   const start = () => new Promise((resolve, reject) => {
     const output = actionsWrapper(id);
@@ -109,7 +105,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
         const album = body;
         output.addAlbum(album);
         const logger = createLogger(album);
-        findReleases(album).subscribe(observer(logger, output));
+        findReleases(album, observer(logger, output));
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
