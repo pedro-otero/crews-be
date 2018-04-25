@@ -21,21 +21,22 @@ function monkeypatchActions() {
 
 const blankRelease = id => ({ id, tracklist: [] });
 
+const pages = [{
+  pagination: {
+    page: 1,
+    pages: 2,
+  },
+  results: [{ id: 1 }, { id: 2 }],
+}, {
+  pagination: {
+    page: 2,
+    pages: 2,
+  },
+  results: [{ id: 3 }, { id: 4 }],
+}];
+
 function setup(context) {
   monkeypatchActions();
-  const pages = [{
-    pagination: {
-      page: 1,
-      pages: 2,
-    },
-    results: [{ id: 1 }, { id: 2 }],
-  }, {
-    pagination: {
-      page: 2,
-      pages: 2,
-    },
-    results: [{ id: 3 }, { id: 4 }],
-  }];
   context.db = {
     search: sinon.stub()
       .onCall(0).resolves(pages[0])
@@ -220,7 +221,6 @@ describe('Search function', () => {
     afterEach(resetActionStubs);
   });
 
-  // TODO test to make release retrieve be retried is setpu like this
   describe('Discogs search promise rejects', () => {
     beforeEach(function (done) {
       setup(this);
@@ -238,6 +238,43 @@ describe('Search function', () => {
 
     it('search is cleared', () => {
       assert(actions.clearSearch.calledOnce);
+    });
+
+    afterEach(resetActionStubs);
+  });
+
+  describe('Discogs search promise rejects because of timeout', () => {
+    beforeEach(function (done) {
+      setup(this);
+      this.db = {
+        search: sinon.stub()
+          .onCall(0).rejects({
+            code: 'ETIMEDOUT',
+            errno: 'ETIMEDOUT',
+          })
+          .onCall(1)
+          .resolves(pages[0])
+          .onCall(2)
+          .resolves(pages[1]),
+        getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+      };
+      this.logger.finish = sinon.stub().callsFake(() => done());
+      searchAlbum(this.spotify, this.db, () => this.logger)('A1')
+        .start()
+        .then((result) => { this.searchResult = result; })
+        .catch(done);
+    });
+
+    it('Error logger is called', function () {
+      assert(this.logger.error.calledOnce);
+    });
+
+    it('search is called 3 times', function () {
+      assert.equal(this.db.search.getCalls().length, 3);
+    });
+
+    it('search is NOT cleare', () => {
+      assert.equal(actions.clearSearch.getCalls().length, 0);
     });
 
     afterEach(resetActionStubs);

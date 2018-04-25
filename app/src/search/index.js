@@ -11,6 +11,9 @@ const observer = (logger, output) => ({
     logger.release({ release });
     output.sendRelease(release);
   },
+  timeout: (error) => {
+    logger.error({ error });
+  },
   error: (error) => {
     logger.error({ error });
     output.clear();
@@ -61,7 +64,8 @@ module.exports = (spotify, db, createLogger) => (id) => {
   });
 
   const findReleases = (album, searchObserver) => {
-    const fetch = async (p) => {
+    let p = 1;
+    const fetch = async () => {
       try {
         search(album, p).then(async (page) => {
           searchObserver.results(page);
@@ -77,12 +81,18 @@ module.exports = (spotify, db, createLogger) => (id) => {
             }
           }
           if (page.pagination.page < page.pagination.pages) {
-            fetch(page.pagination.page + 1);
+            p = page.pagination.page + 1;
+            fetch();
           } else {
             searchObserver.complete();
           }
         }, (error) => {
-          searchObserver.error(error);
+          if (error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT') {
+            searchObserver.timeout(error);
+            fetch();
+          } else {
+            searchObserver.error(error);
+          }
         }).catch((error) => {
           searchObserver.error(error);
         });
@@ -91,7 +101,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
       }
     };
 
-    fetch(1);
+    fetch();
   };
 
   const start = () => new Promise((resolve, reject) => {
