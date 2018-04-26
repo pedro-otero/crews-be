@@ -59,6 +59,8 @@ function is429(error) {
 
 const DEFAULT_WAIT_AFTER_429 = 10000;
 
+const dumbPromiseThatDoesNothing = time => new Promise(resolve => setTimeout(resolve, time));
+
 module.exports = (spotify, db, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -81,9 +83,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
     let wait = 0;
     const fetch = async () => {
       try {
-        await new Promise((resolve) => {
-          setTimeout(resolve, wait);
-        });
+        await dumbPromiseThatDoesNothing(wait);
         search(album, p).then(async (page) => {
           wait = 0;
           searchObserver.results(page);
@@ -93,9 +93,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
           while (result) {
             if (wait) {
               // eslint-disable-next-line no-await-in-loop
-              await new Promise((resolve) => {
-                setTimeout(resolve, wait);
-              });
+              await dumbPromiseThatDoesNothing(wait);
             }
             try {
               // eslint-disable-next-line no-await-in-loop
