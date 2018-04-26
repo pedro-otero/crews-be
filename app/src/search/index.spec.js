@@ -334,6 +334,7 @@ describe('Search function', () => {
         .start()
         .then((result) => { this.searchResult = result; })
         .catch(done);
+      this.timeout(10500);
     });
 
     it('Error logger is called', function () {

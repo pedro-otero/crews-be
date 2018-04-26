@@ -14,6 +14,9 @@ const observer = (logger, output) => ({
   timeout: (error) => {
     logger.error({ error });
   },
+  tooManyRequests: (error) => {
+    logger.error({ error });
+  },
   error: (error) => {
     logger.error({ error });
     output.clear();
@@ -84,6 +87,12 @@ module.exports = (spotify, db, createLogger) => (id) => {
           let result = results.shift();
           // eslint-disable-next-line no-restricted-syntax
           while (result) {
+            if (wait) {
+              // eslint-disable-next-line no-await-in-loop
+              await new Promise((resolve) => {
+                setTimeout(resolve, wait);
+              });
+            }
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await db.getRelease(result.id);
@@ -95,6 +104,8 @@ module.exports = (spotify, db, createLogger) => (id) => {
                 results.unshift(result);
               } else if (is429(error)) {
                 wait = DEFAULT_WAIT_AFTER_429;
+                searchObserver.tooManyRequests(error);
+                results.unshift(result);
               } else {
                 searchObserver.error(error);
                 return;
