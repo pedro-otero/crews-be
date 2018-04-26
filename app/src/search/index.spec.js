@@ -352,6 +352,41 @@ describe('Search function', () => {
     afterEach(resetActionStubs);
   });
 
+  describe('Discogs search rejects because of 429', () => {
+    beforeEach(function (done) {
+      setup(this);
+      this.db = {
+        search: sinon.stub()
+          .onCall(0).rejects({ statusCode: 429 })
+          .onCall(1)
+          .resolves(pages[0])
+          .onCall(2)
+          .resolves(pages[1]),
+        getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+      };
+      this.logger.finish = sinon.stub().callsFake(() => done());
+      searchAlbum(this.spotify, this.db, () => this.logger)('A1')
+        .start()
+        .then((result) => { this.searchResult = result; })
+        .catch(done);
+      this.timeout(10500);
+    });
+
+    it('Error logger is called', function () {
+      assert(this.logger.error.calledOnce);
+    });
+
+    it('search is called 3 times', function () {
+      assert.equal(this.db.search.getCalls().length, 3);
+    });
+
+    it('search is NOT cleared', () => {
+      assert.equal(actions.clearSearch.getCalls().length, 0);
+    });
+
+    afterEach(resetActionStubs);
+  });
+
   describe('Spotify album does not exist', () => {
     beforeEach(function (done) {
       setup(this);

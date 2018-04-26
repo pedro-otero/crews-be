@@ -81,7 +81,11 @@ module.exports = (spotify, db, createLogger) => (id) => {
     let wait = 0;
     const fetch = async () => {
       try {
+        await new Promise((resolve) => {
+          setTimeout(resolve, wait);
+        });
         search(album, p).then(async (page) => {
+          wait = 0;
           searchObserver.results(page);
           const results = [...page.results];
           let result = results.shift();
@@ -122,6 +126,10 @@ module.exports = (spotify, db, createLogger) => (id) => {
         }, (error) => {
           if (isTimeout(error)) {
             searchObserver.timeout(error);
+            fetch();
+          } else if (is429(error)) {
+            wait = DEFAULT_WAIT_AFTER_429;
+            searchObserver.tooManyRequests(error);
             fetch();
           } else {
             searchObserver.error(error);
