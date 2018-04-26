@@ -50,6 +50,12 @@ function isTimeout(error) {
   return error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT';
 }
 
+function is429(error) {
+  return error.statusCode === 429;
+}
+
+const DEFAULT_WAIT_AFTER_429 = 10000;
+
 module.exports = (spotify, db, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -69,6 +75,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
 
   const findReleases = (album, searchObserver) => {
     let p = 1;
+    let wait = 0;
     const fetch = async () => {
       try {
         search(album, p).then(async (page) => {
@@ -81,10 +88,13 @@ module.exports = (spotify, db, createLogger) => (id) => {
               // eslint-disable-next-line no-await-in-loop
               const release = await db.getRelease(result.id);
               searchObserver.release(release);
+              wait = 0;
             } catch (error) {
               if (isTimeout(error)) {
                 searchObserver.timeout(error);
                 results.unshift(result);
+              } else if (is429(error)) {
+                wait = DEFAULT_WAIT_AFTER_429;
               } else {
                 searchObserver.error(error);
                 return;
