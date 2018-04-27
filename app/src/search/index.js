@@ -33,60 +33,46 @@ const getOutput = (id) => {
     const { id: rId, master_id: masterId } = release;
     return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
-  const addSearch = () => actions.addSearch(id);
-  const addAlbum = (searchAlbum) => {
-    album = searchAlbum;
-    actions.addAlbum(album);
-  };
-  const setLastSearchResults = (page) => {
-    actions.setLastSearchPage(album.id, page);
-    pages.push(page);
-  };
-  const sendRelease = (release) => {
-    logger.info(releaseMsg(release));
-    if (release.tracklist.length === album.tracks.items.length) {
-      actions.addCredits(album, release);
-      actions.setLastRelease(album.id, release);
-    }
-  };
-  const abort = () => actions.removeSearch(id);
-  const clear = () => actions.clearSearch(id);
-  const setLogger = (_logger) => {
-    logger = _logger;
-  };
-  const results = (page) => {
-    logger.info(resultsMsg(page));
-    setLastSearchResults(page);
-  };
-  const timeout = (page, releaseId) => {
-    if (!releaseId) {
-      logger.error(`${tag(album)} SEARCH P-${page} TIMEOUT`);
-    } else {
-      const { results: lastResults } = [...pages].pop();
-      const releaseNumber = lastResults.findIndex(r => r.id === releaseId) + 1;
-      const releaseCount = lastResults.length;
-      logger.error(`${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT`);
-    }
-  };
-  const tooManyRequests = (time) => {
-    logger.error(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
-  };
-  const sendError = (error) => {
-    logger.error({ error });
-    clear();
-  };
-  const complete = () => logger.info(`${tag(album)} FINISHED`);
   return {
-    addSearch,
-    addAlbum,
-    abort,
-    setLogger,
-    results,
-    sendRelease,
-    timeout,
-    tooManyRequests,
-    sendError,
-    complete,
+    addSearch: () => actions.addSearch(id),
+    addAlbum: (searchAlbum) => {
+      album = searchAlbum;
+      actions.addAlbum(album);
+    },
+    abort: () => actions.removeSearch(id),
+    setLogger: (_logger) => {
+      logger = _logger;
+    },
+    results: (page) => {
+      logger.info(resultsMsg(page));
+      actions.setLastSearchPage(album.id, page);
+      pages.push(page);
+    },
+    sendRelease: (release) => {
+      logger.info(releaseMsg(release));
+      if (release.tracklist.length === album.tracks.items.length) {
+        actions.addCredits(album, release);
+        actions.setLastRelease(album.id, release);
+      }
+    },
+    timeout: (page, releaseId) => {
+      if (!releaseId) {
+        logger.error(`${tag(album)} SEARCH P-${page} TIMEOUT`);
+      } else {
+        const { results: lastResults } = [...pages].pop();
+        const releaseNumber = lastResults.findIndex(r => r.id === releaseId) + 1;
+        const releaseCount = lastResults.length;
+        logger.error(`${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT`);
+      }
+    },
+    tooManyRequests: (time) => {
+      logger.error(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
+    },
+    sendError: (error) => {
+      logger.error({ error });
+      actions.clearSearch(id);
+    },
+    complete: () => logger.info(`${tag(album)} FINISHED`),
   };
 };
 
