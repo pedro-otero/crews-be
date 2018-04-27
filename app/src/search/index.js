@@ -50,9 +50,9 @@ const getOutput = (id) => {
     },
     sendRelease: (release) => {
       logger.say(releaseMsg(release));
+      actions.setLastRelease(album.id, release);
       if (release.tracklist.length === album.tracks.items.length) {
         actions.addCredits(album, release);
-        actions.setLastRelease(album.id, release);
       }
     },
     timeout: (page, releaseId) => {

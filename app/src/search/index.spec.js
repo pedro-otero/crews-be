@@ -162,11 +162,11 @@ describe('Search function', () => {
       });
     });
 
-    it('sets the 4 releases as last release', () => {
-      assert.equal(actions.setLastRelease.callCount, 4);
+    it('sets all 5 releases as last release', () => {
+      assert.equal(actions.setLastRelease.callCount, 5);
     });
 
-    it('gets credits for the 4 releases', () => {
+    it('gets credits for only the 4 releases that have the same amount of tracks', () => {
       assert.equal(actions.addCredits.callCount, 4);
     });
 
