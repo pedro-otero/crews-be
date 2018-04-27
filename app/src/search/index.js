@@ -53,7 +53,7 @@ const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMED
 
 const is429 = ({ statusCode }) => statusCode === 429;
 
-const dumbPromiseThatDoesNothing = time => new Promise(resolve => setTimeout(resolve, time));
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const isThereNext = ({ pagination: { page, pages } }) => page < pages;
 
@@ -78,29 +78,29 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
 
   const findReleases = (album, searchObserver) => {
     let pageNumber = 1;
-    let wait = 0;
+    let idleTime = 0;
     const fetch = async () => {
       try {
-        await dumbPromiseThatDoesNothing(wait);
+        await sleep(idleTime);
         search(album, pageNumber).then(async (page) => {
-          wait = 0;
+          idleTime = 0;
           searchObserver.results(page);
           const results = [...page.results];
           let result = results.shift();
           while (result) {
             // eslint-disable-next-line no-await-in-loop
-            await dumbPromiseThatDoesNothing(wait);
+            await sleep(idleTime);
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await discogs.db.getRelease(result.id);
               searchObserver.release(release);
-              wait = 0;
+              idleTime = 0;
             } catch (error) {
               if (isTimeout(error)) {
                 searchObserver.timeout(error);
                 results.unshift(result);
               } else if (is429(error)) {
-                wait = discogs.PAUSE_NEEDED_AFTER_429;
+                idleTime = discogs.PAUSE_NEEDED_AFTER_429;
                 searchObserver.tooManyRequests(error);
                 results.unshift(result);
               } else {
@@ -121,7 +121,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             searchObserver.timeout(error);
             fetch();
           } else if (is429(error)) {
-            wait = discogs.PAUSE_NEEDED_AFTER_429;
+            idleTime = discogs.PAUSE_NEEDED_AFTER_429;
             searchObserver.tooManyRequests(error);
             fetch();
           } else {
