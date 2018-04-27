@@ -55,6 +55,10 @@ const is429 = ({ statusCode }) => statusCode === 429;
 
 const dumbPromiseThatDoesNothing = time => new Promise(resolve => setTimeout(resolve, time));
 
+const isThereNext = ({ pagination: { page, pages } }) => page < pages;
+
+const getNext = ({ pagination: { page } }) => page + 1;
+
 module.exports = (spotify, discogs, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -73,12 +77,12 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   });
 
   const findReleases = (album, searchObserver) => {
-    let p = 1;
+    let pageNumber = 1;
     let wait = 0;
     const fetch = async () => {
       try {
         await dumbPromiseThatDoesNothing(wait);
-        search(album, p).then(async (page) => {
+        search(album, pageNumber).then(async (page) => {
           wait = 0;
           searchObserver.results(page);
           const results = [...page.results];
@@ -109,8 +113,8 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             }
             result = results.shift();
           }
-          if (page.pagination.page < page.pagination.pages) {
-            p = page.pagination.page + 1;
+          if (isThereNext(page)) {
+            pageNumber = getNext(page);
             fetch();
           } else {
             searchObserver.complete();
