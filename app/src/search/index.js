@@ -2,7 +2,7 @@ const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
-const actionsWrapper = (id) => {
+const getOutput = (id) => {
   let album;
   let logger;
   const pages = [];
@@ -178,7 +178,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const start = () => new Promise((resolve, reject) => {
-    const output = actionsWrapper(id);
+    const output = getOutput(id);
     spotify.getApi()
       .then((api) => {
         output.addSearch(id);
