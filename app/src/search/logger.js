@@ -11,15 +11,10 @@ const createTransports = albumId => [
   new winston.transports.File({ filename: `app/log/${albumId}.log`, level: 'error' }),
 ];
 
-module.exports = function (album) {
-  const formatFunction = ({
-    message,
-    timestamp,
-  }) => `${timestamp} ${message}`;
+const formatFunction = ({ message, timestamp }) => `${timestamp} ${message}`;
 
-  return winston.createLogger({
-    levels,
-    format: combine(timestampFormat(), printf(formatFunction)),
-    transports: createTransports(album.id),
-  });
-};
+module.exports = album => winston.createLogger({
+  levels,
+  format: combine(timestampFormat(), printf(formatFunction)),
+  transports: createTransports(album.id),
+});
