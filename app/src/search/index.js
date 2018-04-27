@@ -6,6 +6,33 @@ const actionsWrapper = (id) => {
   let album;
   let logger;
   const pages = [];
+  const indicator = (current, total) => `${current}/${total}`;
+  const tag = () => {
+    const {
+      artists: [{ name: artist }],
+      name,
+      id: albumId,
+    } = album;
+    return `${artist} - ${name} (${albumId}) ::`;
+  };
+  const resultsMsg = (pageObject) => {
+    const {
+      pagination: { page, pages: pn },
+      results,
+    } = pageObject;
+    return `${tag(album)} P ${indicator(page, pn)}: ${results.length} items`;
+  };
+
+  const releaseMsg = (release) => {
+    const page = pages.find(p => p.results.find(r => r.id === release.id) !== undefined);
+    const i = page.results.findIndex(r => r.id === release.id) + 1;
+    const {
+      pagination: { page: current, pages: pn },
+      results,
+    } = page;
+    const { id: rId, master_id: masterId } = release;
+    return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
+  };
   const addSearch = () => actions.addSearch(id);
   const addAlbum = (searchAlbum) => {
     album = searchAlbum;
@@ -16,7 +43,7 @@ const actionsWrapper = (id) => {
     pages.push(page);
   };
   const sendRelease = (release) => {
-    logger.release({ release });
+    logger.info({ text: releaseMsg(release) });
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
       actions.setLastRelease(album.id, release);
@@ -28,7 +55,7 @@ const actionsWrapper = (id) => {
     logger = _logger;
   };
   const results = (page) => {
-    logger.results({ page });
+    logger.info({ text: resultsMsg(page) });
     setLastSearchResults(page);
   };
   const timeout = (error) => {

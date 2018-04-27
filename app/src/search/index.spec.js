@@ -60,7 +60,7 @@ function setup(context) {
     getApi: sinon.stub().resolves(context.spotifyApi),
   };
   context.logger = {
-    results: sinon.stub(),
+    info: sinon.stub(),
     release: sinon.stub(),
     finish: sinon.stub(),
     error: sinon.stub(),
@@ -148,8 +148,22 @@ describe('Search function', () => {
       });
     });
 
-    it('logs the 4 releases', function () {
-      assert.equal(this.logger.results.callCount, 2);
+    describe('logs the releases', () => {
+      it('1', function () {
+        assert.equal(this.logger.info.getCalls()[1].args[0].text, 'Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK');
+      });
+
+      it('2', function () {
+        assert.equal(this.logger.info.getCalls()[2].args[0].text, 'Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK');
+      });
+
+      it('3', function () {
+        assert.equal(this.logger.info.getCalls()[4].args[0].text, 'Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK');
+      });
+
+      it('4', function () {
+        assert.equal(this.logger.info.getCalls()[5].args[0].text, 'Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK');
+      });
     });
 
     it('sets the 4 releases as last release', () => {
@@ -160,8 +174,14 @@ describe('Search function', () => {
       assert.equal(actions.addCredits.callCount, 4);
     });
 
-    it('logs the 2 search pages', function () {
-      assert.equal(this.logger.results.callCount, 2);
+    describe('logs the search pages', () => {
+      it('1', function () {
+        assert.equal(this.logger.info.getCalls()[0].args[0].text, 'Artist - Album (A1) :: P 1/2: 2 items');
+      });
+
+      it('2', function () {
+        assert.equal(this.logger.info.getCalls()[3].args[0].text, 'Artist - Album (A1) :: P 2/2: 2 items');
+      });
     });
 
     it('sets the 4 releases as last release', () => {
