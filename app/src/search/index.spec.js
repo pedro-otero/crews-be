@@ -384,6 +384,10 @@ describe('Search function', () => {
       assert(this.logger.error.calledOnce);
     });
 
+    it('Error message is as expected', function () {
+      assert.equal(this.logger.error.getCalls()[0].args[0].error, 'Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s');
+    });
+
     it('getRelease is called 5 times', function () {
       assert.equal(this.discogs.db.getRelease.getCalls().length, 5);
     });
@@ -419,6 +423,10 @@ describe('Search function', () => {
 
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
+    });
+
+    it('Error message is as expected', function () {
+      assert.equal(this.logger.error.getCalls()[0].args[0].error, 'Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s');
     });
 
     it('search is called 3 times', function () {

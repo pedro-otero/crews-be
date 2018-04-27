@@ -68,8 +68,8 @@ const actionsWrapper = (id) => {
       logger.error({ error: `${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT` });
     }
   };
-  const tooManyRequests = (error) => {
-    logger.error({ error });
+  const tooManyRequests = (time) => {
+    logger.error({ error: `${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s` });
   };
   const sendError = (error) => {
     logger.error({ error });
@@ -142,7 +142,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
                 results.unshift(result);
               } else if (is429(error)) {
                 idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-                searchObserver.tooManyRequests(error);
+                searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
                 results.unshift(result);
               } else {
                 searchObserver.sendError(error);
@@ -163,7 +163,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             fetch();
           } else if (is429(error)) {
             idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-            searchObserver.tooManyRequests(error);
+            searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
             fetch();
           } else {
             searchObserver.sendError(error);
