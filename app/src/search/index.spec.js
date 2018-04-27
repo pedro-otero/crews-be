@@ -19,7 +19,7 @@ function monkeypatchActions() {
   actions.removeSearch = sinon.spy();
 }
 
-const blankRelease = id => ({ id, tracklist: [] });
+const blankRelease = id => ({ id, tracklist: [{ title: 'Track #1' }] });
 
 const pages = [{
   pagination: {
@@ -52,7 +52,11 @@ function setup(context, times, done) {
         id: 'A1',
         name: 'Album',
         artists: [{ name: 'Artist' }],
-        tracks: { items: [] },
+        tracks: {
+          items: [{
+            id: 'T1', name: 'Track #1',
+          }],
+        },
       },
     }),
   };
