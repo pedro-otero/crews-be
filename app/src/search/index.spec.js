@@ -72,6 +72,7 @@ function setup(context, times, done) {
       }
     }),
     notice: sinon.stub(),
+    detail: sinon.stub(),
   };
 }
 
