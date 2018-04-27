@@ -53,6 +53,8 @@ const getOutput = (id) => {
       actions.setLastRelease(album.id, release);
       if (release.tracklist.length === album.tracks.items.length) {
         actions.addCredits(album, release);
+      } else {
+        logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
       }
     },
     timeout: (page, releaseId) => {

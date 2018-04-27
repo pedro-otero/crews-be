@@ -223,6 +223,10 @@ describe('Search function', () => {
       });
     });
 
+    it('Logs info about release that is surely no match', function () {
+      assert(this.logger.detail.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-5 tracklist length (2) does not match the album\'s (1)'));
+    });
+
     afterEach(resetActionStubs);
   });
 
