@@ -57,11 +57,9 @@ function is429(error) {
   return error.statusCode === 429;
 }
 
-const DEFAULT_WAIT_AFTER_429 = 10000;
-
 const dumbPromiseThatDoesNothing = time => new Promise(resolve => setTimeout(resolve, time));
 
-module.exports = (spotify, db, createLogger) => (id) => {
+module.exports = (spotify, discogs, createLogger) => (id) => {
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
     if (code in spotifyErrorMessages.http) {
@@ -70,7 +68,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const search = (album, page) => db.search({
+  const search = (album, page) => discogs.db.search({
     artist: album.artists[0].name,
     release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
     type: 'release',
@@ -97,7 +95,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
             }
             try {
               // eslint-disable-next-line no-await-in-loop
-              const release = await db.getRelease(result.id);
+              const release = await discogs.db.getRelease(result.id);
               searchObserver.release(release);
               wait = 0;
             } catch (error) {
@@ -105,7 +103,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
                 searchObserver.timeout(error);
                 results.unshift(result);
               } else if (is429(error)) {
-                wait = DEFAULT_WAIT_AFTER_429;
+                wait = discogs.PAUSE_NEEDED_AFTER_429;
                 searchObserver.tooManyRequests(error);
                 results.unshift(result);
               } else {
@@ -126,7 +124,7 @@ module.exports = (spotify, db, createLogger) => (id) => {
             searchObserver.timeout(error);
             fetch();
           } else if (is429(error)) {
-            wait = DEFAULT_WAIT_AFTER_429;
+            wait = discogs.PAUSE_NEEDED_AFTER_429;
             searchObserver.tooManyRequests(error);
             fetch();
           } else {
