@@ -148,24 +148,6 @@ describe('Search function', () => {
       });
     });
 
-    describe('logs the releases', () => {
-      it('1', function () {
-        assert.equal(this.logger.info.getCalls()[1].args[0].text, 'Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK');
-      });
-
-      it('2', function () {
-        assert.equal(this.logger.info.getCalls()[2].args[0].text, 'Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK');
-      });
-
-      it('3', function () {
-        assert.equal(this.logger.info.getCalls()[4].args[0].text, 'Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK');
-      });
-
-      it('4', function () {
-        assert.equal(this.logger.info.getCalls()[5].args[0].text, 'Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK');
-      });
-    });
-
     it('sets the 4 releases as last release', () => {
       assert.equal(actions.setLastRelease.callCount, 4);
     });
@@ -174,13 +156,38 @@ describe('Search function', () => {
       assert.equal(actions.addCredits.callCount, 4);
     });
 
-    describe('logs the search pages', () => {
-      it('1', function () {
-        assert.equal(this.logger.info.getCalls()[0].args[0].text, 'Artist - Album (A1) :: P 1/2: 2 items');
+
+    describe('logs', () => {
+      it('6 times', function () {
+        assert.equal(this.logger.info.callCount, 6);
       });
 
-      it('2', function () {
-        assert.equal(this.logger.info.getCalls()[3].args[0].text, 'Artist - Album (A1) :: P 2/2: 2 items');
+      describe('releases', () => {
+        it('1', function () {
+          assert.equal(this.logger.info.getCalls()[1].args[0].text, 'Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK');
+        });
+
+        it('2', function () {
+          assert.equal(this.logger.info.getCalls()[2].args[0].text, 'Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK');
+        });
+
+        it('3', function () {
+          assert.equal(this.logger.info.getCalls()[4].args[0].text, 'Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK');
+        });
+
+        it('4', function () {
+          assert.equal(this.logger.info.getCalls()[5].args[0].text, 'Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK');
+        });
+      });
+
+      describe('search pages', () => {
+        it('1', function () {
+          assert.equal(this.logger.info.getCalls()[0].args[0].text, 'Artist - Album (A1) :: P 1/2: 2 items');
+        });
+
+        it('2', function () {
+          assert.equal(this.logger.info.getCalls()[3].args[0].text, 'Artist - Album (A1) :: P 2/2: 2 items');
+        });
       });
     });
 
