@@ -2,30 +2,9 @@ const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
-const observer = (logger, output) => ({
-  results: (page) => {
-    logger.results({ page });
-    output.setLastSearchResults(page);
-  },
-  release: (release) => {
-    logger.release({ release });
-    output.sendRelease(release);
-  },
-  timeout: (error) => {
-    logger.error({ error });
-  },
-  tooManyRequests: (error) => {
-    logger.error({ error });
-  },
-  error: (error) => {
-    logger.error({ error });
-    output.clear();
-  },
-  complete: logger.finish.bind(logger, {}),
-});
-
 const actionsWrapper = (id) => {
   let album;
+  let logger;
   const pages = [];
   const addSearch = () => actions.addSearch(id);
   const addAlbum = (searchAlbum) => {
@@ -37,6 +16,7 @@ const actionsWrapper = (id) => {
     pages.push(page);
   };
   const sendRelease = (release) => {
+    logger.release({ release });
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
       actions.setLastRelease(album.id, release);
@@ -44,8 +24,35 @@ const actionsWrapper = (id) => {
   };
   const abort = () => actions.removeSearch(id);
   const clear = () => actions.clearSearch(id);
+  const setLogger = (_logger) => {
+    logger = _logger;
+  };
+  const results = (page) => {
+    logger.results({ page });
+    setLastSearchResults(page);
+  };
+  const timeout = (error) => {
+    logger.error({ error });
+  };
+  const tooManyRequests = (error) => {
+    logger.error({ error });
+  };
+  const sendError = (error) => {
+    logger.error({ error });
+    clear();
+  };
+  const complete = () => logger.finish({});
   return {
-    addSearch, addAlbum, setLastSearchResults, sendRelease, abort, clear,
+    addSearch,
+    addAlbum,
+    abort,
+    setLogger,
+    results,
+    sendRelease,
+    timeout,
+    tooManyRequests,
+    sendError,
+    complete,
   };
 };
 
@@ -93,7 +100,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await discogs.db.getRelease(result.id);
-              searchObserver.release(release);
+              searchObserver.sendRelease(release);
               idleTime = 0;
             } catch (error) {
               if (isTimeout(error)) {
@@ -104,7 +111,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
                 searchObserver.tooManyRequests(error);
                 results.unshift(result);
               } else {
-                searchObserver.error(error);
+                searchObserver.sendError(error);
                 return;
               }
             }
@@ -125,11 +132,11 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             searchObserver.tooManyRequests(error);
             fetch();
           } else {
-            searchObserver.error(error);
+            searchObserver.sendError(error);
           }
-        }).catch(searchObserver.error);
+        }).catch(searchObserver.sendError);
       } catch (error) {
-        searchObserver.error(error);
+        searchObserver.sendError(error);
       }
     };
 
@@ -146,8 +153,8 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       .then(({ body }) => {
         const album = body;
         output.addAlbum(album);
-        const logger = createLogger(album);
-        findReleases(album, observer(logger, output));
+        output.setLogger(createLogger(album));
+        findReleases(album, output);
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
