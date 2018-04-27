@@ -69,7 +69,7 @@ const getOutput = (id) => {
       logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
     },
     sendError: (error) => {
-      logger.notice({ error });
+      logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
       actions.clearSearch(id);
     },
     complete: () => logger.say(`${tag(album)} FINISHED`),
@@ -131,6 +131,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
                 searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
                 results.unshift(result);
               } else {
+                searchObserver.abort();
                 searchObserver.sendError(error);
                 return;
               }
@@ -152,6 +153,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
             fetch();
           } else {
+            searchObserver.abort();
             searchObserver.sendError(error);
           }
         }).catch(searchObserver.sendError);

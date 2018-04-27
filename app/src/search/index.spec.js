@@ -449,6 +449,44 @@ describe('Search function', () => {
     afterEach(resetActionStubs);
   });
 
+  describe('Discogs get release rejects because of anything else', () => {
+    beforeEach(function (done) {
+      setup(this, 8, done);
+      this.discogs = {
+        db: {
+          search: sinon.stub().onCall(0).rejects({}),
+        },
+      };
+      this.discogs = {
+        db: {
+          search: sinon.stub()
+            .onCall(0)
+            .resolves(pages[0])
+            .onCall(1)
+            .resolves(pages[1]),
+          getRelease: sinon.stub().rejects(Error('BAD!!')),
+        },
+        PAUSE_NEEDED_AFTER_429: 1,
+      };
+      this.logger.notice = sinon.stub().callsFake(() => done());
+      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1').start();
+    });
+
+    it('Error logger is called', function () {
+      assert(this.logger.notice.calledOnce);
+    });
+
+    it('Error message is as expected', function () {
+      assert(this.logger.notice.getCalls()[0].args[0].includes('Artist - Album (A1) :: EXCEPTION. Search removed.'));
+    });
+
+    it('search is aborted', () => {
+      assert(actions.removeSearch.calledOnce);
+    });
+
+    afterEach(resetActionStubs);
+  });
+
   describe('Spotify album does not exist', () => {
     beforeEach(function (done) {
       setup(this);
