@@ -13,7 +13,7 @@ const actionsWrapper = (id) => {
       name,
       id: albumId,
     } = album;
-    return `${artist} - ${name} (${albumId}) ::`;
+    return `${new Date().toString()} ${artist} - ${name} (${albumId}) ::`;
   };
   const resultsMsg = (pageObject) => {
     const {

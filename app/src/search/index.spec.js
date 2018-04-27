@@ -169,29 +169,29 @@ describe('Search function', () => {
 
       describe('releases', () => {
         it('1', function () {
-          assert.equal(this.logger.info.getCalls()[1].args[0], 'Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK');
+          assert(this.logger.info.getCalls()[1].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK'));
         });
 
         it('2', function () {
-          assert.equal(this.logger.info.getCalls()[2].args[0], 'Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK');
+          assert(this.logger.info.getCalls()[2].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK'));
         });
 
         it('3', function () {
-          assert.equal(this.logger.info.getCalls()[4].args[0], 'Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK');
+          assert(this.logger.info.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK'));
         });
 
         it('4', function () {
-          assert.equal(this.logger.info.getCalls()[5].args[0], 'Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK');
+          assert(this.logger.info.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK'));
         });
       });
 
       describe('search pages', () => {
         it('1', function () {
-          assert.equal(this.logger.info.getCalls()[0].args[0], 'Artist - Album (A1) :: P 1/2: 2 items');
+          assert(this.logger.info.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: P 1/2: 2 items'));
         });
 
         it('2', function () {
-          assert.equal(this.logger.info.getCalls()[3].args[0], 'Artist - Album (A1) :: P 2/2: 2 items');
+          assert(this.logger.info.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 2 items'));
         });
       });
     });
@@ -303,7 +303,7 @@ describe('Search function', () => {
     });
 
     it('Error message is as expected', function () {
-      assert.equal(this.logger.error.getCalls()[0].args[0], 'Artist - Album (A1) :: SEARCH P-1 TIMEOUT');
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-1 TIMEOUT'));
     });
 
     it('search is called 3 times', function () {
@@ -344,7 +344,7 @@ describe('Search function', () => {
     });
 
     it('Error message is as expected', function () {
-      assert.equal(this.logger.error.getCalls()[0].args[0], 'Artist - Album (A1) :: R-1 P-(1/2) TIMEOUT');
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-1 P-(1/2) TIMEOUT'));
     });
 
     it('getRelease is called 5 times', function () {
@@ -385,7 +385,7 @@ describe('Search function', () => {
     });
 
     it('Error message is as expected', function () {
-      assert.equal(this.logger.error.getCalls()[0].args[0], 'Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s');
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
     });
 
     it('getRelease is called 5 times', function () {
@@ -426,7 +426,7 @@ describe('Search function', () => {
     });
 
     it('Error message is as expected', function () {
-      assert.equal(this.logger.error.getCalls()[0].args[0], 'Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s');
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
     });
 
     it('search is called 3 times', function () {
