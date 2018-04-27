@@ -517,13 +517,23 @@ describe('Search function', () => {
     });
   });
 
-  describe.skip('Spotify login fails', () => {
+  describe('Spotify login fails', () => {
     beforeEach(function (done) {
-      setup.bind(this)(() => {
-        this.spotify.getAlbum = sinon.stub().rejects(createWebApiError(null, 500));
-      }, done);
+      setup(this);
+      this.spotify = {
+        getApi: sinon.stub().rejects(Error()),
+      };
+      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
+        .start()
+        .then(() => done('ERROR'), (result) => {
+          this.searchResult = result;
+          done();
+        })
+        .catch(done);
     });
 
-    it('tests are missing');
+    it('error message is as expected', function () {
+      assert.equal(this.searchResult.message, "Server couldn't login to Spotify");
+    });
   });
 });
