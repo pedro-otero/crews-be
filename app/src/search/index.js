@@ -49,13 +49,9 @@ const actionsWrapper = (id) => {
   };
 };
 
-function isTimeout(error) {
-  return error.code === 'ETIMEDOUT' && error.errno === 'ETIMEDOUT';
-}
+const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
 
-function is429(error) {
-  return error.statusCode === 429;
-}
+const is429 = ({ statusCode }) => statusCode === 429;
 
 const dumbPromiseThatDoesNothing = time => new Promise(resolve => setTimeout(resolve, time));
 
