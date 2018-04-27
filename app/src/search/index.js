@@ -62,8 +62,9 @@ const actionsWrapper = (id) => {
     if (!releaseId) {
       logger.error({ error: `${tag(album)} SEARCH P-${page} TIMEOUT` });
     } else {
-      const releaseNumber = pages[pages.length - 1].results.findIndex(r => r.id === releaseId) + 1;
-      const releaseCount = pages[pages.length - 1].results.length;
+      const { results: lastResults } = [...pages].pop();
+      const releaseNumber = lastResults.findIndex(r => r.id === releaseId) + 1;
+      const releaseCount = lastResults.length;
       logger.error({ error: `${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT` });
     }
   };
