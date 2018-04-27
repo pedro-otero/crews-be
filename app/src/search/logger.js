@@ -13,23 +13,9 @@ const createTransports = albumId => [
 
 module.exports = function (album) {
   const formatFunction = ({
-    level,
-    message: {
-      text,
-      error,
-    },
+    message,
     timestamp,
-  }) => {
-    let result = `${timestamp} `;
-    switch (level) {
-      case 'error':
-        result += error.stack;
-        break;
-      default:
-        result += text;
-    }
-    return result;
-  };
+  }) => `${timestamp} ${message}`;
 
   return winston.createLogger({
     levels,

@@ -43,7 +43,7 @@ const actionsWrapper = (id) => {
     pages.push(page);
   };
   const sendRelease = (release) => {
-    logger.info({ text: releaseMsg(release) });
+    logger.info(releaseMsg(release));
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
       actions.setLastRelease(album.id, release);
@@ -55,27 +55,27 @@ const actionsWrapper = (id) => {
     logger = _logger;
   };
   const results = (page) => {
-    logger.info({ text: resultsMsg(page) });
+    logger.info(resultsMsg(page));
     setLastSearchResults(page);
   };
   const timeout = (page, releaseId) => {
     if (!releaseId) {
-      logger.error({ error: `${tag(album)} SEARCH P-${page} TIMEOUT` });
+      logger.error(`${tag(album)} SEARCH P-${page} TIMEOUT`);
     } else {
       const { results: lastResults } = [...pages].pop();
       const releaseNumber = lastResults.findIndex(r => r.id === releaseId) + 1;
       const releaseCount = lastResults.length;
-      logger.error({ error: `${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT` });
+      logger.error(`${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT`);
     }
   };
   const tooManyRequests = (time) => {
-    logger.error({ error: `${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s` });
+    logger.error(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
   };
   const sendError = (error) => {
     logger.error({ error });
     clear();
   };
-  const complete = () => logger.info({ text: `${tag(album)} FINISHED` });
+  const complete = () => logger.info(`${tag(album)} FINISHED`);
   return {
     addSearch,
     addAlbum,
