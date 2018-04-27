@@ -87,12 +87,9 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           searchObserver.results(page);
           const results = [...page.results];
           let result = results.shift();
-          // eslint-disable-next-line no-restricted-syntax
           while (result) {
-            if (wait) {
-              // eslint-disable-next-line no-await-in-loop
-              await dumbPromiseThatDoesNothing(wait);
-            }
+            // eslint-disable-next-line no-await-in-loop
+            await dumbPromiseThatDoesNothing(wait);
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await discogs.db.getRelease(result.id);
