@@ -4,10 +4,7 @@ const { printf, combine, timestamp: timestampFormat } = winston.format;
 
 const levels = {
   info: 0,
-  finish: 1,
-  results: 2,
-  release: 3,
-  error: 4,
+  error: 1,
 };
 const createTransports = albumId => [
   new winston.transports.Console({ level: 'error' }),
