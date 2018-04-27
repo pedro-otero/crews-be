@@ -127,9 +127,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           } else {
             searchObserver.error(error);
           }
-        }).catch((error) => {
-          searchObserver.error(error);
-        });
+        }).catch(searchObserver.error);
       } catch (error) {
         searchObserver.error(error);
       }
