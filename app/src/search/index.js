@@ -68,7 +68,7 @@ const actionsWrapper = (id) => {
     logger.error({ error });
     clear();
   };
-  const complete = () => logger.finish({});
+  const complete = () => logger.info({ text: `${tag(album)} FINISHED` });
   return {
     addSearch,
     addAlbum,

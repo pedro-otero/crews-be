@@ -35,7 +35,7 @@ const pages = [{
   results: [{ id: 3 }, { id: 4 }],
 }];
 
-function setup(context) {
+function setup(context, times, done) {
   monkeypatchActions();
   context.discogs = {
     db: {
@@ -59,8 +59,14 @@ function setup(context) {
   context.spotify = {
     getApi: sinon.stub().resolves(context.spotifyApi),
   };
+  this.timesInfoLogged = 0;
   context.logger = {
-    info: sinon.stub(),
+    info: sinon.stub().callsFake(() => {
+      this.timesInfoLogged += 1;
+      if (this.timesInfoLogged === times) {
+        done();
+      }
+    }),
     release: sinon.stub(),
     finish: sinon.stub(),
     error: sinon.stub(),
@@ -82,8 +88,7 @@ function resetActionStubs() {
 describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
-      setup(this);
-      this.logger.finish = sinon.stub().callsFake(() => done());
+      setup(this, 7, done);
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -158,8 +163,8 @@ describe('Search function', () => {
 
 
     describe('logs', () => {
-      it('6 times', function () {
-        assert.equal(this.logger.info.callCount, 6);
+      it('7 times', function () {
+        assert.equal(this.logger.info.callCount, 7);
       });
 
       describe('releases', () => {
@@ -274,7 +279,7 @@ describe('Search function', () => {
 
   describe('Discogs search promise rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 7, done);
       this.discogs.db = {
         search: sinon.stub()
           .onCall(0).rejects({
@@ -287,7 +292,6 @@ describe('Search function', () => {
           .resolves(pages[1]),
         getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
       };
-      this.logger.finish = sinon.stub().callsFake(() => done());
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -311,7 +315,7 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 7, done);
       const releaseStub = sinon.stub().onCall(0).rejects({
         code: 'ETIMEDOUT',
         errno: 'ETIMEDOUT',
@@ -348,7 +352,7 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 7, done);
       const releaseStub = sinon.stub().onCall(0).rejects({ statusCode: 429 });
       [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs = {
@@ -385,7 +389,7 @@ describe('Search function', () => {
 
   describe('Discogs search rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 7, done);
       this.discogs = {
         db: {
           search: sinon.stub()

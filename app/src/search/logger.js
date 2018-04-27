@@ -15,14 +15,6 @@ const createTransports = albumId => [
 ];
 
 module.exports = function (album) {
-  const {
-    artists: [{ name: artist }],
-    name,
-    id: albumId,
-  } = album;
-
-  const tag = () => `${artist} - ${name} (${albumId}) ::`;
-
   const formatFunction = ({
     level,
     message: {
@@ -33,9 +25,6 @@ module.exports = function (album) {
   }) => {
     let result = `${timestamp} `;
     switch (level) {
-      case 'finish':
-        result += `${tag(album)} FINISHED`;
-        break;
       case 'error':
         result += error.stack;
         break;
