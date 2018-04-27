@@ -58,8 +58,14 @@ const actionsWrapper = (id) => {
     logger.info({ text: resultsMsg(page) });
     setLastSearchResults(page);
   };
-  const timeout = (error) => {
-    logger.error({ error });
+  const timeout = (page, releaseId) => {
+    if (!releaseId) {
+      logger.error({ error: `${tag(album)} SEARCH P-${page} TIMEOUT` });
+    } else {
+      const releaseNumber = pages[pages.length - 1].results.findIndex(r => r.id === releaseId) + 1;
+      const releaseCount = pages[pages.length - 1].results.length;
+      logger.error({ error: `${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT` });
+    }
   };
   const tooManyRequests = (error) => {
     logger.error({ error });
@@ -131,7 +137,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
               idleTime = 0;
             } catch (error) {
               if (isTimeout(error)) {
-                searchObserver.timeout(error);
+                searchObserver.timeout(pageNumber, result.id);
                 results.unshift(result);
               } else if (is429(error)) {
                 idleTime = discogs.PAUSE_NEEDED_AFTER_429;
@@ -152,7 +158,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           }
         }, (error) => {
           if (isTimeout(error)) {
-            searchObserver.timeout(error);
+            searchObserver.timeout(pageNumber);
             fetch();
           } else if (is429(error)) {
             idleTime = discogs.PAUSE_NEEDED_AFTER_429;
