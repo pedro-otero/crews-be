@@ -32,7 +32,7 @@ const pages = [{
     page: 2,
     pages: 2,
   },
-  results: [{ id: 3 }, { id: 4 }],
+  results: [{ id: 3 }, { id: 4 }, { id: 5 }],
 }];
 
 function setup(context, times, done) {
@@ -43,7 +43,13 @@ function setup(context, times, done) {
         .onCall(0).resolves(pages[0])
         .onCall(1)
         .resolves(pages[1]),
-      getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+      getRelease: sinon.stub().callsFake((id) => {
+        const release = blankRelease(id);
+        if (id > 4) {
+          release.tracklist.push({ title: 'Track #2' });
+        }
+        return Promise.resolve(release);
+      }),
     },
   };
   context.spotifyApi = {
@@ -91,7 +97,7 @@ function resetActionStubs() {
 describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
-      setup(this, 7, done);
+      setup(this, 8, done);
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
         .start()
         .then((result) => { this.searchResult = result; })
@@ -166,8 +172,8 @@ describe('Search function', () => {
 
 
     describe('logs', () => {
-      it('7 times', function () {
-        assert.equal(this.logger.say.callCount, 7);
+      it('8 times', function () {
+        assert.equal(this.logger.say.callCount, 8);
       });
 
       describe('releases', () => {
@@ -180,11 +186,11 @@ describe('Search function', () => {
         });
 
         it('3', function () {
-          assert(this.logger.say.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/2) R-3 (M-undefined) OK'));
+          assert(this.logger.say.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/3) R-3 (M-undefined) OK'));
         });
 
         it('4', function () {
-          assert(this.logger.say.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/2) R-4 (M-undefined) OK'));
+          assert(this.logger.say.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/3) R-4 (M-undefined) OK'));
         });
       });
 
@@ -194,7 +200,7 @@ describe('Search function', () => {
         });
 
         it('2', function () {
-          assert(this.logger.say.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 2 items'));
+          assert(this.logger.say.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 3 items'));
         });
       });
     });
@@ -282,7 +288,7 @@ describe('Search function', () => {
 
   describe('Discogs search promise rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this, 7, done);
+      setup(this, 8, done);
       this.discogs.db = {
         search: sinon.stub()
           .onCall(0).rejects({
@@ -322,12 +328,12 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this, 7, done);
+      setup(this, 8, done);
       const releaseStub = sinon.stub().onCall(0).rejects({
         code: 'ETIMEDOUT',
         errno: 'ETIMEDOUT',
       });
-      [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
+      [1, 2, 3, 4, 5].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs.db = {
         search: sinon.stub()
           .onCall(0).resolves(pages[0])
@@ -351,7 +357,7 @@ describe('Search function', () => {
     });
 
     it('getRelease is called 5 times', function () {
-      assert.equal(this.discogs.db.getRelease.getCalls().length, 5);
+      assert.equal(this.discogs.db.getRelease.getCalls().length, 6);
     });
 
     it('search is NOT cleared', () => {
@@ -363,9 +369,9 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this, 7, done);
+      setup(this, 8, done);
       const releaseStub = sinon.stub().onCall(0).rejects({ statusCode: 429 });
-      [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
+      [1, 2, 3, 4, 5].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs = {
         db: {
           search: sinon.stub()
@@ -392,7 +398,7 @@ describe('Search function', () => {
     });
 
     it('getRelease is called 5 times', function () {
-      assert.equal(this.discogs.db.getRelease.getCalls().length, 5);
+      assert.equal(this.discogs.db.getRelease.getCalls().length, 6);
     });
 
     it('search is NOT cleared', () => {
@@ -404,7 +410,7 @@ describe('Search function', () => {
 
   describe('Discogs search rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this, 7, done);
+      setup(this, 8, done);
       this.discogs = {
         db: {
           search: sinon.stub()
