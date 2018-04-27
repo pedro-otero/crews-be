@@ -7,13 +7,13 @@ const search = require('../search');
 
 const createLogger = ({ id }) => winston.createLogger({
   levels: {
-    info: 0,
-    error: 1,
+    say: 0,
+    notice: 1,
   },
   format: winston.format.simple(),
   transports: [
-    new winston.transports.Console({ level: 'error' }),
-    new winston.transports.File({ filename: `app/log/${id}.log`, level: 'error' }),
+    new winston.transports.Console({ level: 'notice' }),
+    new winston.transports.File({ filename: `app/log/${id}.log`, level: 'notice' }),
   ],
 });
 
