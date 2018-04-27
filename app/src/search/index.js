@@ -13,7 +13,7 @@ const getOutput = (id) => {
       name,
       id: albumId,
     } = album;
-    return `${new Date().toString()} ${artist} - ${name} (${albumId}) ::`;
+    return `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
   };
   const resultsMsg = (pageObject) => {
     const {
