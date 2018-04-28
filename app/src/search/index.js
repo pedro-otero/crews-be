@@ -101,7 +101,7 @@ const getNext = ({ pagination: { page } }) => page + 1;
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let output;
   let album;
-  let tasks = [];
+  const tasks = [];
 
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -129,7 +129,9 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           idleTime = 0;
           output.results(page);
           tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
-          tasks.push({ type: 'search', data: page.pagination.page + 1 });
+          if (isThereNext(page)) {
+            tasks.push({ type: 'search', data: page.pagination.page + 1 });
+          }
           const results = [...page.results];
           let result = results.shift();
           while (result) {
