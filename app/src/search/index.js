@@ -6,6 +6,9 @@ const getOutput = (id) => {
   let album;
   let logger;
   const pages = [];
+  let nextPage = 1;
+  let nextReleaseIndex;
+  let nextReleaseId;
   const indicator = (current, total) => `${current}/${total}`;
   const tag = () => {
     const {
@@ -44,11 +47,16 @@ const getOutput = (id) => {
       logger = _logger;
     },
     results: (page) => {
+      nextPage = null;
+      nextReleaseIndex = 0;
+      nextReleaseId = page.results[0].id;
       logger.say(resultsMsg(page));
       actions.setLastSearchPage(album.id, page);
       pages.push(page);
     },
     sendRelease: (release) => {
+      nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
+      nextReleaseIndex += 1;
       logger.say(releaseMsg(release));
       actions.setLastRelease(album.id, release);
       if (release.tracklist.length === album.tracks.items.length) {
@@ -57,14 +65,11 @@ const getOutput = (id) => {
         logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
       }
     },
-    timeout: (page, releaseId) => {
-      if (!releaseId) {
-        logger.notice(`${tag(album)} SEARCH P-${page} TIMEOUT`);
+    timeout: () => {
+      if (!nextReleaseId) {
+        logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
       } else {
-        const { results: lastResults } = [...pages].pop();
-        const releaseNumber = lastResults.findIndex(r => r.id === releaseId) + 1;
-        const releaseCount = lastResults.length;
-        logger.notice(`${tag(album)} R-${releaseId} P-(${indicator(releaseNumber, releaseCount)}) TIMEOUT`);
+        logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
       }
     },
     tooManyRequests: (time) => {
@@ -126,7 +131,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
               idleTime = 0;
             } catch (error) {
               if (isTimeout(error)) {
-                searchObserver.timeout(pageNumber, result.id);
+                searchObserver.timeout();
                 results.unshift(result);
               } else if (is429(error)) {
                 idleTime = discogs.PAUSE_NEEDED_AFTER_429;
@@ -148,7 +153,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           }
         }, (error) => {
           if (isTimeout(error)) {
-            searchObserver.timeout(pageNumber);
+            searchObserver.timeout();
             fetch();
           } else if (is429(error)) {
             idleTime = discogs.PAUSE_NEEDED_AFTER_429;
