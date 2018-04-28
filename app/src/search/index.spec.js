@@ -330,6 +330,47 @@ describe('Search function', () => {
 
       afterEach(resetActionStubs);
     });
+
+    describe('Second page', () => {
+      beforeEach(function (done) {
+        setup(this, 8, done);
+        this.discogs.db = {
+          search: sinon.stub()
+            .onCall(0)
+            .resolves(pages[0])
+            .onCall(1)
+            .rejects({
+              code: 'ETIMEDOUT',
+              errno: 'ETIMEDOUT',
+            })
+            .onCall(2)
+            .resolves(pages[1]),
+          getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+        };
+        searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
+          .start()
+          .then((result) => { this.searchResult = result; })
+          .catch(done);
+      });
+
+      it('Error logger is called', function () {
+        assert(this.logger.notice.calledOnce);
+      });
+
+      it('Error message is as expected', function () {
+        assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-2 TIMEOUT'));
+      });
+
+      it('search is called 3 times', function () {
+        assert.equal(this.discogs.db.search.getCalls().length, 3);
+      });
+
+      it('search is NOT cleared', () => {
+        assert.equal(actions.clearSearch.getCalls().length, 0);
+      });
+
+      afterEach(resetActionStubs);
+    });
   });
 
   describe('Discogs release retrieval rejects because of timeout', () => {

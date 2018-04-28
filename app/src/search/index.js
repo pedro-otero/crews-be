@@ -57,6 +57,11 @@ const getOutput = (id) => {
     sendRelease: (release) => {
       nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
       nextReleaseIndex += 1;
+      if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
+        nextReleaseIndex = null;
+        nextReleaseId = null;
+        nextPage = pages[pages.length - 1].pagination.page + 1;
+      }
       logger.say(releaseMsg(release));
       actions.setLastRelease(album.id, release);
       if (release.tracklist.length === album.tracks.items.length) {
