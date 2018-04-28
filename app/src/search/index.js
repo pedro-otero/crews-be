@@ -101,6 +101,7 @@ const getNext = ({ pagination: { page } }) => page + 1;
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let output;
   let album;
+  let tasks = [];
 
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -127,6 +128,9 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         search(pageNumber).then(async (page) => {
           idleTime = 0;
           output.results(page);
+          tasks = tasks.filter(t => t.type !== 'search' && t.data !== pageNumber);
+          tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
+          tasks.push({ type: 'search', data: page.pagination.page + 1 });
           const results = [...page.results];
           let result = results.shift();
           while (result) {
@@ -135,6 +139,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await discogs.db.getRelease(result.id);
+              tasks = tasks.filter(t => t.type !== 'release' && t.data !== release.id);
               output.sendRelease(release);
               idleTime = 0;
             } catch (error) {
@@ -191,6 +196,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         album = body;
         output.addAlbum(album);
         output.setLogger(createLogger(album));
+        tasks.push({ type: 'search', data: 1 });
         findReleases(album);
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
