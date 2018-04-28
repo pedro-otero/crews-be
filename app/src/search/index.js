@@ -190,7 +190,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         const album = body;
         output.addAlbum(album);
         output.setLogger(createLogger(album));
-        findReleases(album, output);
+        findReleases(album);
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
