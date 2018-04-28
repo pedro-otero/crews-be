@@ -100,6 +100,7 @@ const getNext = ({ pagination: { page } }) => page + 1;
 
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let output;
+  let album;
 
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -109,7 +110,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const search = (album, page) => discogs.db.search({
+  const search = page => discogs.db.search({
     artist: album.artists[0].name,
     release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
     type: 'release',
@@ -117,13 +118,13 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     page,
   });
 
-  const findReleases = (album) => {
+  const findReleases = () => {
     let pageNumber = 1;
     let idleTime = 0;
     const fetch = async () => {
       try {
         await sleep(idleTime);
-        search(album, pageNumber).then(async (page) => {
+        search(pageNumber).then(async (page) => {
           idleTime = 0;
           output.results(page);
           const results = [...page.results];
@@ -187,7 +188,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
-        const album = body;
+        album = body;
         output.addAlbum(album);
         output.setLogger(createLogger(album));
         findReleases(album);
