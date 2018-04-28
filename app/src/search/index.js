@@ -99,6 +99,8 @@ const isThereNext = ({ pagination: { page, pages } }) => page < pages;
 const getNext = ({ pagination: { page } }) => page + 1;
 
 module.exports = (spotify, discogs, createLogger) => (id) => {
+  let output;
+
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
     if (code in spotifyErrorMessages.http) {
@@ -115,7 +117,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     page,
   });
 
-  const findReleases = (album, searchObserver) => {
+  const findReleases = (album) => {
     let pageNumber = 1;
     let idleTime = 0;
     const fetch = async () => {
@@ -123,7 +125,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         await sleep(idleTime);
         search(album, pageNumber).then(async (page) => {
           idleTime = 0;
-          searchObserver.results(page);
+          output.results(page);
           const results = [...page.results];
           let result = results.shift();
           while (result) {
@@ -132,19 +134,19 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             try {
               // eslint-disable-next-line no-await-in-loop
               const release = await discogs.db.getRelease(result.id);
-              searchObserver.sendRelease(release);
+              output.sendRelease(release);
               idleTime = 0;
             } catch (error) {
               if (isTimeout(error)) {
-                searchObserver.timeout();
+                output.timeout();
                 results.unshift(result);
               } else if (is429(error)) {
                 idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-                searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
+                output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
                 results.unshift(result);
               } else {
-                searchObserver.abort();
-                searchObserver.sendError(error);
+                output.abort();
+                output.sendError(error);
                 return;
               }
             }
@@ -154,23 +156,23 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
             pageNumber = getNext(page);
             fetch();
           } else {
-            searchObserver.complete();
+            output.complete();
           }
         }, (error) => {
           if (isTimeout(error)) {
-            searchObserver.timeout();
+            output.timeout();
             fetch();
           } else if (is429(error)) {
             idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-            searchObserver.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
+            output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
             fetch();
           } else {
-            searchObserver.abort();
-            searchObserver.sendError(error);
+            output.abort();
+            output.sendError(error);
           }
-        }).catch(searchObserver.sendError);
+        }).catch(output.sendError);
       } catch (error) {
-        searchObserver.sendError(error);
+        output.sendError(error);
       }
     };
 
@@ -178,7 +180,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const start = () => new Promise((resolve, reject) => {
-    const output = getOutput(id);
+    output = getOutput(id);
     spotify.getApi()
       .then((api) => {
         output.addSearch(id);
