@@ -49,59 +49,47 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
 
-  const output = {
-    addSearch: () => actions.addSearch(id),
-    addAlbum: (searchAlbum) => {
-      album = searchAlbum;
-      actions.addAlbum(album);
-    },
-    abort: () => actions.removeSearch(id),
-    setLogger: () => {
-      logger = createLogger(album);
-    },
-    results: (page) => {
-      tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
-      if (isThereNext(page)) {
-        tasks.push({ type: 'search', data: page.pagination.page + 1 });
-      }
-      nextPage = null;
-      nextReleaseIndex = 0;
-      nextReleaseId = page.results[0].id;
-      logger.say(resultsMsg(page));
-      actions.setLastSearchPage(album.id, page);
-      pages.push(page);
-    },
-    sendRelease: (release) => {
-      nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
-      nextReleaseIndex += 1;
-      if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
-        nextReleaseIndex = null;
-        nextReleaseId = null;
-        nextPage = pages[pages.length - 1].pagination.page + 1;
-      }
-      logger.say(releaseMsg(release));
-      actions.setLastRelease(album.id, release);
-      if (release.tracklist.length === album.tracks.items.length) {
-        actions.addCredits(album, release);
-      } else {
-        logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
-      }
-    },
-    timeout: () => {
-      if (!nextReleaseId) {
-        logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
-      } else {
-        logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
-      }
-    },
-    tooManyRequests: (time) => {
-      logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
-    },
-    sendError: (error) => {
-      logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
-      actions.clearSearch(id);
-    },
-    complete: () => logger.say(`${tag(album)} FINISHED`),
+  const results = (page) => {
+    tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
+    if (isThereNext(page)) {
+      tasks.push({ type: 'search', data: page.pagination.page + 1 });
+    }
+    nextPage = null;
+    nextReleaseIndex = 0;
+    nextReleaseId = page.results[0].id;
+    logger.say(resultsMsg(page));
+    actions.setLastSearchPage(album.id, page);
+    pages.push(page);
+  };
+
+  const sendRelease = (release) => {
+    nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
+    nextReleaseIndex += 1;
+    if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
+      nextReleaseIndex = null;
+      nextReleaseId = null;
+      nextPage = pages[pages.length - 1].pagination.page + 1;
+    }
+    logger.say(releaseMsg(release));
+    actions.setLastRelease(album.id, release);
+    if (release.tracklist.length === album.tracks.items.length) {
+      actions.addCredits(album, release);
+    } else {
+      logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
+    }
+  };
+
+  const timeout = () => {
+    if (!nextReleaseId) {
+      logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
+    } else {
+      logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
+    }
+  };
+
+  const sendError = (error) => {
+    logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
+    actions.clearSearch(id);
   };
 
   const albumRejection = (reason) => {
@@ -130,8 +118,8 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   });
 
   const complete = ({ type }) => ({
-    search: output.results,
-    release: output.sendRelease,
+    search: results,
+    release: sendRelease,
     wait: () => {},
   })[type];
 
@@ -140,47 +128,47 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     try {
       run(task).then(complete(task), (error) => {
         if (isTimeout(error)) {
-          output.timeout();
+          timeout();
           tasks.unshift(task);
         } else if (is429(error)) {
-          output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
+          logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
           tasks.unshift(task);
           makeItWait();
         } else {
           throw error;
         }
       }).catch((error) => {
-        output.abort();
-        output.sendError(error);
+        actions.removeSearch(id);
+        sendError(error);
         tasks.splice(0, tasks.length);
       }).then(() => {
         if (tasks.length) {
           performTask();
         } else {
-          output.complete();
+          logger.say(`${tag(album)} FINISHED`);
         }
       });
     } catch (error) {
-      output.sendError(error);
+      sendError(error);
     }
   };
 
   const start = () => new Promise((resolve, reject) => {
     spotify.getApi()
       .then((api) => {
-        output.addSearch(id);
+        actions.addSearch(id);
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         album = body;
-        output.addAlbum(album);
-        output.setLogger();
+        actions.addAlbum(album);
+        logger = createLogger(album);
         tasks.push({ type: 'search', data: 1 });
         performTask();
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
-        output.abort();
+        actions.removeSearch(id);
       }).catch(reject);
   });
 
