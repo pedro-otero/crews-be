@@ -1,9 +1,9 @@
 const express = require('express');
 const Request = require('supertest');
 
-const route = require('./new');
+const route = require('./search');
 
-describe('Albums endpoint', () => {
+describe('Search middleware', () => {
   it('returns 200', (done) => {
     const app = express();
     app.locals.searchAlbum = () => ({

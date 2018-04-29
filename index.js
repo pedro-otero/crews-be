@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const users = require('./routes/users');
 const existingSearch = require('./app/src/routes/album/existing');
-const newSearch = require('./app/src/routes/album/new');
+const newSearch = require('./app/src/routes/album/search');
 
 const app = express();
 
