@@ -12,12 +12,12 @@ const {
 } = require('./utils');
 
 module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
-  let currentTask;
-  const tasks = [];
+  const LOGGER = createLogger(album);
+  const MESSAGES = createMessagesFactory(album);
+  const tasks = [searchPage(1)];
+
   let lastPage;
-  let tag;
-  let LOGGER;
-  let MESSAGES;
+  let currentTask;
 
   const results = (page) => {
     LOGGER.info(MESSAGES.results(page));
@@ -35,7 +35,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      LOGGER.debug(MESSAGES.albumMismatch(release, album));
+      LOGGER.debug(MESSAGES.albumMismatch(release));
     }
   };
 
@@ -107,20 +107,8 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
     }
   };
 
-  function initialize() {
-    LOGGER = createLogger(album);
-    tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
-    MESSAGES = createMessagesFactory(tag);
-  }
-
-  function firstTask() {
-    tasks.push(searchPage(1));
-    doTask();
-  }
-
   const start = () => {
-    initialize();
-    firstTask();
+    doTask();
   };
 
   return { start };
