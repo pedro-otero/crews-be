@@ -124,11 +124,10 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
   }
 
   const start = () => new Promise((resolve, reject) => {
-    spotify.getApi()
-      .then((api) => {
-        actions.addSearch(id);
-        return api.getAlbum(id);
-      }, () => reject(loginError()))
+    spotify.getApi().then((api) => {
+      actions.addSearch(id);
+      return api.getAlbum(id);
+    }, () => reject(loginError()))
       .then(({ body }) => {
         initialize(body);
         firstTask();
