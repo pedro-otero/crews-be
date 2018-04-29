@@ -30,6 +30,9 @@ module.exports = store => function (id) {
     const {
       page, items, perPage, releases,
     } = lastSearchPage;
+    if (items === 0) {
+      return 100;
+    }
     const soFar = ((page - 1) * perPage) + (releases.indexOf(lastRelease) + 1);
     return Math.round((soFar / items) * 100);
   })();

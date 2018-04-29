@@ -19,6 +19,16 @@
       "id": "progress-0-no-search-results-retrieved"
     },
     {
+      "id": "progress-100-no-search-results-found",
+      "lastSearchPage": {
+        "page": 1,
+        "pages": 1,
+        "items": 0,
+        "perPage": 100,
+        "releases": []
+      }
+    },
+    {
       "id": "partial-one-page-50%",
       "lastSearchPage": {
         "page": 1,
@@ -90,6 +100,12 @@
     },
     {
       "id": "progress-0-no-search-results-retrieved",
+      "tracks": {
+        "items": []
+      }
+    },
+    {
+      "id": "progress-100-no-search-results-found",
       "tracks": {
         "items": []
       }
