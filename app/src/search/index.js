@@ -3,8 +3,6 @@ const { actions } = require('../redux/state');
 const createMessagesFactory = require('./messages');
 
 const {
-  albumRejection,
-  loginError,
   isTimeout,
   is429, sleep,
   isThereNext,
@@ -13,8 +11,7 @@ const {
   releaseTask,
 } = require('./utils');
 
-module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id) => {
-  let album;
+module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
   let currentTask;
   const tasks = [];
   let lastPage;
@@ -54,7 +51,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
 
   const logError = (error) => {
     LOGGER.error(MESSAGES.exception(error));
-    actions.clearSearch(id);
+    actions.clearSearch(album.id);
   };
 
   const run = ({ type, data }) => ({
@@ -95,7 +92,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
           throw error;
         }
       }).catch((error) => {
-        actions.removeSearch(id);
+        actions.removeSearch(album.id);
         logError(error);
         tasks.splice(0, tasks.length);
       }).then(() => {
@@ -110,9 +107,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
     }
   };
 
-  function initialize(_album) {
-    album = _album;
-    actions.addAlbum(album);
+  function initialize() {
     LOGGER = createLogger(album);
     tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
     MESSAGES = createMessagesFactory(tag);
@@ -123,20 +118,10 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
     doTask();
   }
 
-  const start = () => new Promise((resolve, reject) => {
-    spotify.getApi().then((api) => {
-      actions.addSearch(id);
-      return api.getAlbum(id);
-    }, () => reject(loginError()))
-      .then(({ body }) => {
-        initialize(body);
-        firstTask();
-        resolve({ id, progress: 0, bestMatch: null });
-      }, (reason) => {
-        reject(albumRejection(reason));
-        actions.removeSearch(id);
-      }).catch(reject);
-  });
+  const start = () => {
+    initialize();
+    firstTask();
+  };
 
   return { start };
 };
