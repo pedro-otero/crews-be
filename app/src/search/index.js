@@ -112,19 +112,15 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const getSearchPage = pageN => discogs.db.search({
-    artist: album.artists[0].name,
-    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
-    type: 'release',
-    per_page: 100,
-    page: pageN,
-  });
-
-  const getRelease = releaseId => discogs.db.getRelease(releaseId);
-
   const run = ({ type, data }) => ({
-    search: page => getSearchPage(page),
-    release: releaseId => getRelease(releaseId),
+    search: page => discogs.db.search({
+      artist: album.artists[0].name,
+      release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
+      type: 'release',
+      per_page: 100,
+      page,
+    }),
+    release: releaseId => discogs.db.getRelease(releaseId),
     wait: time => sleep(time),
   })[type](data);
 
