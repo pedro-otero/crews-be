@@ -1,7 +1,5 @@
-const SpotifyWebApi = require('spotify-web-api-node');
 const winston = require('winston');
 
-const spotify = require('../api/spotify');
 const discogs = require('../api/discogs');
 const search = require('../search');
 
@@ -18,4 +16,4 @@ const createLogger = ({ id }) => winston.createLogger({
   ],
 });
 
-module.exports = search(spotify(SpotifyWebApi), discogs, createLogger);
+module.exports = search(discogs, createLogger);
