@@ -12,7 +12,7 @@ const {
   releaseTask,
 } = require('./utils');
 
-module.exports = (spotify, discogs, createLogger) => (id) => {
+module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id) => {
   let album;
   let currentTask;
   const tasks = [];
@@ -65,20 +65,20 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const run = ({ type, data }) => ({
-    search: page => discogs.db.search({
+    search: page => db.search({
       artist: album.artists[0].name,
       release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
       type: 'release',
       per_page: 100,
       page,
     }),
-    release: index => discogs.db.getRelease(lastPage.results[index].id),
+    release: index => db.getRelease(lastPage.results[index].id),
     wait: time => sleep(time),
   })[type](data);
 
   const makeItWait = () => tasks.unshift({
     type: 'wait',
-    data: discogs.PAUSE_NEEDED_AFTER_429,
+    data: PAUSE_NEEDED_AFTER_429,
   });
 
   const complete = ({ type }) => ({
@@ -95,7 +95,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.error(messages.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429));
+          logger.error(messages.tooManyRequests(PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
