@@ -1,3 +1,8 @@
+const searchPage= data => ({
+  type: 'search',
+  data,
+});
+
 module.exports = ({
   isTimeout: ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT',
 
@@ -7,15 +12,9 @@ module.exports = ({
 
   isThereNext: ({ pagination: { page, pages } }) => page < pages,
 
-  searchNext: page => ({
-    type: 'search',
-    data: page.pagination.page + 1,
-  }),
+  searchPage,
 
-  searchPage: data => ({
-    type: 'search',
-    data,
-  }),
+  searchNext: page => searchPage(page.pagination.page + 1),
 
   releaseTask: data => ({
     type: 'release',
