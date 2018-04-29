@@ -31,7 +31,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const sendRelease = (release) => {
-    logger.say(messages.releaseMsg(release, lastPage, currentTask));
+    logger.say(messages.releaseMsg(release, currentTask.data + 1, lastPage));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);

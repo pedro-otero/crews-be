@@ -10,13 +10,13 @@ module.exports = tag => ({
     return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
   },
 
-  releaseMsg: (release, lastPage, currentTask) => {
+  releaseMsg: (release, releaseNumber, lastPage) => {
     const {
       pagination: { page, pages },
       results,
     } = lastPage;
     const { id: rId, master_id: masterId } = release;
-    return `${tag} P(${indicator(page, pages)}) I(${indicator(currentTask.data + 1, results.length)}) R-${rId} (M-${masterId}) OK`;
+    return `${tag} P(${indicator(page, pages)}) I(${indicator(releaseNumber, results.length)}) R-${rId} (M-${masterId}) OK`;
   },
 
   albumMismatch: (release, album) => `${tag} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`,
