@@ -16,7 +16,7 @@
       }
     },
     {
-      "id": "progress-0-no-search-results"
+      "id": "progress-0-no-search-results-retrieved"
     },
     {
       "id": "partial-one-page-50%",
@@ -89,7 +89,7 @@
       }
     },
     {
-      "id": "progress-0-no-search-results",
+      "id": "progress-0-no-search-results-retrieved",
       "tracks": {
         "items": []
       }
