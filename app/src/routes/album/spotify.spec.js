@@ -76,4 +76,18 @@ describe('Spotify middleware', () => {
       assert.equal(this.actions.addAlbum.getCalls().length, 0);
     });
   });
+
+  describe('getApi promise rejects', () => {
+    beforeEach(function (done) {
+      setup.bind(this)();
+      this.app.locals.spotify = {
+        getApi: sinon.stub().rejects(Error()),
+      };
+      Request(this.app).get('/data/album/AX').expect(500, done);
+    });
+
+    it('does not add nothing to the store', function () {
+      assert.equal(this.actions.addAlbum.getCalls().length, 0);
+    });
+  });
 });

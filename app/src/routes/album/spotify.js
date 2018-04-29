@@ -15,10 +15,13 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
     next();
   } else {
     spotify.getApi()
-      .then(api => api.getAlbum(spotifyAlbumId))
-      .then(({ body }) => {
-        actions.addAlbum(body);
-        next();
-      }, () => res.status(404).end());
+      .then(
+        api => api.getAlbum(spotifyAlbumId)
+          .then(({ body }) => {
+            actions.addAlbum(body);
+            next();
+          }, () => res.status(404).end()),
+        () => res.status(500).end()
+      );
   }
 });
