@@ -6,29 +6,33 @@ const assert = require('assert');
 const route = require('./spotify');
 
 describe('Spotify middleware', () => {
+  beforeEach(function () {
+    const app = express();
+    app.use('/data/album', route);
+    app.use('/data/album', (req, res) => {
+      res.status(200).send('NEXT CALLED');
+    });
+    this.app = app;
+  });
+
   describe('Album is NOT in store', () => {
     beforeEach(function () {
-      const app = express();
-      app.use('/data/album', route);
-      app.use('/data/album', (req, res) => {
-        res.status(200).send('NEXT CALLED');
-      });
       this.api = {
         getAlbum: sinon.stub().resolves({ body: { id: 1 } }),
       };
       this.actions = {
         addAlbum: sinon.stub(),
       };
-      app.locals.spotify = {
+      this.app.locals.spotify = {
         getApi: () => Promise.resolve(this.api),
       };
-      app.locals.actions = this.actions;
-      app.locals.store = {
+      this.app.locals.actions = this.actions;
+      this.app.locals.store = {
         getState: () => ({
           albums: [],
         }),
       };
-      this.request = Request(app);
+      this.request = Request(this.app);
     });
 
     it('calls next middleware after getting album', function (done) {
@@ -52,27 +56,22 @@ describe('Spotify middleware', () => {
 
   describe('Album is in store', () => {
     beforeEach(function () {
-      const app = express();
-      app.use('/data/album', route);
-      app.use('/data/album', (req, res) => {
-        res.status(200).send('NEXT CALLED');
-      });
       this.api = {
         getAlbum: sinon.stub().resolves({ body: { id: 1 } }),
       };
       this.actions = {
         addAlbum: sinon.stub(),
       };
-      app.locals.spotify = {
+      this.app.locals.spotify = {
         getApi: () => Promise.resolve(this.api),
       };
-      app.locals.actions = this.actions;
-      app.locals.store = {
+      this.app.locals.actions = this.actions;
+      this.app.locals.store = {
         getState: () => ({
           albums: [{ id: '1' }],
         }),
       };
-      this.request = Request(app);
+      this.request = Request(this.app);
     });
 
     it('calls next middleware after getting album', function (done) {
