@@ -50,7 +50,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
   };
 
-  const sendError = (error) => {
+  const logError = (error) => {
     logger.notice(messages.exception(error));
     actions.clearSearch(id);
   };
@@ -102,7 +102,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         }
       }).catch((error) => {
         actions.removeSearch(id);
-        sendError(error);
+        logError(error);
         tasks.splice(0, tasks.length);
       }).then(() => {
         if (tasks.length) {
@@ -112,7 +112,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         }
       });
     } catch (error) {
-      sendError(error);
+      logError(error);
     }
   };
 
