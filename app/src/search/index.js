@@ -153,12 +153,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         album = body;
-        const {
-          artists: [{ name: artist }],
-          name,
-          id: albumId,
-        } = album;
-        tag = `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
+        tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
         actions.addAlbum(album);
         logger = createLogger(album);
         tasks.push({ type: 'search', data: 1 });
