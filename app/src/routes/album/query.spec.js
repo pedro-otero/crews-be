@@ -1,7 +1,7 @@
 const express = require('express');
 const Request = require('supertest');
 
-const route = require('./existing');
+const route = require('./query');
 
 describe('Existing search middleware', () => {
   it('returns 200 with query', (done) => {
