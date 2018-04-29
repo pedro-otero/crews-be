@@ -29,17 +29,16 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const releaseMsg = (release) => {
-    const i = lastPage.results.findIndex(r => r.id === release.id) + 1;
     const {
       pagination: { page, pages },
       results,
     } = lastPage;
     const { id: rId, master_id: masterId } = release;
-    return `${tag} P(${indicator(page, pages)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
+    return `${tag} P(${indicator(page, pages)}) I(${indicator(currentTask.data + 1, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
 
   const results = (page) => {
-    tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
+    tasks.push(...page.results.map((_, data) => ({ type: 'release', data })));
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
@@ -63,8 +62,9 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       logger.notice(`${tag} SEARCH P-${currentTask.data} TIMEOUT`);
     } else {
       const latestResults = lastPage.results;
-      const number = latestResults.findIndex(r => r.id === currentTask.data) + 1;
-      logger.notice(`${tag} R-${currentTask.data} P-(${indicator(number, latestResults.length)}) TIMEOUT`);
+      const number = currentTask.data + 1;
+      const releaseId = lastPage.results[currentTask.data].id;
+      logger.notice(`${tag} R-${releaseId} P-(${indicator(number, latestResults.length)}) TIMEOUT`);
     }
   };
 
@@ -89,7 +89,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       per_page: 100,
       page,
     }),
-    release: releaseId => discogs.db.getRelease(releaseId),
+    release: index => discogs.db.getRelease(lastPage.results[index].id),
     wait: time => sleep(time),
   })[type](data);
 
