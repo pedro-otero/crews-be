@@ -7,7 +7,7 @@ const {
   isTimeout,
   is429, sleep,
   isThereNext,
-  searchTask,
+  searchNext,
   releaseTask,
 } = require('./utils');
 
@@ -23,7 +23,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   const results = (page) => {
     tasks.push(...page.results.map((_, data) => (releaseTask(data))));
     if (isThereNext(page)) {
-      tasks.push(searchTask(page));
+      tasks.push(searchNext(page));
     }
     logger.info(messages.resultsMsg(page));
     actions.setLastSearchPage(album.id, page);

@@ -7,7 +7,7 @@ module.exports = ({
 
   isThereNext: ({ pagination: { page, pages } }) => page < pages,
 
-  searchTask: page => ({
+  searchNext: page => ({
     type: 'search',
     data: page.pagination.page + 1,
   }),
