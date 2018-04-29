@@ -12,6 +12,11 @@ module.exports = ({
     data: page.pagination.page + 1,
   }),
 
+  searchPage: data => ({
+    type: 'search',
+    data,
+  }),
+
   releaseTask: data => ({
     type: 'release',
     data,

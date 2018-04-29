@@ -7,6 +7,7 @@ const {
   isTimeout,
   is429, sleep,
   isThereNext,
+  searchPage,
   searchNext,
   releaseTask,
 } = require('./utils');
@@ -125,7 +126,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   }
 
   function firstTask() {
-    tasks.push({ type: 'search', data: 1 });
+    tasks.push(searchPage(1));
     doTask();
   }
 
