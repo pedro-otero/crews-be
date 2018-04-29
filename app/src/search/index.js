@@ -10,6 +10,37 @@ const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const isThereNext = ({ pagination: { page, pages } }) => page < pages;
 
+const indicator = (current, total) => `${current}/${total}`;
+
+const resultsMsg = (tag, pageObject) => {
+  const {
+    pagination: { page, pages },
+    results,
+  } = pageObject;
+  return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
+};
+
+const releaseMsg = (tag, release, lastPage, currentTask) => {
+  const {
+    pagination: { page, pages },
+    results,
+  } = lastPage;
+  const { id: rId, master_id: masterId } = release;
+  return `${tag} P(${indicator(page, pages)}) I(${indicator(currentTask.data + 1, results.length)}) R-${rId} (M-${masterId}) OK`;
+};
+
+const albumMismatch = (tag, release, album) => `${tag} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`;
+
+const searchPageTimeout = (tag, page) => `${tag} SEARCH P-${page} TIMEOUT`;
+
+const releaseTimeout = (tag, releaseId, releaseNumber, releasesLength) => `${tag} R-${releaseId} P-(${indicator(releaseNumber, releasesLength)}) TIMEOUT`;
+
+const exception = (tag, error) => `${tag} EXCEPTION. Search removed. ${error}`;
+
+const tooManyRequests = (tag, waitMs) => `${tag} A 429 was thrown (too many requests). Search will pause for ${waitMs / 1000}s`;
+
+const finish = tag => `${tag} FINISHED`;
+
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let album;
   let currentTask;
@@ -18,57 +49,38 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   let lastPage;
   let tag;
 
-  const indicator = (current, total) => `${current}/${total}`;
-
-  const resultsMsg = (pageObject) => {
-    const {
-      pagination: { page, pages },
-      results,
-    } = pageObject;
-    return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
-  };
-
-  const releaseMsg = (release) => {
-    const {
-      pagination: { page, pages },
-      results,
-    } = lastPage;
-    const { id: rId, master_id: masterId } = release;
-    return `${tag} P(${indicator(page, pages)}) I(${indicator(currentTask.data + 1, results.length)}) R-${rId} (M-${masterId}) OK`;
-  };
-
   const results = (page) => {
     tasks.push(...page.results.map((_, data) => ({ type: 'release', data })));
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
-    logger.say(resultsMsg(page));
+    logger.say(resultsMsg(tag, page));
     actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.say(releaseMsg(release));
+    logger.say(releaseMsg(tag, release, lastPage, currentTask));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.detail(`${tag} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
+      logger.detail(albumMismatch(tag, release, album));
     }
   };
 
   const logTimeout = () => {
     if (currentTask.type === 'search') {
-      logger.notice(`${tag} SEARCH P-${currentTask.data} TIMEOUT`);
+      logger.notice(searchPageTimeout(tag, currentTask.data));
     } else {
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.notice(`${tag} R-${releaseId} P-(${indicator(number, lastPage.results.length)}) TIMEOUT`);
+      logger.notice(releaseTimeout(tag, releaseId, number, lastPage.results.length));
     }
   };
 
   const sendError = (error) => {
-    logger.notice(`${tag} EXCEPTION. Search removed. ${error}`);
+    logger.notice(exception(tag, error));
     actions.clearSearch(id);
   };
 
@@ -111,7 +123,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.notice(`${tag} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
+          logger.notice(tooManyRequests(tag, discogs.PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
@@ -125,7 +137,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         if (tasks.length) {
           performTask();
         } else {
-          logger.say(`${tag} FINISHED`);
+          logger.say(finish(tag));
         }
       });
     } catch (error) {
