@@ -11,6 +11,9 @@ describe('Search middleware', () => {
     app.locals.searchAlbum = sinon.stub().returns({
       start: () => Promise.resolve({ status: 200 }),
     });
+    app.locals.actions = {
+      addSearch: sinon.stub(),
+    };
     app.locals.store = {
       getState: () => ({
         searches: [],
@@ -23,6 +26,7 @@ describe('Search middleware', () => {
     const request = Request(app);
     request.get('/data/album/1').expect('NEXT CALLED', () => {
       assert(app.locals.searchAlbum.calledOnce);
+      assert.equal(app.locals.actions.addSearch.getCalls()[0].args[0].id);
       done();
     });
   });
@@ -30,6 +34,9 @@ describe('Search middleware', () => {
   it('does not start search if it DOES exist', (done) => {
     const app = express();
     app.locals.searchAlbum = sinon.stub();
+    app.locals.actions = {
+      addSearch: sinon.stub(),
+    };
     app.locals.store = {
       getState: () => ({
         searches: [{ id: '1' }],
@@ -42,6 +49,7 @@ describe('Search middleware', () => {
     const request = Request(app);
     request.get('/data/album/1').expect('NEXT CALLED', () => {
       assert(!app.locals.searchAlbum.calledOnce);
+      assert.equal(app.locals.actions.addSearch.getCalls().length, 0);
       done();
     });
   });

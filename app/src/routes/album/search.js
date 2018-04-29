@@ -4,7 +4,7 @@ const router = express.Router();
 
 const func = router.get('/:spotifyAlbumId', (req, res, next) => {
   const {
-    app: { locals: { searchAlbum, store } },
+    app: { locals: { searchAlbum, store, actions } },
     params: { spotifyAlbumId },
   } = req;
 
@@ -12,6 +12,7 @@ const func = router.get('/:spotifyAlbumId', (req, res, next) => {
   if (!existing) {
     const search = searchAlbum(spotifyAlbumId);
     search.start();
+    actions.addSearch(spotifyAlbumId);
   }
   next();
 });
