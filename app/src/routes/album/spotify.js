@@ -19,6 +19,6 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
       .then(({ body }) => {
         actions.addAlbum(body);
         next();
-      });
+      }, () => res.status(404).end());
   }
 });
