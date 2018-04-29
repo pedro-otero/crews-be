@@ -15,7 +15,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   let currentTask;
   const tasks = [];
   let logger;
-  const pages = [];
+  let lastPage;
   let tag;
 
   const indicator = (current, total) => `${current}/${total}`;
@@ -29,12 +29,11 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const releaseMsg = (release) => {
-    const page = pages.find(p => p.results.find(r => r.id === release.id) !== undefined);
-    const i = page.results.findIndex(r => r.id === release.id) + 1;
+    const i = lastPage.results.findIndex(r => r.id === release.id) + 1;
     const {
       pagination: { page: current, pages: pn },
       results,
-    } = page;
+    } = lastPage;
     const { id: rId, master_id: masterId } = release;
     return `${tag} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
@@ -46,7 +45,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
     logger.say(resultsMsg(page));
     actions.setLastSearchPage(album.id, page);
-    pages.push(page);
+    lastPage = page;
   };
 
   const sendRelease = (release) => {
@@ -63,7 +62,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (currentTask.type === 'search') {
       logger.notice(`${tag} SEARCH P-${currentTask.data} TIMEOUT`);
     } else {
-      const latestResults = pages[pages.length - 1].results;
+      const latestResults = lastPage.results;
       const number = latestResults.findIndex(r => r.id === currentTask.data) + 1;
       logger.notice(`${tag} R-${currentTask.data} P-(${indicator(number, latestResults.length)}) TIMEOUT`);
     }
