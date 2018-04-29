@@ -6,4 +6,14 @@ module.exports = ({
   sleep: time => new Promise(resolve => setTimeout(resolve, time)),
 
   isThereNext: ({ pagination: { page, pages } }) => page < pages,
+
+  searchTask: page => ({
+    type: 'search',
+    data: page.pagination.page + 1,
+  }),
+
+  releaseTask: data => ({
+    type: 'release',
+    data,
+  }),
 });
