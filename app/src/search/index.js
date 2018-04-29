@@ -107,9 +107,5 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
     }
   };
 
-  const start = () => {
-    doTask();
-  };
-
-  return { start };
+  return { start: () => doTask() };
 };
