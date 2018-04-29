@@ -18,24 +18,16 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   let nextPage = 1;
   let nextReleaseIndex;
   let nextReleaseId;
+  let tag;
 
   const indicator = (current, total) => `${current}/${total}`;
-
-  const tag = () => {
-    const {
-      artists: [{ name: artist }],
-      name,
-      id: albumId,
-    } = album;
-    return `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
-  };
 
   const resultsMsg = (pageObject) => {
     const {
       pagination: { page, pages: pn },
       results,
     } = pageObject;
-    return `${tag(album)} P ${indicator(page, pn)}: ${results.length} items`;
+    return `${tag} P ${indicator(page, pn)}: ${results.length} items`;
   };
 
   const releaseMsg = (release) => {
@@ -46,7 +38,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       results,
     } = page;
     const { id: rId, master_id: masterId } = release;
-    return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
+    return `${tag} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
 
   const results = (page) => {
@@ -75,20 +67,20 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
+      logger.detail(`${tag} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
     }
   };
 
   const logTimeout = () => {
     if (!nextReleaseId) {
-      logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
+      logger.notice(`${tag} SEARCH P-${nextPage} TIMEOUT`);
     } else {
-      logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
+      logger.notice(`${tag} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
     }
   };
 
   const sendError = (error) => {
-    logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
+    logger.notice(`${tag} EXCEPTION. Search removed. ${error}`);
     actions.clearSearch(id);
   };
 
@@ -131,7 +123,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(task);
         } else if (is429(error)) {
-          logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
+          logger.notice(`${tag} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
           tasks.unshift(task);
           makeItWait();
         } else {
@@ -145,7 +137,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         if (tasks.length) {
           performTask();
         } else {
-          logger.say(`${tag(album)} FINISHED`);
+          logger.say(`${tag} FINISHED`);
         }
       });
     } catch (error) {
@@ -161,6 +153,12 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         album = body;
+        const {
+          artists: [{ name: artist }],
+          name,
+          id: albumId,
+        } = album;
+        tag = `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
         actions.addAlbum(album);
         logger = createLogger(album);
         tasks.push({ type: 'search', data: 1 });
