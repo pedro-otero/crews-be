@@ -2,92 +2,6 @@ const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
 
-const getOutput = (id) => {
-  let album;
-  let logger;
-  const pages = [];
-  let nextPage = 1;
-  let nextReleaseIndex;
-  let nextReleaseId;
-  const indicator = (current, total) => `${current}/${total}`;
-  const tag = () => {
-    const {
-      artists: [{ name: artist }],
-      name,
-      id: albumId,
-    } = album;
-    return `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
-  };
-  const resultsMsg = (pageObject) => {
-    const {
-      pagination: { page, pages: pn },
-      results,
-    } = pageObject;
-    return `${tag(album)} P ${indicator(page, pn)}: ${results.length} items`;
-  };
-
-  const releaseMsg = (release) => {
-    const page = pages.find(p => p.results.find(r => r.id === release.id) !== undefined);
-    const i = page.results.findIndex(r => r.id === release.id) + 1;
-    const {
-      pagination: { page: current, pages: pn },
-      results,
-    } = page;
-    const { id: rId, master_id: masterId } = release;
-    return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
-  };
-  return {
-    addSearch: () => actions.addSearch(id),
-    addAlbum: (searchAlbum) => {
-      album = searchAlbum;
-      actions.addAlbum(album);
-    },
-    abort: () => actions.removeSearch(id),
-    setLogger: (_logger) => {
-      logger = _logger;
-    },
-    results: (page) => {
-      nextPage = null;
-      nextReleaseIndex = 0;
-      nextReleaseId = page.results[0].id;
-      logger.say(resultsMsg(page));
-      actions.setLastSearchPage(album.id, page);
-      pages.push(page);
-    },
-    sendRelease: (release) => {
-      nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
-      nextReleaseIndex += 1;
-      if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
-        nextReleaseIndex = null;
-        nextReleaseId = null;
-        nextPage = pages[pages.length - 1].pagination.page + 1;
-      }
-      logger.say(releaseMsg(release));
-      actions.setLastRelease(album.id, release);
-      if (release.tracklist.length === album.tracks.items.length) {
-        actions.addCredits(album, release);
-      } else {
-        logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
-      }
-    },
-    timeout: () => {
-      if (!nextReleaseId) {
-        logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
-      } else {
-        logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
-      }
-    },
-    tooManyRequests: (time) => {
-      logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
-    },
-    sendError: (error) => {
-      logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
-      actions.clearSearch(id);
-    },
-    complete: () => logger.say(`${tag(album)} FINISHED`),
-  };
-};
-
 const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
 
 const is429 = ({ statusCode }) => statusCode === 429;
@@ -100,6 +14,91 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   let output;
   let album;
   const tasks = [];
+
+  const getOutput = () => {
+    let logger;
+    const pages = [];
+    let nextPage = 1;
+    let nextReleaseIndex;
+    let nextReleaseId;
+    const indicator = (current, total) => `${current}/${total}`;
+    const tag = () => {
+      const {
+        artists: [{ name: artist }],
+        name,
+        id: albumId,
+      } = album;
+      return `${new Date().toLocaleString()} ${artist} - ${name} (${albumId}) ::`;
+    };
+    const resultsMsg = (pageObject) => {
+      const {
+        pagination: { page, pages: pn },
+        results,
+      } = pageObject;
+      return `${tag(album)} P ${indicator(page, pn)}: ${results.length} items`;
+    };
+
+    const releaseMsg = (release) => {
+      const page = pages.find(p => p.results.find(r => r.id === release.id) !== undefined);
+      const i = page.results.findIndex(r => r.id === release.id) + 1;
+      const {
+        pagination: { page: current, pages: pn },
+        results,
+      } = page;
+      const { id: rId, master_id: masterId } = release;
+      return `${tag(album)} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
+    };
+    return {
+      addSearch: () => actions.addSearch(id),
+      addAlbum: (searchAlbum) => {
+        album = searchAlbum;
+        actions.addAlbum(album);
+      },
+      abort: () => actions.removeSearch(id),
+      setLogger: () => {
+        logger = createLogger(album);
+      },
+      results: (page) => {
+        nextPage = null;
+        nextReleaseIndex = 0;
+        nextReleaseId = page.results[0].id;
+        logger.say(resultsMsg(page));
+        actions.setLastSearchPage(album.id, page);
+        pages.push(page);
+      },
+      sendRelease: (release) => {
+        nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
+        nextReleaseIndex += 1;
+        if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
+          nextReleaseIndex = null;
+          nextReleaseId = null;
+          nextPage = pages[pages.length - 1].pagination.page + 1;
+        }
+        logger.say(releaseMsg(release));
+        actions.setLastRelease(album.id, release);
+        if (release.tracklist.length === album.tracks.items.length) {
+          actions.addCredits(album, release);
+        } else {
+          logger.detail(`${tag(album)} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`);
+        }
+      },
+      timeout: () => {
+        if (!nextReleaseId) {
+          logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
+        } else {
+          logger.notice(`${tag(album)} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
+        }
+      },
+      tooManyRequests: (time) => {
+        logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${time / 1000}s`);
+      },
+      sendError: (error) => {
+        logger.notice(`${tag(album)} EXCEPTION. Search removed. ${error}`);
+        actions.clearSearch(id);
+      },
+      complete: () => logger.say(`${tag(album)} FINISHED`),
+    };
+  };
 
   const albumRejection = (reason) => {
     const code = String(reason.statusCode);
@@ -180,7 +179,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const start = () => new Promise((resolve, reject) => {
-    output = getOutput(id);
+    output = getOutput();
     spotify.getApi()
       .then((api) => {
         output.addSearch(id);
@@ -189,7 +188,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       .then(({ body }) => {
         album = body;
         output.addAlbum(album);
-        output.setLogger(createLogger(album));
+        output.setLogger();
         tasks.push({ type: 'search', data: 1 });
         performTask();
         resolve({ id, progress: 0, bestMatch: null });
