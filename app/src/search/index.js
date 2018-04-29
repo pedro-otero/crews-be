@@ -1,9 +1,10 @@
 const { actions } = require('../redux/state');
 
-const spotifyErrorMessages = require('./spotify-errors');
 const createMessagesFactory = require('./messages');
 
 const {
+  albumRejection,
+  loginError,
   isTimeout,
   is429, sleep,
   isThereNext,
@@ -16,52 +17,44 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
   let album;
   let currentTask;
   const tasks = [];
-  let logger;
   let lastPage;
   let tag;
-  let messages;
+  let LOGGER;
+  let MESSAGES;
 
   const results = (page) => {
+    LOGGER.info(MESSAGES.results(page));
+    actions.setLastSearchPage(album.id, page);
     tasks.push(...page.results.map((_, data) => (releaseTask(data))));
     if (isThereNext(page)) {
       tasks.push(searchNext(page));
     }
-    logger.info(messages.results(page));
-    actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.info(messages.release(release, currentTask.data + 1, lastPage));
+    LOGGER.info(MESSAGES.release(release, currentTask.data + 1, lastPage));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.debug(messages.albumMismatch(release, album));
+      LOGGER.debug(MESSAGES.albumMismatch(release, album));
     }
   };
 
   const logTimeout = () => {
     if (currentTask.type === 'search') {
-      logger.error(messages.searchPageTimeout(currentTask.data));
+      LOGGER.error(MESSAGES.searchPageTimeout(currentTask.data));
     } else {
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.error(messages.releaseTimeout(releaseId, number, lastPage.results.length));
+      LOGGER.error(MESSAGES.releaseTimeout(releaseId, number, lastPage.results.length));
     }
   };
 
   const logError = (error) => {
-    logger.error(messages.exception(error));
+    LOGGER.error(MESSAGES.exception(error));
     actions.clearSearch(id);
-  };
-
-  const albumRejection = (reason) => {
-    const code = String(reason.statusCode);
-    if (code in spotifyErrorMessages.http) {
-      return Error(spotifyErrorMessages.http[code]);
-    }
-    return Error(spotifyErrorMessages.general);
   };
 
   const run = ({ type, data }) => ({
@@ -95,7 +88,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.error(messages.tooManyRequests(PAUSE_NEEDED_AFTER_429));
+          LOGGER.error(MESSAGES.tooManyRequests(PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
@@ -109,7 +102,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
         if (tasks.length) {
           doTask();
         } else {
-          logger.info(messages.finish());
+          LOGGER.info(MESSAGES.finish());
         }
       });
     } catch (error) {
@@ -120,9 +113,9 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
   function initialize(_album) {
     album = _album;
     actions.addAlbum(album);
-    logger = createLogger(album);
+    LOGGER = createLogger(album);
     tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
-    messages = createMessagesFactory(tag);
+    MESSAGES = createMessagesFactory(tag);
   }
 
   function firstTask() {
@@ -135,7 +128,7 @@ module.exports = (spotify, { db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (id)
       .then((api) => {
         actions.addSearch(id);
         return api.getAlbum(id);
-      }, () => reject(Error(spotifyErrorMessages.login)))
+      }, () => reject(loginError()))
       .then(({ body }) => {
         initialize(body);
         firstTask();
