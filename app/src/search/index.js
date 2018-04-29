@@ -3,13 +3,11 @@ const { actions } = require('../redux/state');
 const spotifyErrorMessages = require('./spotify-errors');
 const createMessagesFactory = require('./messages');
 
-const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
-
-const is429 = ({ statusCode }) => statusCode === 429;
-
-const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
-const isThereNext = ({ pagination: { page, pages } }) => page < pages;
+const {
+  isTimeout,
+  is429, sleep,
+  isThereNext,
+} = require('./utils');
 
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let album;
