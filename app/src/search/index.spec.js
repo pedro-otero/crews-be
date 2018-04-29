@@ -71,14 +71,14 @@ function setup(context, times, done) {
   };
   this.timesInfoLogged = 0;
   context.logger = {
-    say: sinon.stub().callsFake(() => {
+    error: sinon.stub(),
+    info: sinon.stub().callsFake(() => {
       this.timesInfoLogged += 1;
       if (this.timesInfoLogged === times) {
         done();
       }
     }),
-    notice: sinon.stub(),
-    detail: sinon.stub(),
+    debug: sinon.stub(),
   };
 }
 
@@ -173,34 +173,34 @@ describe('Search function', () => {
 
     describe('logs', () => {
       it('8 times', function () {
-        assert.equal(this.logger.say.callCount, 8);
+        assert.equal(this.logger.info.callCount, 8);
       });
 
       describe('releases', () => {
         it('1', function () {
-          assert(this.logger.say.getCalls()[1].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK'));
+          assert(this.logger.info.getCalls()[1].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK'));
         });
 
         it('2', function () {
-          assert(this.logger.say.getCalls()[2].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK'));
+          assert(this.logger.info.getCalls()[2].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK'));
         });
 
         it('3', function () {
-          assert(this.logger.say.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/3) R-3 (M-undefined) OK'));
+          assert(this.logger.info.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/3) R-3 (M-undefined) OK'));
         });
 
         it('4', function () {
-          assert(this.logger.say.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/3) R-4 (M-undefined) OK'));
+          assert(this.logger.info.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/3) R-4 (M-undefined) OK'));
         });
       });
 
       describe('search pages', () => {
         it('1', function () {
-          assert(this.logger.say.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: P 1/2: 2 items'));
+          assert(this.logger.info.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: P 1/2: 2 items'));
         });
 
         it('2', function () {
-          assert(this.logger.say.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 3 items'));
+          assert(this.logger.info.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 3 items'));
         });
       });
     });
@@ -224,7 +224,7 @@ describe('Search function', () => {
     });
 
     it('Logs info about release that is surely no match', function () {
-      assert(this.logger.detail.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-5 tracklist length (2) does not match the album\'s (1)'));
+      assert(this.logger.debug.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-5 tracklist length (2) does not match the album\'s (1)'));
     });
 
     afterEach(resetActionStubs);
@@ -234,7 +234,7 @@ describe('Search function', () => {
     beforeEach(function (done) {
       setup(this);
       this.discogs.db.search = sinon.stub().throws();
-      this.logger.notice = sinon.stub().callsFake(() => done());
+      this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
         .start()
@@ -243,7 +243,7 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     afterEach(resetActionStubs);
@@ -253,7 +253,7 @@ describe('Search function', () => {
     beforeEach(function (done) {
       setup(this);
       this.discogs.db.search = sinon.stub().resolves({});
-      this.logger.notice = sinon.stub().callsFake(() => done());
+      this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
         .start()
@@ -262,7 +262,7 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     afterEach(resetActionStubs);
@@ -280,7 +280,7 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     it('search is cleared', () => {
@@ -313,11 +313,11 @@ describe('Search function', () => {
       });
 
       it('Error logger is called', function () {
-        assert(this.logger.notice.calledOnce);
+        assert(this.logger.error.calledOnce);
       });
 
       it('Error message is as expected', function () {
-        assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-1 TIMEOUT'));
+        assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-1 TIMEOUT'));
       });
 
       it('search is called 3 times', function () {
@@ -354,11 +354,11 @@ describe('Search function', () => {
       });
 
       it('Error logger is called', function () {
-        assert(this.logger.notice.calledOnce);
+        assert(this.logger.error.calledOnce);
       });
 
       it('Error message is as expected', function () {
-        assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-2 TIMEOUT'));
+        assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-2 TIMEOUT'));
       });
 
       it('search is called 3 times', function () {
@@ -396,11 +396,11 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     it('Error message is as expected', function () {
-      assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-1 P-(1/2) TIMEOUT'));
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-1 P-(1/2) TIMEOUT'));
     });
 
     it('getRelease is called 5 times', function () {
@@ -437,11 +437,11 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     it('Error message is as expected', function () {
-      assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
     });
 
     it('getRelease is called 5 times', function () {
@@ -478,11 +478,11 @@ describe('Search function', () => {
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     it('Error message is as expected', function () {
-      assert(this.logger.notice.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
     });
 
     it('search is called 3 times', function () {
@@ -515,16 +515,16 @@ describe('Search function', () => {
         },
         PAUSE_NEEDED_AFTER_429: 1,
       };
-      this.logger.notice = sinon.stub().callsFake(() => done());
+      this.logger.error = sinon.stub().callsFake(() => done());
       searchAlbum(this.spotify, this.discogs, () => this.logger)('A1').start();
     });
 
     it('Error logger is called', function () {
-      assert(this.logger.notice.calledOnce);
+      assert(this.logger.error.calledOnce);
     });
 
     it('Error message is as expected', function () {
-      assert(this.logger.notice.getCalls()[0].args[0].includes('Artist - Album (A1) :: EXCEPTION. Search removed.'));
+      assert(this.logger.error.getCalls()[0].args[0].includes('Artist - Album (A1) :: EXCEPTION. Search removed.'));
     });
 
     it('search is aborted', () => {

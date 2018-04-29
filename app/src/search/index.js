@@ -23,33 +23,33 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
-    logger.say(messages.resultsMsg(page));
+    logger.info(messages.resultsMsg(page));
     actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.say(messages.releaseMsg(release, currentTask.data + 1, lastPage));
+    logger.info(messages.releaseMsg(release, currentTask.data + 1, lastPage));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.detail(messages.albumMismatch(release, album));
+      logger.debug(messages.albumMismatch(release, album));
     }
   };
 
   const logTimeout = () => {
     if (currentTask.type === 'search') {
-      logger.notice(messages.searchPageTimeout(currentTask.data));
+      logger.error(messages.searchPageTimeout(currentTask.data));
     } else {
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.notice(messages.releaseTimeout(releaseId, number, lastPage.results.length));
+      logger.error(messages.releaseTimeout(releaseId, number, lastPage.results.length));
     }
   };
 
   const logError = (error) => {
-    logger.notice(messages.exception(error));
+    logger.error(messages.exception(error));
     actions.clearSearch(id);
   };
 
@@ -92,7 +92,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.notice(messages.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429));
+          logger.error(messages.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
@@ -106,7 +106,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         if (tasks.length) {
           performTask();
         } else {
-          logger.say(messages.finish());
+          logger.info(messages.finish());
         }
       });
     } catch (error) {
