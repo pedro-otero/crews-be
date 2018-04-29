@@ -144,21 +144,27 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }, handleDiscogsError(resolve, reject));
   });
 
-  const taskDoers = {
+  const run = ({ type, data }) => ({
     search: page => getSearchPage(page),
     release: releaseId => getRelease(releaseId),
     wait: time => sleep(time),
-  };
+  })[type](data);
+
+  const makeItWait = () => tasks.unshift({
+    type: 'wait',
+    data: discogs.PAUSE_NEEDED_AFTER_429,
+  });
 
   const performTask = () => {
-    const top = tasks.shift();
-    taskDoers[top.type](top.data).then(() => {
+    const task = tasks.shift();
+    run(task).then(() => {
 
     }, (error) => {
-      if (error.message === 'wait' || error.message === 'repeat') {
-        tasks.unshift(top);
-        if (error.message === 'wait') {
-          tasks.unshift({ type: 'wait', data: discogs.PAUSE_NEEDED_AFTER_429 });
+      const { message } = error;
+      if (['wait', 'repeat'].includes(message)) {
+        tasks.unshift(task);
+        if (message === 'wait') {
+          makeItWait();
         }
       } else {
         output.abort();
