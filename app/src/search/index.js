@@ -150,11 +150,11 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     wait: time => sleep(time),
   };
 
-  const performTask = async () => {
+  const performTask = () => {
     const top = tasks.shift();
-    try {
-      await taskDoers[top.type](top.data);
-    } catch (error) {
+    taskDoers[top.type](top.data).then(() => {
+
+    }, (error) => {
       if (error.message === 'wait' || error.message === 'repeat') {
         tasks.unshift(top);
         if (error.message === 'wait') {
@@ -164,12 +164,13 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         output.abort();
         output.sendError(error);
       }
-    }
-    if (tasks.length) {
-      await performTask();
-    } else {
-      output.complete();
-    }
+    }).then(() => {
+      if (tasks.length) {
+        performTask();
+      } else {
+        output.complete();
+      }
+    });
   };
 
   const start = () => new Promise((resolve, reject) => {
