@@ -190,12 +190,12 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         output.addSearch(id);
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
-      .then(async ({ body }) => {
+      .then(({ body }) => {
         album = body;
         output.addAlbum(album);
         output.setLogger(createLogger(album));
         tasks.push({ type: 'search', data: 1 });
-        await performTask();
+        performTask();
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
