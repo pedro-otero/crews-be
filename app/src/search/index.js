@@ -144,14 +144,16 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }, handleDiscogsError(resolve, reject));
   });
 
+  const taskDoers = {
+    search: page => getSearchPage(page),
+    release: releaseId => getRelease(releaseId),
+    wait: time => sleep(time),
+  };
+
   const performTask = async () => {
     const top = tasks.shift();
     try {
-      await ({
-        search: page => getSearchPage(page),
-        release: releaseId => getRelease(releaseId),
-        wait: time => sleep(time),
-      })[top.type](top.data);
+      await taskDoers[top.type](top.data);
     } catch (error) {
       if (error.message === 'wait' || error.message === 'repeat') {
         tasks.unshift(top);
