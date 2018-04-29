@@ -117,14 +117,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     page,
   });
 
-  const getSearchPage = pageN => new Promise((resolve, reject) => search(pageN).then((page) => {
-    output.results(page);
-    tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
-    if (isThereNext(page)) {
-      tasks.push({ type: 'search', data: page.pagination.page + 1 });
-    }
-    resolve();
-  }, (error) => {
+  const handleDiscogsError = (resolve, reject) => (error) => {
     if (isTimeout(error)) {
       output.timeout();
       reject(Error('repeat'));
@@ -135,26 +128,22 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       output.abort();
       output.sendError(error);
     }
-  }).catch(output.sendError));
+  };
+
+  const getSearchPage = pageN => new Promise((resolve, reject) => search(pageN).then((page) => {
+    output.results(page);
+    tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
+    if (isThereNext(page)) {
+      tasks.push({ type: 'search', data: page.pagination.page + 1 });
+    }
+    resolve();
+  }, handleDiscogsError(resolve, reject)).catch(output.sendError));
 
   const getRelease = releaseId => new Promise((resolve, reject) => {
-    discogs.db.getRelease(releaseId).then(
-      (release) => {
-        output.sendRelease(release);
-        resolve();
-      },
-      (error) => {
-        if (isTimeout(error)) {
-          output.timeout();
-          reject(Error('repeat'));
-        } else if (is429(error)) {
-          output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
-          reject(Error('wait'));
-        } else {
-          output.abort();
-          output.sendError(error);
-        }
-      });
+    discogs.db.getRelease(releaseId).then((release) => {
+      output.sendRelease(release);
+      resolve();
+    }, handleDiscogsError(resolve, reject));
   });
 
   const performTask = async () => {
