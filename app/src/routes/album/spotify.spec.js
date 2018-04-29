@@ -6,7 +6,7 @@ const assert = require('assert');
 const route = require('./spotify');
 
 describe('Spotify middleware', () => {
-  describe('Nothing fails', () => {
+  describe('Album is not in store', () => {
     before(function () {
       const app = express();
       app.use('/data/album', route);
@@ -23,6 +23,11 @@ describe('Spotify middleware', () => {
         getApi: () => Promise.resolve(this.api),
       };
       app.locals.actions = this.actions;
+      app.locals.store = {
+        getState: () => ({
+          albums: [],
+        }),
+      };
       this.request = Request(app);
     });
 
