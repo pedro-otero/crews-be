@@ -1,6 +1,7 @@
 const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
+const MESSAGES = require('./messages');
 
 const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
 
@@ -9,37 +10,6 @@ const is429 = ({ statusCode }) => statusCode === 429;
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 const isThereNext = ({ pagination: { page, pages } }) => page < pages;
-
-const indicator = (current, total) => `${current}/${total}`;
-
-const resultsMsg = (tag, pageObject) => {
-  const {
-    pagination: { page, pages },
-    results,
-  } = pageObject;
-  return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
-};
-
-const releaseMsg = (tag, release, lastPage, currentTask) => {
-  const {
-    pagination: { page, pages },
-    results,
-  } = lastPage;
-  const { id: rId, master_id: masterId } = release;
-  return `${tag} P(${indicator(page, pages)}) I(${indicator(currentTask.data + 1, results.length)}) R-${rId} (M-${masterId}) OK`;
-};
-
-const albumMismatch = (tag, release, album) => `${tag} R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`;
-
-const searchPageTimeout = (tag, page) => `${tag} SEARCH P-${page} TIMEOUT`;
-
-const releaseTimeout = (tag, releaseId, releaseNumber, releasesLength) => `${tag} R-${releaseId} P-(${indicator(releaseNumber, releasesLength)}) TIMEOUT`;
-
-const exception = (tag, error) => `${tag} EXCEPTION. Search removed. ${error}`;
-
-const tooManyRequests = (tag, waitMs) => `${tag} A 429 was thrown (too many requests). Search will pause for ${waitMs / 1000}s`;
-
-const finish = tag => `${tag} FINISHED`;
 
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let album;
@@ -54,33 +24,33 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
-    logger.say(resultsMsg(tag, page));
+    logger.say(MESSAGES.resultsMsg(tag, page));
     actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.say(releaseMsg(tag, release, lastPage, currentTask));
+    logger.say(MESSAGES.releaseMsg(tag, release, lastPage, currentTask));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.detail(albumMismatch(tag, release, album));
+      logger.detail(MESSAGES.albumMismatch(tag, release, album));
     }
   };
 
   const logTimeout = () => {
     if (currentTask.type === 'search') {
-      logger.notice(searchPageTimeout(tag, currentTask.data));
+      logger.notice(MESSAGES.searchPageTimeout(tag, currentTask.data));
     } else {
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.notice(releaseTimeout(tag, releaseId, number, lastPage.results.length));
+      logger.notice(MESSAGES.releaseTimeout(tag, releaseId, number, lastPage.results.length));
     }
   };
 
   const sendError = (error) => {
-    logger.notice(exception(tag, error));
+    logger.notice(MESSAGES.exception(tag, error));
     actions.clearSearch(id);
   };
 
@@ -123,7 +93,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.notice(tooManyRequests(tag, discogs.PAUSE_NEEDED_AFTER_429));
+          logger.notice(MESSAGES.tooManyRequests(tag, discogs.PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
@@ -137,7 +107,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         if (tasks.length) {
           performTask();
         } else {
-          logger.say(finish(tag));
+          logger.say(MESSAGES.finish(tag));
         }
       });
     } catch (error) {
