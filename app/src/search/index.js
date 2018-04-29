@@ -79,7 +79,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
   };
 
-  const timeout = () => {
+  const logTimeout = () => {
     if (!nextReleaseId) {
       logger.notice(`${tag(album)} SEARCH P-${nextPage} TIMEOUT`);
     } else {
@@ -128,7 +128,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     try {
       run(task).then(complete(task), (error) => {
         if (isTimeout(error)) {
-          timeout();
+          logTimeout();
           tasks.unshift(task);
         } else if (is429(error)) {
           logger.notice(`${tag(album)} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
