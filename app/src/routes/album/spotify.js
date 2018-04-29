@@ -10,5 +10,5 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
     params: { spotifyAlbumId },
   } = req;
 
-  spotify.getApi().then(api => api.getAlbum()).then(() =>next());
+  spotify.getApi().then(api => api.getAlbum(spotifyAlbumId)).then(() =>next());
 });
