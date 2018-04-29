@@ -59,6 +59,10 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         logger = createLogger(album);
       },
       results: (page) => {
+        tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
+        if (isThereNext(page)) {
+          tasks.push({ type: 'search', data: page.pagination.page + 1 });
+        }
         nextPage = null;
         nextReleaseIndex = 0;
         nextReleaseId = page.results[0].id;
@@ -129,10 +133,6 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     page: pageN,
   }).then((page) => {
     output.results(page);
-    tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
-    if (isThereNext(page)) {
-      tasks.push({ type: 'search', data: page.pagination.page + 1 });
-    }
     resolve();
   }, handleDiscogsError(resolve, reject)).catch(output.sendError));
 
