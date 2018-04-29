@@ -2,7 +2,7 @@ const indicator = (current, total) => `${current}/${total}`;
 
 module.exports = tag => ({
 
-  resultsMsg: (pageObject) => {
+  results: (pageObject) => {
     const {
       pagination: { page, pages },
       results,
@@ -10,7 +10,7 @@ module.exports = tag => ({
     return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
   },
 
-  releaseMsg: (release, releaseNumber, lastPage) => {
+  release: (release, releaseNumber, lastPage) => {
     const {
       pagination: { page, pages },
       results,

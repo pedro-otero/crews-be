@@ -26,13 +26,13 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (isThereNext(page)) {
       tasks.push(searchNext(page));
     }
-    logger.info(messages.resultsMsg(page));
+    logger.info(messages.results(page));
     actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.info(messages.releaseMsg(release, currentTask.data + 1, lastPage));
+    logger.info(messages.release(release, currentTask.data + 1, lastPage));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
