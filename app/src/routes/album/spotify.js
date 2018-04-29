@@ -14,9 +14,11 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
   if (album) {
     next();
   } else {
-    spotify.getApi().then(api => api.getAlbum(spotifyAlbumId)).then(({ body }) => {
-      actions.addAlbum(body);
-      next();
-    });
+    spotify.getApi()
+      .then(api => api.getAlbum(spotifyAlbumId))
+      .then(({ body }) => {
+        actions.addAlbum(body);
+        next();
+      });
   }
 });
