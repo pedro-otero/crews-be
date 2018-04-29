@@ -4,11 +4,17 @@ const favicon = require('static-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const SpotifyWebApi = require('spotify-web-api-node');
+
+const { store, actions } = require('./app/src/redux/state');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
-const existingSearch = require('./app/src/routes/album/existing');
-const newSearch = require('./app/src/routes/album/new');
+const query = require('./app/src/routes/album/query');
+const search = require('./app/src/routes/album/search');
+const spotify = require('./app/src/routes/album/spotify');
+
+const SpotifyWrapper = require('./app/src/api/spotify');
 
 const app = express();
 
@@ -28,10 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.locals.searchAlbum = require('./app/src/locals/search-album');
 app.locals.getQuery = require('./app/src/locals/get-query');
 
+app.locals.store = store;
+app.locals.actions = actions;
+app.locals.spotify = SpotifyWrapper(SpotifyWebApi);
+
 app.use('/', routes);
 app.use('/users', users);
-app.use('/data/album', existingSearch);
-app.use('/data/album', newSearch);
+app.use('/data/album', spotify);
+app.use('/data/album', search);
+app.use('/data/album', query);
 
 // / catch 404 and forwarding to error handler
 app.use((req, res, next) => {

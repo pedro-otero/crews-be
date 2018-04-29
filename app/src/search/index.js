@@ -1,159 +1,111 @@
 const { actions } = require('../redux/state');
 
-const spotifyErrorMessages = require('./spotify-errors');
+const createMessagesFactory = require('./messages');
 
-const observer = (logger, output) => ({
-  results: (page) => {
-    logger.results({ page });
-    output.setLastSearchResults(page);
-  },
-  release: (release) => {
-    logger.release({ release });
-    output.sendRelease(release);
-  },
-  timeout: (error) => {
-    logger.error({ error });
-  },
-  tooManyRequests: (error) => {
-    logger.error({ error });
-  },
-  error: (error) => {
-    logger.error({ error });
-    output.clear();
-  },
-  complete: logger.finish.bind(logger, {}),
-});
+const {
+  isTimeout,
+  is429, sleep,
+  isThereNext,
+  searchPage,
+  searchNext,
+  releaseTask,
+} = require('./utils');
 
-const actionsWrapper = (id) => {
-  let album;
-  const pages = [];
-  const addSearch = () => actions.addSearch(id);
-  const addAlbum = (searchAlbum) => {
-    album = searchAlbum;
-    actions.addAlbum(album);
-  };
-  const setLastSearchResults = (page) => {
+module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
+  const LOGGER = createLogger(album);
+  const MESSAGES = createMessagesFactory(album);
+  const tasks = [searchPage(1)];
+
+  let lastPage;
+  let currentTask;
+
+  const results = (page) => {
+    LOGGER.info(MESSAGES.results(page));
     actions.setLastSearchPage(album.id, page);
-    pages.push(page);
+    tasks.push(...page.results.map((_, data) => (releaseTask(data))));
+    if (isThereNext(page)) {
+      tasks.push(searchNext(page));
+    }
+    lastPage = page;
   };
+
   const sendRelease = (release) => {
+    LOGGER.info(MESSAGES.release(release, currentTask.data + 1, lastPage));
+    actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
-      actions.setLastRelease(album.id, release);
+    } else {
+      LOGGER.debug(MESSAGES.albumMismatch(release));
     }
   };
-  const abort = () => actions.removeSearch(id);
-  const clear = () => actions.clearSearch(id);
-  return {
-    addSearch, addAlbum, setLastSearchResults, sendRelease, abort, clear,
-  };
-};
 
-const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
-
-const is429 = ({ statusCode }) => statusCode === 429;
-
-const sleep = time => new Promise(resolve => setTimeout(resolve, time));
-
-const isThereNext = ({ pagination: { page, pages } }) => page < pages;
-
-const getNext = ({ pagination: { page } }) => page + 1;
-
-module.exports = (spotify, discogs, createLogger) => (id) => {
-  const albumRejection = (reason) => {
-    const code = String(reason.statusCode);
-    if (code in spotifyErrorMessages.http) {
-      return Error(spotifyErrorMessages.http[code]);
+  const logTimeout = () => {
+    if (currentTask.type === 'search') {
+      LOGGER.error(MESSAGES.searchPageTimeout(currentTask.data));
+    } else {
+      const number = currentTask.data + 1;
+      const releaseId = lastPage.results[currentTask.data].id;
+      LOGGER.error(MESSAGES.releaseTimeout(releaseId, number, lastPage.results.length));
     }
-    return Error(spotifyErrorMessages.general);
   };
 
-  const search = (album, page) => discogs.db.search({
-    artist: album.artists[0].name,
-    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
-    type: 'release',
-    per_page: 100,
-    page,
-  });
-
-  const findReleases = (album, searchObserver) => {
-    let pageNumber = 1;
-    let idleTime = 0;
-    const fetch = async () => {
-      try {
-        await sleep(idleTime);
-        search(album, pageNumber).then(async (page) => {
-          idleTime = 0;
-          searchObserver.results(page);
-          const results = [...page.results];
-          let result = results.shift();
-          while (result) {
-            // eslint-disable-next-line no-await-in-loop
-            await sleep(idleTime);
-            try {
-              // eslint-disable-next-line no-await-in-loop
-              const release = await discogs.db.getRelease(result.id);
-              searchObserver.release(release);
-              idleTime = 0;
-            } catch (error) {
-              if (isTimeout(error)) {
-                searchObserver.timeout(error);
-                results.unshift(result);
-              } else if (is429(error)) {
-                idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-                searchObserver.tooManyRequests(error);
-                results.unshift(result);
-              } else {
-                searchObserver.error(error);
-                return;
-              }
-            }
-            result = results.shift();
-          }
-          if (isThereNext(page)) {
-            pageNumber = getNext(page);
-            fetch();
-          } else {
-            searchObserver.complete();
-          }
-        }, (error) => {
-          if (isTimeout(error)) {
-            searchObserver.timeout(error);
-            fetch();
-          } else if (is429(error)) {
-            idleTime = discogs.PAUSE_NEEDED_AFTER_429;
-            searchObserver.tooManyRequests(error);
-            fetch();
-          } else {
-            searchObserver.error(error);
-          }
-        }).catch(searchObserver.error);
-      } catch (error) {
-        searchObserver.error(error);
-      }
-    };
-
-    fetch();
+  const logError = (error) => {
+    LOGGER.error(MESSAGES.exception(error));
+    actions.clearSearch(album.id);
   };
 
-  const start = () => new Promise((resolve, reject) => {
-    const output = actionsWrapper(id);
-    spotify.getApi()
-      .then((api) => {
-        output.addSearch(id);
-        return api.getAlbum(id);
-      }, () => reject(Error(spotifyErrorMessages.login)))
-      .then(({ body }) => {
-        const album = body;
-        output.addAlbum(album);
-        const logger = createLogger(album);
-        findReleases(album, observer(logger, output));
-        resolve({ id, progress: 0, bestMatch: null });
-      }, (reason) => {
-        reject(albumRejection(reason));
-        output.abort();
-      }).catch(reject);
+  const run = ({ type, data }) => ({
+    search: page => db.search({
+      artist: album.artists[0].name,
+      release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
+      type: 'release',
+      per_page: 100,
+      page,
+    }),
+    release: index => db.getRelease(lastPage.results[index].id),
+    wait: time => sleep(time),
+  })[type](data);
+
+  const makeItWait = () => tasks.unshift({
+    type: 'wait',
+    data: PAUSE_NEEDED_AFTER_429,
   });
 
-  return { start };
+  const complete = ({ type }) => ({
+    search: results,
+    release: sendRelease,
+    wait: () => {},
+  })[type];
+
+  const doTask = () => {
+    currentTask = tasks.shift();
+    try {
+      run(currentTask).then(complete(currentTask), (error) => {
+        if (isTimeout(error)) {
+          logTimeout();
+          tasks.unshift(currentTask);
+        } else if (is429(error)) {
+          LOGGER.error(MESSAGES.tooManyRequests(PAUSE_NEEDED_AFTER_429));
+          tasks.unshift(currentTask);
+          makeItWait();
+        } else {
+          throw error;
+        }
+      }).catch((error) => {
+        actions.removeSearch(album.id);
+        logError(error);
+        tasks.splice(0, tasks.length);
+      }).then(() => {
+        if (tasks.length) {
+          doTask();
+        } else {
+          LOGGER.info(MESSAGES.finish());
+        }
+      });
+    } catch (error) {
+      logError(error);
+    }
+  };
+
+  return { start: () => doTask() };
 };

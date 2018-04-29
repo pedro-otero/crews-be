@@ -19,7 +19,7 @@ function monkeypatchActions() {
   actions.removeSearch = sinon.spy();
 }
 
-const blankRelease = id => ({ id, tracklist: [] });
+const blankRelease = id => ({ id, tracklist: [{ title: 'Track #1' }] });
 
 const pages = [{
   pagination: {
@@ -32,10 +32,10 @@ const pages = [{
     page: 2,
     pages: 2,
   },
-  results: [{ id: 3 }, { id: 4 }],
+  results: [{ id: 3 }, { id: 4 }, { id: 5 }],
 }];
 
-function setup(context) {
+function setup(context, times, done) {
   monkeypatchActions();
   context.discogs = {
     db: {
@@ -43,27 +43,25 @@ function setup(context) {
         .onCall(0).resolves(pages[0])
         .onCall(1)
         .resolves(pages[1]),
-      getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+      getRelease: sinon.stub().callsFake((id) => {
+        const release = blankRelease(id);
+        if (id > 4) {
+          release.tracklist.push({ title: 'Track #2' });
+        }
+        return Promise.resolve(release);
+      }),
     },
   };
-  context.spotifyApi = {
-    getAlbum: sinon.stub().resolves({
-      body: {
-        id: 'A1',
-        name: 'Album',
-        artists: [{ name: 'Artist' }],
-        tracks: { items: [] },
-      },
-    }),
-  };
-  context.spotify = {
-    getApi: sinon.stub().resolves(context.spotifyApi),
-  };
+  this.timesInfoLogged = 0;
   context.logger = {
-    results: sinon.stub(),
-    release: sinon.stub(),
-    finish: sinon.stub(),
     error: sinon.stub(),
+    info: sinon.stub().callsFake(() => {
+      this.timesInfoLogged += 1;
+      if (this.timesInfoLogged === times) {
+        done();
+      }
+    }),
+    debug: sinon.stub(),
   };
 }
 
@@ -79,43 +77,22 @@ function resetActionStubs() {
   ].forEach(action => actions[action].resetHistory());
 }
 
+const album = {
+  id: 'A1',
+  name: 'Album',
+  artists: [{ name: 'Artist' }],
+  tracks: {
+    items: [{
+      id: 'T1', name: 'Track #1',
+    }],
+  },
+};
+
 describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
-      setup(this);
-      this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
-    });
-
-    it('Calls spotify module\'s getApi', function () {
-      assert(this.spotify.getApi.calledOnce);
-    });
-
-    describe('Adds search to state', () => {
-      it('only once', () => {
-        assert(actions.addSearch.calledOnce);
-      });
-
-      it('with id A1', () => {
-        assert.equal(actions.addSearch.getCalls()[0].args[0], 'A1');
-      });
-    });
-
-    describe('Gets album', () => {
-      it('only once', function () {
-        assert(this.spotifyApi.getAlbum.calledOnce);
-      });
-
-      it('with id A1', function () {
-        assert.equal(this.spotifyApi.getAlbum.getCalls()[0].args[0], 'A1');
-      });
-
-      it('adds it to state', () => {
-        assert.equal(actions.addAlbum.getCalls()[0].args[0].id, 'A1');
-      });
+      setup(this, 8, done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     describe('Calls database methods', () => {
@@ -148,38 +125,55 @@ describe('Search function', () => {
       });
     });
 
-    it('logs the 4 releases', function () {
-      assert.equal(this.logger.results.callCount, 2);
+    it('sets all 5 releases as last release', () => {
+      assert.equal(actions.setLastRelease.callCount, 5);
     });
 
-    it('sets the 4 releases as last release', () => {
-      assert.equal(actions.setLastRelease.callCount, 4);
-    });
-
-    it('gets credits for the 4 releases', () => {
+    it('gets credits for only the 4 releases that have the same amount of tracks', () => {
       assert.equal(actions.addCredits.callCount, 4);
     });
 
-    it('logs the 2 search pages', function () {
-      assert.equal(this.logger.results.callCount, 2);
+
+    describe('logs', () => {
+      it('8 times', function () {
+        assert.equal(this.logger.info.callCount, 8);
+      });
+
+      describe('releases', () => {
+        it('1', function () {
+          assert(this.logger.info.getCalls()[1].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(1/2) R-1 (M-undefined) OK'));
+        });
+
+        it('2', function () {
+          assert(this.logger.info.getCalls()[2].args[0].endsWith('Artist - Album (A1) :: P(1/2) I(2/2) R-2 (M-undefined) OK'));
+        });
+
+        it('3', function () {
+          assert(this.logger.info.getCalls()[4].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(1/3) R-3 (M-undefined) OK'));
+        });
+
+        it('4', function () {
+          assert(this.logger.info.getCalls()[5].args[0].endsWith('Artist - Album (A1) :: P(2/2) I(2/3) R-4 (M-undefined) OK'));
+        });
+      });
+
+      describe('search pages', () => {
+        it('1', function () {
+          assert(this.logger.info.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: P 1/2: 2 items'));
+        });
+
+        it('2', function () {
+          assert(this.logger.info.getCalls()[3].args[0].endsWith('Artist - Album (A1) :: P 2/2: 3 items'));
+        });
+      });
     });
 
     it('sets the 4 releases as last release', () => {
       assert.equal(actions.setLastSearchPage.callCount, 2);
     });
 
-    describe('Returns a newly created search', () => {
-      it('with correct id', function () {
-        assert.equal('A1', this.searchResult.id);
-      });
-
-      it('with progress 0', function () {
-        assert.equal(0, this.searchResult.progress);
-      });
-
-      it('with null bestMatch', function () {
-        assert.equal(null, this.searchResult.bestMatch);
-      });
+    it('Logs info about release that is surely no match', function () {
+      assert(this.logger.debug.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-5 tracklist length (2) does not match the album\'s (1)'));
     });
 
     afterEach(resetActionStubs);
@@ -191,7 +185,7 @@ describe('Search function', () => {
       this.discogs.db.search = sinon.stub().throws();
       this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
+      searchAlbum(this.discogs, () => this.logger)(album)
         .start()
         .then((result) => { this.searchResult = result; })
         .catch(done);
@@ -210,10 +204,7 @@ describe('Search function', () => {
       this.discogs.db.search = sinon.stub().resolves({});
       this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -228,10 +219,7 @@ describe('Search function', () => {
       setup(this);
       this.discogs.db.search = sinon.stub().rejects(Error('ERROR'));
       actions.clearSearch = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -246,50 +234,90 @@ describe('Search function', () => {
   });
 
   describe('Discogs search promise rejects because of timeout', () => {
-    beforeEach(function (done) {
-      setup(this);
-      this.discogs.db = {
-        search: sinon.stub()
-          .onCall(0).rejects({
-            code: 'ETIMEDOUT',
-            errno: 'ETIMEDOUT',
-          })
-          .onCall(1)
-          .resolves(pages[0])
-          .onCall(2)
-          .resolves(pages[1]),
-        getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
-      };
-      this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+    describe('First page', () => {
+      beforeEach(function (done) {
+        setup(this, 8, done);
+        this.discogs.db = {
+          search: sinon.stub()
+            .onCall(0).rejects({
+              code: 'ETIMEDOUT',
+              errno: 'ETIMEDOUT',
+            })
+            .onCall(1)
+            .resolves(pages[0])
+            .onCall(2)
+            .resolves(pages[1]),
+          getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+        };
+        searchAlbum(this.discogs, () => this.logger)(album).start();
+      });
+
+      it('Error logger is called', function () {
+        assert(this.logger.error.calledOnce);
+      });
+
+      it('Error message is as expected', function () {
+        assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-1 TIMEOUT'));
+      });
+
+      it('search is called 3 times', function () {
+        assert.equal(this.discogs.db.search.getCalls().length, 3);
+      });
+
+      it('search is NOT cleared', () => {
+        assert.equal(actions.clearSearch.getCalls().length, 0);
+      });
+
+      afterEach(resetActionStubs);
     });
 
-    it('Error logger is called', function () {
-      assert(this.logger.error.calledOnce);
-    });
+    describe('Second page', () => {
+      beforeEach(function (done) {
+        setup(this, 8, done);
+        this.discogs.db = {
+          search: sinon.stub()
+            .onCall(0)
+            .resolves(pages[0])
+            .onCall(1)
+            .rejects({
+              code: 'ETIMEDOUT',
+              errno: 'ETIMEDOUT',
+            })
+            .onCall(2)
+            .resolves(pages[1]),
+          getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
+        };
+        searchAlbum(this.discogs, () => this.logger)(album).start();
+      });
 
-    it('search is called 3 times', function () {
-      assert.equal(this.discogs.db.search.getCalls().length, 3);
-    });
+      it('Error logger is called', function () {
+        assert(this.logger.error.calledOnce);
+      });
 
-    it('search is NOT cleared', () => {
-      assert.equal(actions.clearSearch.getCalls().length, 0);
-    });
+      it('Error message is as expected', function () {
+        assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: SEARCH P-2 TIMEOUT'));
+      });
 
-    afterEach(resetActionStubs);
+      it('search is called 3 times', function () {
+        assert.equal(this.discogs.db.search.getCalls().length, 3);
+      });
+
+      it('search is NOT cleared', () => {
+        assert.equal(actions.clearSearch.getCalls().length, 0);
+      });
+
+      afterEach(resetActionStubs);
+    });
   });
 
   describe('Discogs release retrieval rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 8, done);
       const releaseStub = sinon.stub().onCall(0).rejects({
         code: 'ETIMEDOUT',
         errno: 'ETIMEDOUT',
       });
-      [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
+      [1, 2, 3, 4, 5].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs.db = {
         search: sinon.stub()
           .onCall(0).resolves(pages[0])
@@ -298,18 +326,19 @@ describe('Search function', () => {
         getRelease: releaseStub,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
     });
 
+    it('Error message is as expected', function () {
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-1 P-(1/2) TIMEOUT'));
+    });
+
     it('getRelease is called 5 times', function () {
-      assert.equal(this.discogs.db.getRelease.getCalls().length, 5);
+      assert.equal(this.discogs.db.getRelease.getCalls().length, 6);
     });
 
     it('search is NOT cleared', () => {
@@ -321,9 +350,9 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 8, done);
       const releaseStub = sinon.stub().onCall(0).rejects({ statusCode: 429 });
-      [1, 2, 3, 4].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
+      [1, 2, 3, 4, 5].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs = {
         db: {
           search: sinon.stub()
@@ -335,18 +364,19 @@ describe('Search function', () => {
         PAUSE_NEEDED_AFTER_429: 1,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
     });
 
+    it('Error message is as expected', function () {
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
+    });
+
     it('getRelease is called 5 times', function () {
-      assert.equal(this.discogs.db.getRelease.getCalls().length, 5);
+      assert.equal(this.discogs.db.getRelease.getCalls().length, 6);
     });
 
     it('search is NOT cleared', () => {
@@ -358,7 +388,7 @@ describe('Search function', () => {
 
   describe('Discogs search rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this);
+      setup(this, 8, done);
       this.discogs = {
         db: {
           search: sinon.stub()
@@ -372,14 +402,15 @@ describe('Search function', () => {
         PAUSE_NEEDED_AFTER_429: 1,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.spotify, this.discogs, () => this.logger)('A1')
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
+    });
+
+    it('Error message is as expected', function () {
+      assert(this.logger.error.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: A 429 was thrown (too many requests). Search will pause for 0.001s'));
     });
 
     it('search is called 3 times', function () {
@@ -393,81 +424,41 @@ describe('Search function', () => {
     afterEach(resetActionStubs);
   });
 
-  describe('Spotify album does not exist', () => {
+  describe('Discogs get release rejects because of anything else', () => {
     beforeEach(function (done) {
-      setup(this);
-      this.spotify = {
-        getApi: sinon.stub().resolves({
-          getAlbum: sinon.stub().rejects(createWebApiError(null, 404)),
-        }),
+      setup(this, 8, done);
+      this.discogs = {
+        db: {
+          search: sinon.stub().onCall(0).rejects({}),
+        },
       };
-      actions.removeSearch = sinon.stub().callsFake(() => done());
-      this.search = searchAlbum(this.spotify, this.discogs, () => this.logger)('A1').start();
+      this.discogs = {
+        db: {
+          search: sinon.stub()
+            .onCall(0)
+            .resolves(pages[0])
+            .onCall(1)
+            .resolves(pages[1]),
+          getRelease: sinon.stub().rejects(Error('BAD!!')),
+        },
+        PAUSE_NEEDED_AFTER_429: 1,
+      };
+      this.logger.error = sinon.stub().callsFake(() => done());
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
-    it('Returns error with message', function (done) {
-      this.search.then(done, (error) => {
-        assert.equal(error.message, 'Album does not exist in Spotify');
-        done();
-      });
+    it('Error logger is called', function () {
+      assert(this.logger.error.calledOnce);
+    });
+
+    it('Error message is as expected', function () {
+      assert(this.logger.error.getCalls()[0].args[0].includes('Artist - Album (A1) :: EXCEPTION. Search removed.'));
     });
 
     it('search is aborted', () => {
       assert(actions.removeSearch.calledOnce);
     });
-  });
 
-  describe('Spotify id is invalid', () => {
-    beforeEach(function (done) {
-      setup(this);
-      this.spotify = {
-        getApi: sinon.stub().resolves({
-          getAlbum: sinon.stub().rejects(createWebApiError(null, 400)),
-        }),
-      };
-      actions.removeSearch = sinon.stub().callsFake(() => done());
-      this.search = searchAlbum(this.spotify, this.discogs, () => this.logger)('A1').start();
-    });
-
-    it('Returns error with message', function (done) {
-      this.search.then(done, (error) => {
-        assert.equal(error.message, 'Spotify album id is invalid');
-        done();
-      });
-    });
-
-    it('search is aborted', () => {
-      assert(actions.removeSearch.calledOnce);
-    });
-  });
-
-  describe('Fails for some other reason', () => {
-    beforeEach(function (done) {
-      setup(this);
-      this.spotify = {
-        getApi: sinon.stub().resolves({
-          getAlbum: sinon.stub().rejects(createWebApiError(null, 500)),
-        }),
-      };
-      actions.removeSearch = sinon.stub().callsFake(() => done());
-      this.search = searchAlbum(this.spotify, this.discogs, () => this.logger)('A1').start();
-    });
-
-    it('Returns error with message', function (done) {
-      this.search.then(done, (error) => {
-        assert.equal(error.message, "There's something wrong with Spotify");
-        done();
-      });
-    });
-  });
-
-  describe.skip('Spotify login fails', () => {
-    beforeEach(function (done) {
-      setup.bind(this)(() => {
-        this.spotify.getAlbum = sinon.stub().rejects(createWebApiError(null, 500));
-      }, done);
-    });
-
-    it('tests are missing');
+    afterEach(resetActionStubs);
   });
 });
