@@ -7,7 +7,7 @@ const route = require('./spotify');
 
 describe('Spotify middleware', () => {
   describe('Album is NOT in store', () => {
-    before(function () {
+    beforeEach(function () {
       const app = express();
       app.use('/data/album', route);
       app.use('/data/album', (req, res) => {
