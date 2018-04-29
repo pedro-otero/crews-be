@@ -12,12 +12,10 @@ const isThereNext = ({ pagination: { page, pages } }) => page < pages;
 
 module.exports = (spotify, discogs, createLogger) => (id) => {
   let album;
+  let currentTask;
   const tasks = [];
   let logger;
   const pages = [];
-  let nextPage = 1;
-  let nextReleaseIndex;
-  let nextReleaseId;
   let tag;
 
   const indicator = (current, total) => `${current}/${total}`;
@@ -46,22 +44,12 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
-    nextPage = null;
-    nextReleaseIndex = 0;
-    nextReleaseId = page.results[0].id;
     logger.say(resultsMsg(page));
     actions.setLastSearchPage(album.id, page);
     pages.push(page);
   };
 
   const sendRelease = (release) => {
-    nextReleaseId = pages[pages.length - 1].results[nextReleaseIndex].id;
-    nextReleaseIndex += 1;
-    if (nextReleaseIndex > pages[pages.length - 1].results.length - 1) {
-      nextReleaseIndex = null;
-      nextReleaseId = null;
-      nextPage = pages[pages.length - 1].pagination.page + 1;
-    }
     logger.say(releaseMsg(release));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
@@ -72,10 +60,12 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   };
 
   const logTimeout = () => {
-    if (!nextReleaseId) {
-      logger.notice(`${tag} SEARCH P-${nextPage} TIMEOUT`);
+    if (currentTask.type === 'search') {
+      logger.notice(`${tag} SEARCH P-${currentTask.data} TIMEOUT`);
     } else {
-      logger.notice(`${tag} R-${nextReleaseId} P-(${indicator(nextReleaseIndex + 1, pages[pages.length - 1].results.length)}) TIMEOUT`);
+      const latestResults = pages[pages.length - 1].results;
+      const number = latestResults.findIndex(r => r.id === currentTask.data) + 1;
+      logger.notice(`${tag} R-${currentTask.data} P-(${indicator(number, latestResults.length)}) TIMEOUT`);
     }
   };
 
@@ -116,15 +106,15 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   })[type];
 
   const performTask = () => {
-    const task = tasks.shift();
+    currentTask = tasks.shift();
     try {
-      run(task).then(complete(task), (error) => {
+      run(currentTask).then(complete(currentTask), (error) => {
         if (isTimeout(error)) {
           logTimeout();
-          tasks.unshift(task);
+          tasks.unshift(currentTask);
         } else if (is429(error)) {
           logger.notice(`${tag} A 429 was thrown (too many requests). Search will pause for ${discogs.PAUSE_NEEDED_AFTER_429 / 1000}s`);
-          tasks.unshift(task);
+          tasks.unshift(currentTask);
           makeItWait();
         } else {
           throw error;
