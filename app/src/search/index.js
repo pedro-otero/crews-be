@@ -61,10 +61,9 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     if (currentTask.type === 'search') {
       logger.notice(`${tag} SEARCH P-${currentTask.data} TIMEOUT`);
     } else {
-      const latestResults = lastPage.results;
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.notice(`${tag} R-${releaseId} P-(${indicator(number, latestResults.length)}) TIMEOUT`);
+      logger.notice(`${tag} R-${releaseId} P-(${indicator(number, lastPage.results.length)}) TIMEOUT`);
     }
   };
 
