@@ -16,7 +16,7 @@ describe('Search middleware', () => {
     };
     app.locals.store = {
       getState: () => ({
-        searches: [],
+        searches: [], albums: [{ id: 1 }],
       }),
     };
     app.use('/data/album', route);

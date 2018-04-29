@@ -10,7 +10,8 @@ const func = router.get('/:spotifyAlbumId', (req, res, next) => {
 
   const existing = store.getState().searches.find(s => s.id === spotifyAlbumId);
   if (!existing) {
-    const search = searchAlbum(spotifyAlbumId);
+    const album = store.getState().albums.find(a => a.id === spotifyAlbumId);
+    const search = searchAlbum(album);
     search.start();
     actions.addSearch(spotifyAlbumId);
   }
