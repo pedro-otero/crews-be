@@ -14,11 +14,15 @@ describe('Spotify middleware', () => {
         res.status(200).send('NEXT CALLED');
       });
       this.api = {
-        getAlbum: sinon.stub().resolves({}),
+        getAlbum: sinon.stub().resolves({ body: { id: 1 } }),
+      };
+      this.actions = {
+        addAlbum: sinon.stub(),
       };
       app.locals.spotify = {
         getApi: () => Promise.resolve(this.api),
       };
+      app.locals.actions = this.actions;
       this.request = Request(app);
     });
 
@@ -29,6 +33,13 @@ describe('Spotify middleware', () => {
     it('gets the album with the id passed in the path', function (done) {
       this.request.get('/data/album/1').expect('NEXT CALLED', () => {
         assert.equal(this.api.getAlbum.getCalls()[0].args[0], 1);
+        done();
+      });
+    });
+
+    it('adds album to the store', function (done) {
+      this.request.get('/data/album/1').expect('NEXT CALLED', () => {
+        assert.equal(this.actions.addAlbum.getCalls()[0].args[0].id, 1);
         done();
       });
     });
