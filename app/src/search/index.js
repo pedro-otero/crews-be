@@ -86,7 +86,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     wait: () => {},
   })[type];
 
-  const performTask = () => {
+  const doTask = () => {
     currentTask = tasks.shift();
     try {
       run(currentTask).then(complete(currentTask), (error) => {
@@ -106,7 +106,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         tasks.splice(0, tasks.length);
       }).then(() => {
         if (tasks.length) {
-          performTask();
+          doTask();
         } else {
           logger.info(messages.finish());
         }
@@ -116,6 +116,19 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
   };
 
+  function initialize(_album) {
+    album = _album;
+    actions.addAlbum(album);
+    logger = createLogger(album);
+    tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
+    messages = createMessagesFactory(tag);
+  }
+
+  function firstTask() {
+    tasks.push({ type: 'search', data: 1 });
+    doTask();
+  }
+
   const start = () => new Promise((resolve, reject) => {
     spotify.getApi()
       .then((api) => {
@@ -123,13 +136,8 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         return api.getAlbum(id);
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
-        album = body;
-        actions.addAlbum(album);
-        logger = createLogger(album);
-        tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
-        messages = createMessagesFactory(tag);
-        tasks.push({ type: 'search', data: 1 });
-        performTask();
+        initialize(body);
+        firstTask();
         resolve({ id, progress: 0, bestMatch: null });
       }, (reason) => {
         reject(albumRejection(reason));
