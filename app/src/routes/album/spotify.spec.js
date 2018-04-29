@@ -12,6 +12,11 @@ describe('Spotify middleware', () => {
     app.use('/data/album', (req, res) => {
       res.status(200).send('NEXT CALLED');
     });
+    app.locals.store = {
+      getState: () => ({
+        albums: [{ id: '2' }],
+      }),
+    };
     this.app = app;
   });
 
@@ -27,11 +32,6 @@ describe('Spotify middleware', () => {
         getApi: () => Promise.resolve(this.api),
       };
       this.app.locals.actions = this.actions;
-      this.app.locals.store = {
-        getState: () => ({
-          albums: [],
-        }),
-      };
       this.request = Request(this.app);
     });
 
@@ -66,27 +66,22 @@ describe('Spotify middleware', () => {
         getApi: () => Promise.resolve(this.api),
       };
       this.app.locals.actions = this.actions;
-      this.app.locals.store = {
-        getState: () => ({
-          albums: [{ id: '1' }],
-        }),
-      };
       this.request = Request(this.app);
     });
 
     it('calls next middleware after getting album', function (done) {
-      this.request.get('/data/album/1').expect('NEXT CALLED', done);
+      this.request.get('/data/album/2').expect('NEXT CALLED', done);
     });
 
     it('does not get album again', function (done) {
-      this.request.get('/data/album/1').expect('NEXT CALLED', () => {
+      this.request.get('/data/album/2').expect('NEXT CALLED', () => {
         assert.equal(this.api.getAlbum.getCalls().length, 0);
         done();
       });
     });
 
     it('does not add album to the store', function (done) {
-      this.request.get('/data/album/1').expect('NEXT CALLED', () => {
+      this.request.get('/data/album/2').expect('NEXT CALLED', () => {
         assert.equal(this.actions.addAlbum.getCalls().length, 0);
         done();
       });
