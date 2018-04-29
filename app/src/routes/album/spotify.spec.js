@@ -17,6 +17,10 @@ describe('Spotify middleware', () => {
         albums: [{ id: '2' }],
       }),
     };
+    this.actions = {
+      addAlbum: sinon.stub(),
+    };
+    app.locals.actions = this.actions;
     this.app = app;
   });
 
@@ -25,13 +29,9 @@ describe('Spotify middleware', () => {
       this.api = {
         getAlbum: sinon.stub().resolves({ body: { id: 1 } }),
       };
-      this.actions = {
-        addAlbum: sinon.stub(),
-      };
       this.app.locals.spotify = {
         getApi: () => Promise.resolve(this.api),
       };
-      this.app.locals.actions = this.actions;
       this.request = Request(this.app);
     });
 
@@ -59,13 +59,9 @@ describe('Spotify middleware', () => {
       this.api = {
         getAlbum: sinon.stub().resolves({ body: { id: 1 } }),
       };
-      this.actions = {
-        addAlbum: sinon.stub(),
-      };
       this.app.locals.spotify = {
         getApi: () => Promise.resolve(this.api),
       };
-      this.app.locals.actions = this.actions;
       this.request = Request(this.app);
     });
 
