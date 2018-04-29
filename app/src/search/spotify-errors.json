@@ -1,8 +1,0 @@
-{
-  "http": {
-    "400": "Spotify album id is invalid",
-    "404": "Album does not exist in Spotify"
-  },
-  "general": "There's something wrong with Spotify",
-  "login": "Server couldn't login to Spotify"
-}
