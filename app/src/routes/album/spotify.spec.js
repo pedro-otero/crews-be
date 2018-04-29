@@ -1,5 +1,6 @@
 const express = require('express');
 const Request = require('supertest');
+const sinon = require('sinon');
 
 const route = require('./spotify');
 
@@ -13,7 +14,7 @@ describe('Spotify middleware', () => {
       });
       app.locals.spotify = {
         getApi: () => Promise.resolve({
-          getAlbum: () => ({}),
+          getAlbum: sinon.stub().resolves({}),
         }),
       };
       this.request = Request(app);
