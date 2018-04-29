@@ -109,14 +109,6 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const search = page => discogs.db.search({
-    artist: album.artists[0].name,
-    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
-    type: 'release',
-    per_page: 100,
-    page,
-  });
-
   const handleDiscogsError = (resolve, reject) => (error) => {
     if (isTimeout(error)) {
       output.timeout();
@@ -130,7 +122,13 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     }
   };
 
-  const getSearchPage = pageN => new Promise((resolve, reject) => search(pageN).then((page) => {
+  const getSearchPage = pageN => new Promise((resolve, reject) => discogs.db.search({
+    artist: album.artists[0].name,
+    release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
+    type: 'release',
+    per_page: 100,
+    page: pageN,
+  }).then((page) => {
     output.results(page);
     tasks.push(...page.results.map(r => ({ type: 'release', data: r.id })));
     if (isThereNext(page)) {
