@@ -22,20 +22,20 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
 
   const resultsMsg = (pageObject) => {
     const {
-      pagination: { page, pages: pn },
+      pagination: { page, pages },
       results,
     } = pageObject;
-    return `${tag} P ${indicator(page, pn)}: ${results.length} items`;
+    return `${tag} P ${indicator(page, pages)}: ${results.length} items`;
   };
 
   const releaseMsg = (release) => {
     const i = lastPage.results.findIndex(r => r.id === release.id) + 1;
     const {
-      pagination: { page: current, pages: pn },
+      pagination: { page, pages },
       results,
     } = lastPage;
     const { id: rId, master_id: masterId } = release;
-    return `${tag} P(${indicator(current, pn)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
+    return `${tag} P(${indicator(page, pages)}) I(${indicator(i, results.length)}) R-${rId} (M-${masterId}) OK`;
   };
 
   const results = (page) => {
