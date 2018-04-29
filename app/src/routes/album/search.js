@@ -2,16 +2,18 @@ const express = require('express');
 
 const router = express.Router();
 
-const func = router.get('/:spotifyAlbumId', (req, res) => {
+const func = router.get('/:spotifyAlbumId', (req, res, next) => {
   const {
-    app: { locals: { searchAlbum } },
+    app: { locals: { searchAlbum, store } },
     params: { spotifyAlbumId },
   } = req;
 
-  const search = searchAlbum(spotifyAlbumId);
-  search.start().then(data =>
-    res.status(200).json(data), error =>
-    res.status(404).json(error));
+  const existing = store.getState().searches.find(s => s.id === spotifyAlbumId);
+  if (!existing) {
+    const search = searchAlbum(spotifyAlbumId);
+    search.start();
+  }
+  next();
 });
 
 module.exports = func;
