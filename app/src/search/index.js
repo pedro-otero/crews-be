@@ -1,7 +1,7 @@
 const { actions } = require('../redux/state');
 
 const spotifyErrorMessages = require('./spotify-errors');
-const MESSAGES = require('./messages');
+const createMessagesFactory = require('./messages');
 
 const isTimeout = ({ code, errno }) => code === 'ETIMEDOUT' && errno === 'ETIMEDOUT';
 
@@ -18,39 +18,40 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
   let logger;
   let lastPage;
   let tag;
+  let messages;
 
   const results = (page) => {
     tasks.push(...page.results.map((_, data) => ({ type: 'release', data })));
     if (isThereNext(page)) {
       tasks.push({ type: 'search', data: page.pagination.page + 1 });
     }
-    logger.say(MESSAGES.resultsMsg(tag, page));
+    logger.say(messages.resultsMsg(page));
     actions.setLastSearchPage(album.id, page);
     lastPage = page;
   };
 
   const sendRelease = (release) => {
-    logger.say(MESSAGES.releaseMsg(tag, release, lastPage, currentTask));
+    logger.say(messages.releaseMsg(release, lastPage, currentTask));
     actions.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.items.length) {
       actions.addCredits(album, release);
     } else {
-      logger.detail(MESSAGES.albumMismatch(tag, release, album));
+      logger.detail(messages.albumMismatch(release, album));
     }
   };
 
   const logTimeout = () => {
     if (currentTask.type === 'search') {
-      logger.notice(MESSAGES.searchPageTimeout(tag, currentTask.data));
+      logger.notice(messages.searchPageTimeout(currentTask.data));
     } else {
       const number = currentTask.data + 1;
       const releaseId = lastPage.results[currentTask.data].id;
-      logger.notice(MESSAGES.releaseTimeout(tag, releaseId, number, lastPage.results.length));
+      logger.notice(messages.releaseTimeout(releaseId, number, lastPage.results.length));
     }
   };
 
   const sendError = (error) => {
-    logger.notice(MESSAGES.exception(tag, error));
+    logger.notice(messages.exception(error));
     actions.clearSearch(id);
   };
 
@@ -93,7 +94,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
           logTimeout();
           tasks.unshift(currentTask);
         } else if (is429(error)) {
-          logger.notice(MESSAGES.tooManyRequests(tag, discogs.PAUSE_NEEDED_AFTER_429));
+          logger.notice(messages.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429));
           tasks.unshift(currentTask);
           makeItWait();
         } else {
@@ -107,7 +108,7 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
         if (tasks.length) {
           performTask();
         } else {
-          logger.say(MESSAGES.finish(tag));
+          logger.say(messages.finish());
         }
       });
     } catch (error) {
@@ -123,9 +124,10 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
       }, () => reject(Error(spotifyErrorMessages.login)))
       .then(({ body }) => {
         album = body;
-        tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
         actions.addAlbum(album);
         logger = createLogger(album);
+        tag = `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
+        messages = createMessagesFactory(tag);
         tasks.push({ type: 'search', data: 1 });
         performTask();
         resolve({ id, progress: 0, bestMatch: null });
