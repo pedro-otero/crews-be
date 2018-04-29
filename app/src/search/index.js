@@ -112,36 +112,15 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     return Error(spotifyErrorMessages.general);
   };
 
-  const handleDiscogsError = (resolve, reject) => (error) => {
-    if (isTimeout(error)) {
-      output.timeout();
-      reject(Error('repeat'));
-    } else if (is429(error)) {
-      output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
-      reject(Error('wait'));
-    } else {
-      output.abort();
-      output.sendError(error);
-    }
-  };
-
-  const getSearchPage = pageN => new Promise((resolve, reject) => discogs.db.search({
+  const getSearchPage = pageN => discogs.db.search({
     artist: album.artists[0].name,
     release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
     type: 'release',
     per_page: 100,
     page: pageN,
-  }).then((page) => {
-    output.results(page);
-    resolve();
-  }, handleDiscogsError(resolve, reject)).catch(output.sendError));
-
-  const getRelease = releaseId => new Promise((resolve, reject) => {
-    discogs.db.getRelease(releaseId).then((release) => {
-      output.sendRelease(release);
-      resolve();
-    }, handleDiscogsError(resolve, reject));
   });
+
+  const getRelease = releaseId => discogs.db.getRelease(releaseId);
 
   const run = ({ type, data }) => ({
     search: page => getSearchPage(page),
@@ -154,28 +133,40 @@ module.exports = (spotify, discogs, createLogger) => (id) => {
     data: discogs.PAUSE_NEEDED_AFTER_429,
   });
 
+  const complete = ({ type }) => ({
+    search: output.results,
+    release: output.sendRelease,
+    wait: () => {},
+  })[type];
+
   const performTask = () => {
     const task = tasks.shift();
-    run(task).then(() => {
-
-    }, (error) => {
-      const { message } = error;
-      if (['wait', 'repeat'].includes(message)) {
-        tasks.unshift(task);
-        if (message === 'wait') {
+    try {
+      run(task).then(complete(task), (error) => {
+        if (isTimeout(error)) {
+          output.timeout();
+          tasks.unshift(task);
+        } else if (is429(error)) {
+          output.tooManyRequests(discogs.PAUSE_NEEDED_AFTER_429);
+          tasks.unshift(task);
           makeItWait();
+        } else {
+          throw error;
         }
-      } else {
+      }).catch((error) => {
         output.abort();
         output.sendError(error);
-      }
-    }).then(() => {
-      if (tasks.length) {
-        performTask();
-      } else {
-        output.complete();
-      }
-    });
+        tasks.splice(0, tasks.length);
+      }).then(() => {
+        if (tasks.length) {
+          performTask();
+        } else {
+          output.complete();
+        }
+      });
+    } catch (error) {
+      output.sendError(error);
+    }
   };
 
   const start = () => new Promise((resolve, reject) => {
