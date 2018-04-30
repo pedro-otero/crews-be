@@ -59,13 +59,15 @@ const SpotifyWrapper = require('../src/api/spotify');
 
 module.exports = (app) => {
   /* App locals setup */
-  app.locals = {
-    store,
-    actions,
-    searchAlbum: search(discogs, loggerFactory),
-    Query,
-    spotify: SpotifyWrapper(SpotifyWebApi),
-  };
+  Object.assign(app, {
+    locals: {
+      store,
+      actions,
+      searchAlbum: search(discogs, loggerFactory),
+      Query,
+      spotify: SpotifyWrapper(SpotifyWebApi),
+    },
+  });
 
   // Routes setup
   // 1. Fetches album from Spotify
