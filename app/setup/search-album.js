@@ -1,11 +1,9 @@
 const Throxy = require('throxy');
 const Disconnect = require('disconnect');
 const minimist = require('minimist');
-const {
-  createLogger,
-  transports,
-  format: { combine, printf, timestamp },
-} = require('winston');
+const winston = require('winston');
+
+const search = require('../src/search/index');
 
 const {
   agent,
@@ -15,7 +13,6 @@ const {
   PAUSE_NEEDED_AFTER_429 = 30000,
 } = minimist(process.argv.slice(2));
 
-const search = require('../src/search/index');
 
 const discogs = {
   db: new Throxy(
@@ -25,6 +22,11 @@ const discogs = {
   PAUSE_NEEDED_AFTER_429,
 };
 
+const {
+  createLogger,
+  transports,
+  format: { combine, printf, timestamp },
+} = winston;
 const loggerFactory = ({ id, artists: [{ name: artist }], name }) => createLogger({
   transports: [
     new transports.Console({
