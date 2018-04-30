@@ -1,6 +1,6 @@
 const winston = require('winston');
 
-const spotifyConfig = require('../../../spotify-config.json');
+const { clientId, clientSecret, redirectUri } = require('../../../spotify-config.json');
 
 const { printf, combine, timestamp } = winston.format;
 const logger = winston.createLogger({
@@ -17,11 +17,7 @@ module.exports = (SpotifyWebApi) => {
   let expiresIn;
   let activeIntent;
 
-  const spotifyApi = new SpotifyWebApi({
-    clientId: spotifyConfig.keys.consumer,
-    clientSecret: spotifyConfig.keys.secret,
-    redirectUri: spotifyConfig.urls.redirect,
-  });
+  const spotifyApi = new SpotifyWebApi({ clientId, clientSecret, redirectUri });
 
   const loggedIn = () => {
     if (token) {
