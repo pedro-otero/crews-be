@@ -26,7 +26,7 @@ const Query = require('./app/src/redux/view/query');
 const query = require('./app/src/routes/album/query');
 const search = require('./app/src/routes/album/search');
 const spotify = require('./app/src/routes/album/spotify');
-const searchAlbum = require('./app/src/locals/search-album');
+const searchAlbum = require('./app/setup/search-album');
 
 const SpotifyWrapper = require('./app/src/api/spotify');
 

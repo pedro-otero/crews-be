@@ -15,7 +15,7 @@ const {
   PAUSE_NEEDED_AFTER_429 = 30000,
 } = minimist(process.argv.slice(2));
 
-const search = require('../search');
+const search = require('../src/search/index');
 
 const discogs = {
   db: new Throxy(
