@@ -7,6 +7,7 @@ if (missing.length) {
   throw Error(`FATAL. Missing arguments: ${missing.join(', ')}`);
 }
 
+// Express app imports
 const logger = require('morgan');
 const express = require('express');
 const path = require('path');
@@ -17,6 +18,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const users = require('./routes/users');
 
+// Custom imports
 const SpotifyWebApi = require('spotify-web-api-node');
 const { store, actions } = require('./app/src/redux/state');
 const Query = require('./app/src/redux/view/query');
