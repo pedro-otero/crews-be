@@ -1,17 +1,23 @@
 const Throxy = require('throxy');
 const Disconnect = require('disconnect');
+const minimist = require('minimist');
 const {
   createLogger,
   transports,
   format: { combine, printf, timestamp },
 } = require('winston');
 
-const { agent, keys } = require('../../../disconnect-config.json');
+const {
+  agent,
+  consumerKey,
+  consumerSecret,
+} = minimist(process.argv.slice(2));
+
 const search = require('../search');
 
 const discogs = {
   db: new Throxy(
-    new Disconnect.Client(agent, keys).database(),
+    new Disconnect.Client(agent, { consumerKey, consumerSecret }).database(),
     1100
   ),
   PAUSE_NEEDED_AFTER_429: 30000,
