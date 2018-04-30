@@ -11,6 +11,7 @@ const {
   agent,
   consumerKey,
   consumerSecret,
+  throttleTime,
 } = minimist(process.argv.slice(2));
 
 const search = require('../search');
@@ -18,7 +19,7 @@ const search = require('../search');
 const discogs = {
   db: new Throxy(
     new Disconnect.Client(agent, { consumerKey, consumerSecret }).database(),
-    1100
+    throttleTime
   ),
   PAUSE_NEEDED_AFTER_429: 30000,
 };
