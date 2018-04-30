@@ -36,21 +36,29 @@ describe('Credit reducer', () => {
         name: 'Pe2', role: 'R2', track: 'T2',
       }, {
         name: 'P4', role: 'R4', track: 'T4',
+      }, {
+        name: 'P3', role: 'R3', track: 'T4',
       }],
     });
 
     it('test length', () => {
-      assert.equal(credits.length, 4);
+      assert.equal(credits.length, 5);
     });
 
-    describe('but prefers accented version', () => {
-      it('of Pe', () => {
-        assert(!credits.find(c => c.name === 'Pe1' && c.role === 'R1' && c.track === 'T1'));
-      });
+    it('has accented Pe1', () => {
+      assert(credits.find(c => c.name === 'Pé1' && c.role === 'R1' && c.track === 'T1'));
+    });
 
-      it('of Re', () => {
-        assert(!credits.find(c => c.name === 'P2' && c.role === 'Re2' && c.track === 'T2'));
-      });
+    it('has NOT unaccented Pe1', () => {
+      assert(!credits.find(c => c.name === 'Pe1' && c.role === 'R1' && c.track === 'T1'));
+    });
+
+    it('has accented Pe2', () => {
+      assert(credits.find(c => c.name === 'Pé2' && c.role === 'R2' && c.track === 'T2'));
+    });
+
+    it('has NOT unaccented Pe2', () => {
+      assert(!credits.find(c => c.name === 'Pe2' && c.role === 'R2' && c.track === 'T2'));
     });
 
     it('adds credits that have no equivalent accented or not', () => {
@@ -59,6 +67,10 @@ describe('Credit reducer', () => {
 
     it('keeps credits that have no equivalent accented or not', () => {
       assert(credits.find(c => c.name === 'P4' && c.role === 'R4' && c.track === 'T4'));
+    });
+
+    it('compares credits by the role when name is the same', () => {
+      assert(credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T4'));
     });
   });
 });

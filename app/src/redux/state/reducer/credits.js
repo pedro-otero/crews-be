@@ -2,27 +2,25 @@ const accents = require('remove-accents');
 
 const { ADD_CREDITS } = require('../action/constants');
 
+const hasAccentedName = c => accents.has(c.name);
+
 module.exports = (state = [], { type, credits }) => {
   switch (type) {
     case ADD_CREDITS:
-      const unique = credits.filter(({ name, role, track }) =>
-        !state.find(s => s.name === name && s.role === role && s.track === track));
-      const merged = [...unique, ...state];
-      return merged.reduce((filtered, current) => {
-        if (accents.has(current.name)) {
-          const index = filtered.findIndex(f => f.name === accents.remove(current.name));
-          if (index > -1) {
-            return [current, ...filtered.filter((_, i) => i !== index)];
+      return credits
+        .filter(c => !hasAccentedName(c))
+        .concat(state.filter(c => !hasAccentedName(c)))
+        .reduce((all, current) => {
+          if (all.find(item =>
+            accents.remove(item.name) === current.name &&
+            item.role === current.role &&
+            item.track === current.track)) {
+            return all;
           }
-        } else {
-          const index = filtered.findIndex(f => accents.remove(f.name) === current.name);
-          if (index === -1) {
-            return [current, ...filtered];
-          }
-          return filtered;
-        }
-        return [current, ...filtered];
-      }, []);
+          return all.concat([current]);
+        }, credits
+          .filter(hasAccentedName)
+          .concat(state.filter(hasAccentedName)));
     default:
       return state;
   }
