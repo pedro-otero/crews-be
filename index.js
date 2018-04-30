@@ -14,7 +14,7 @@ const path = require('path');
 const favicon = require('static-favicon');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const setup = require('./app/setup/search-album');
+const setup = require('./app/setup');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
