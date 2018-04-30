@@ -4,11 +4,6 @@ const assert = require('assert');
 const searchAlbum = require('./index');
 const { actions } = require('../redux/state');
 
-const createWebApiError = (message, statusCode) => Object.assign(Error(message), {
-  name: 'WebapiError',
-  statusCode,
-});
-
 function monkeypatchActions() {
   actions.addSearch = sinon.stub();
   actions.addAlbum = sinon.stub();
