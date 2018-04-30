@@ -160,5 +160,11 @@
   ],
   "results": [],
   "releases": [],
-  "credits": []
+  "credits": [
+    {
+      "track": "T1",
+      "name": "P1",
+      "role": "R1"
+    }
+  ]
 }
