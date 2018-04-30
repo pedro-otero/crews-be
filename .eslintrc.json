@@ -5,6 +5,7 @@
     "node": true
   },
   "rules": {
-    "func-names": ["off"]
+    "func-names": ["off"],
+    "comma-dangle": ["error", "always-multiline", {"functions": "never"}]
   }
 }

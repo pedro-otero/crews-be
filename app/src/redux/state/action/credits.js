@@ -38,6 +38,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
       (accum, { id, credits }) =>
         accum.concat(credits
           .map(({ name, role }) => ({ track: id, name, role }))),
-      []),
+      []
+    ),
   };
 };
