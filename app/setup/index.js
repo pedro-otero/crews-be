@@ -72,7 +72,7 @@ module.exports = (app) => {
   // Routes setup
   // 1. Fetches album from Spotify
   app.use('/data/album', spotify);
-  // 2. Starts a earch if there isn't one already
+  // 2. Starts a search if there isn't one already
   app.use('/data/album', searchMiddleware);
   // 3. Queries the store for data about an album and sends it to client
   app.use('/data/album', query);
