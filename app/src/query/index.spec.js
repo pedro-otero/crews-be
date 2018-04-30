@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const Query = require('./query');
+const Query = require('./index');
 const mockState = require('./mock-state');
 
 describe('Query', () => {

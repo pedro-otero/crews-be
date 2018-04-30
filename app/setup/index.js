@@ -6,7 +6,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const { store, actions } = require('../src/redux/state');
 const createSearchFunction = require('../src/search');
 const createSpotifyModule = require('../src/api/spotify');
-const Query = require('../src/redux/view/query');
+const Query = require('../src/query/index');
 
 // Middleware
 const query = require('../src/routes/album/query');
