@@ -19,11 +19,17 @@ const createLogger = ({ id, artists: [{ name: artist }], name }) => winston.crea
   transports: [
     new winston.transports.Console({
       level: 'info',
-      format: combine(timestamp(), printf(info => `${info.timestamp} ${artist} - ${name} (${id}) :: ${info.message}`)),
+      format: combine(
+        timestamp(),
+        printf(info => `${info.timestamp} ${artist} - ${name} (${id}) :: ${info.message}`)
+      ),
     }),
     new winston.transports.File({
       level: 'debug',
-      format: combine(timestamp(), printf(info => `${info.timestamp}  ${info.message}`)),
+      format: combine(
+        timestamp(),
+        printf(info => `${info.timestamp}  ${info.message}`)
+      ),
       filename: `app/log/${id}.log`,
     }),
   ],
