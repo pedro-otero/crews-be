@@ -1,8 +1,15 @@
 const assert = require('assert');
 
 const Query = require('./query');
+const mockState = require('./mock-state');
 
 describe('Query', () => {
+  before(function () {
+    this.store = {
+      getState: () => mockState,
+    };
+  });
+
   const test = (id, cause, progress) => {
     context(cause, () => {
       before(function () {
