@@ -30,8 +30,9 @@ const pages = [{
   results: [{ id: 3 }, { id: 4 }, { id: 5 }],
 }];
 
-function setup(context, times, done) {
+function setup(times, done) {
   monkeypatchActions();
+  const context = {};
   context.discogs = {
     db: {
       search: sinon.stub()
@@ -47,17 +48,18 @@ function setup(context, times, done) {
       }),
     },
   };
-  this.timesInfoLogged = 0;
+  context.timesInfoLogged = 0;
   context.logger = {
     error: sinon.stub(),
     info: sinon.stub().callsFake(() => {
-      this.timesInfoLogged += 1;
-      if (this.timesInfoLogged === times) {
+      context.timesInfoLogged += 1;
+      if (context.timesInfoLogged === times) {
         done();
       }
     }),
     debug: sinon.stub(),
   };
+  return context;
 }
 
 function resetActionStubs() {
@@ -86,7 +88,7 @@ const album = {
 describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
-      setup(this, 8, done);
+      Object.assign(this, setup(8, done));
       searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
@@ -176,14 +178,11 @@ describe('Search function', () => {
 
   describe('Discogs search throws an exception', () => {
     beforeEach(function (done) {
-      setup(this);
+      Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().throws();
       this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger)(album)
-        .start()
-        .then((result) => { this.searchResult = result; })
-        .catch(done);
+      searchAlbum(this.discogs, () => this.logger)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -195,7 +194,7 @@ describe('Search function', () => {
 
   describe('Discogs results processing throws an exception', () => {
     beforeEach(function (done) {
-      setup(this);
+      Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().resolves({});
       this.logger.error = sinon.stub().callsFake(() => done());
       actions.finish = sinon.stub().callsFake(() => done());
@@ -211,7 +210,7 @@ describe('Search function', () => {
 
   describe('Discogs search promise rejects', () => {
     beforeEach(function (done) {
-      setup(this);
+      Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().rejects(Error('ERROR'));
       actions.clearSearch = sinon.stub().callsFake(() => done());
       searchAlbum(this.discogs, () => this.logger)(album).start();
@@ -231,7 +230,7 @@ describe('Search function', () => {
   describe('Discogs search promise rejects because of timeout', () => {
     describe('First page', () => {
       beforeEach(function (done) {
-        setup(this, 8, done);
+        Object.assign(this, setup(8, done));
         this.discogs.db = {
           search: sinon.stub()
             .onCall(0).rejects({
@@ -268,7 +267,7 @@ describe('Search function', () => {
 
     describe('Second page', () => {
       beforeEach(function (done) {
-        setup(this, 8, done);
+        Object.assign(this, setup(8, done));
         this.discogs.db = {
           search: sinon.stub()
             .onCall(0)
@@ -307,7 +306,7 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of timeout', () => {
     beforeEach(function (done) {
-      setup(this, 8, done);
+      Object.assign(this, setup(8, done));
       const releaseStub = sinon.stub().onCall(0).rejects({
         code: 'ETIMEDOUT',
         errno: 'ETIMEDOUT',
@@ -345,7 +344,7 @@ describe('Search function', () => {
 
   describe('Discogs release retrieval rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this, 8, done);
+      Object.assign(this, setup(8, done));
       const releaseStub = sinon.stub().onCall(0).rejects({ statusCode: 429 });
       [1, 2, 3, 4, 5].forEach(id => releaseStub.onCall(id).resolves(blankRelease(id)));
       this.discogs = {
@@ -383,7 +382,7 @@ describe('Search function', () => {
 
   describe('Discogs search rejects because of 429', () => {
     beforeEach(function (done) {
-      setup(this, 8, done);
+      Object.assign(this, setup(8, done));
       this.discogs = {
         db: {
           search: sinon.stub()
@@ -421,7 +420,7 @@ describe('Search function', () => {
 
   describe('Discogs get release rejects because of anything else', () => {
     beforeEach(function (done) {
-      setup(this, 8, done);
+      Object.assign(this, setup(8, done));
       this.discogs = {
         db: {
           search: sinon.stub().onCall(0).rejects({}),
