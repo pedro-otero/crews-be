@@ -2,10 +2,10 @@ const winston = require('winston');
 
 const spotifyConfig = require('../../../spotify-config.json');
 
-const { printf, combine } = winston.format;
+const { printf, combine, timestamp } = winston.format;
 const logger = winston.createLogger({
   level: 'info',
-  format: combine(printf(info => `${info.message}`)),
+  format: combine(timestamp(), printf(info => `${info.timestamp} ${info.message}`)),
   transports: [
     new winston.transports.Console(),
   ],
