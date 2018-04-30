@@ -1,5 +1,6 @@
 const minimist = require('minimist');
 
+// Check that mandatory command line arguments are present
 const {
   agent,
   consumerKey,
