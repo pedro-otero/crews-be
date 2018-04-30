@@ -3,6 +3,7 @@ const {
   SET_LAST_SEARCH_PAGE,
   SET_LAST_RELEASE,
   CLEAR_SEARCH,
+  REMOVE_SEARCH,
 } = require('./constants');
 
 const addSearch = id => ({
@@ -38,9 +39,15 @@ const clearSearch = id => ({
   id,
 });
 
+const removeSearch = id => ({
+  type: REMOVE_SEARCH,
+  id,
+});
+
 module.exports = {
   addSearch,
   setLastSearchPage,
   setLastRelease,
   clearSearch,
+  removeSearch,
 };
