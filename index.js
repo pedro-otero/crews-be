@@ -1,7 +1,36 @@
+const minimist = require('minimist');
+
+const {
+  agent,
+  consumerKey,
+  consumerSecret,
+  clientId,
+  clientSecret,
+} = minimist(process.argv.slice(2));
+const missing = [];
+if (!agent) {
+  missing.push('agent');
+}
+if (!consumerKey) {
+  missing.push('consumerKey');
+}
+if (!consumerSecret) {
+  missing.push('consumerSecret');
+}
+if (!clientId) {
+  missing.push('clientId');
+}
+if (!clientSecret) {
+  missing.push('clientSecret');
+}
+if (missing.length) {
+  throw Error(`FATAL. Missing arguments: ${missing.join(', ')}`);
+}
+
+const logger = require('morgan');
 const express = require('express');
 const path = require('path');
 const favicon = require('static-favicon');
-const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
