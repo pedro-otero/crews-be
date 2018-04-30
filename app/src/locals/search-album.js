@@ -11,8 +11,8 @@ const {
   agent,
   consumerKey,
   consumerSecret,
-  throttleTime,
-  PAUSE_NEEDED_AFTER_429,
+  throttleTime = 1100,
+  PAUSE_NEEDED_AFTER_429 = 30000,
 } = minimist(process.argv.slice(2));
 
 const search = require('../search');
