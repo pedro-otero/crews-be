@@ -56,15 +56,14 @@ module.exports = (SpotifyWebApi) => {
   activeIntent = login();
 
   return {
-    getApi: () => new Promise(((resolve, reject) => {
+    getApi: () => {
       if (loggedIn()) {
-        resolve(spotifyApi);
-      } else {
-        if (!activeIntent) {
-          activeIntent = login();
-        }
-        activeIntent.then(resolve, reject).catch(reject);
+        return Promise.resolve(spotifyApi);
       }
-    })),
+      if (!activeIntent) {
+        activeIntent = login();
+      }
+      return activeIntent;
+    },
   };
 };
