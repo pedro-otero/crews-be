@@ -5,7 +5,7 @@ const search = require('../search');
 
 const { combine, printf, timestamp } = winston.format;
 
-const createLogger = ({ id }) => winston.createLogger({
+const createLogger = album => winston.createLogger({
   levels: {
     error: 0,
     info: 1,
@@ -14,7 +14,7 @@ const createLogger = ({ id }) => winston.createLogger({
   format: combine(timestamp(), printf(info => `${info.timestamp} ${info.message}`)),
   transports: [
     new winston.transports.Console({ level: 'info' }),
-    new winston.transports.File({ filename: `app/log/${id}.log`, level: 'debug' }),
+    new winston.transports.File({ filename: `app/log/${album.id}.log`, level: 'debug' }),
   ],
 });
 
