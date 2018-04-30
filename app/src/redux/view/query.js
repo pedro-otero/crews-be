@@ -1,16 +1,4 @@
-const similarity = require('string-similarity').compareTwoStrings;
-
 const buildAlbum = require('./build');
-
-const compareTracklist = (spotify, discogs) => {
-  if (discogs.length !== spotify.length) {
-    return 0;
-  }
-  return spotify
-    .map(track => track.name)
-    .map((track, i) => similarity(track, discogs[i].title))
-    .reduce((sum, current, i, array) => sum + (current / array.length), 0);
-};
 
 module.exports = store => function (id) {
   const {
