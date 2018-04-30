@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const SpotifyWebApi = require('spotify-web-api-node');
 
 const { store, actions } = require('./app/src/redux/state');
+const Query = require('./app/src/redux/view/query');
 
 const routes = require('./routes/index');
 const users = require('./routes/users');
@@ -32,8 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* App locals setup */
 
 app.locals.searchAlbum = require('./app/src/locals/search-album');
-app.locals.getQuery = require('./app/src/locals/get-query');
 
+app.locals.Query = Query;
 app.locals.store = store;
 app.locals.actions = actions;
 app.locals.spotify = SpotifyWrapper(SpotifyWebApi);
