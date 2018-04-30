@@ -12,6 +12,7 @@ const {
   consumerKey,
   consumerSecret,
   throttleTime,
+  PAUSE_NEEDED_AFTER_429,
 } = minimist(process.argv.slice(2));
 
 const search = require('../search');
@@ -21,7 +22,7 @@ const discogs = {
     new Disconnect.Client(agent, { consumerKey, consumerSecret }).database(),
     throttleTime
   ),
-  PAUSE_NEEDED_AFTER_429: 30000,
+  PAUSE_NEEDED_AFTER_429,
 };
 
 const loggerFactory = ({ id, artists: [{ name: artist }], name }) => createLogger({
