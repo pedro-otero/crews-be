@@ -1,6 +1,6 @@
 const indicator = (current, total) => `${current}/${total}`;
 
-const tag = album => `${new Date().toLocaleString()} ${album.artists[0].name} - ${album.name} (${album.id}) ::`;
+const tag = album => `${album.artists[0].name} - ${album.name} (${album.id}) ::`;
 
 module.exports = album => ({
 
