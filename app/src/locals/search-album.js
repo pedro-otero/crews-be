@@ -1,8 +1,13 @@
-const winston = require('winston');
 const Throxy = require('throxy');
 const Disconnect = require('disconnect');
+const {
+  createLogger,
+  transports,
+  format: { combine, printf, timestamp },
+} = require('winston');
 
 const { agent, keys } = require('../../../disconnect-config.json');
+const search = require('../search');
 
 const discogs = {
   db: new Throxy(
@@ -11,20 +16,17 @@ const discogs = {
   ),
   PAUSE_NEEDED_AFTER_429: 30000,
 };
-const search = require('../search');
 
-const { combine, printf, timestamp } = winston.format;
-
-const createLogger = ({ id, artists: [{ name: artist }], name }) => winston.createLogger({
+const loggerFactory = ({ id, artists: [{ name: artist }], name }) => createLogger({
   transports: [
-    new winston.transports.Console({
+    new transports.Console({
       level: 'info',
       format: combine(
         timestamp(),
         printf(info => `${info.timestamp} ${artist} - ${name} (${id}) :: ${info.message}`)
       ),
     }),
-    new winston.transports.File({
+    new transports.File({
       level: 'debug',
       format: combine(
         timestamp(),
@@ -35,4 +37,4 @@ const createLogger = ({ id, artists: [{ name: artist }], name }) => winston.crea
   ],
 });
 
-module.exports = search(discogs, createLogger);
+module.exports = search(discogs, loggerFactory);
