@@ -6,15 +6,16 @@ const search = require('../search');
 const { combine, printf, timestamp } = winston.format;
 
 const createLogger = ({ id, artists: [{ name: artist }], name }) => winston.createLogger({
-  levels: {
-    error: 0,
-    info: 1,
-    debug: 2,
-  },
-  format: combine(timestamp(), printf(info => `${info.timestamp} ${artist} - ${name} (${id}) :: ${info.message}`)),
   transports: [
-    new winston.transports.Console({ level: 'info' }),
-    new winston.transports.File({ filename: `app/log/${id}.log`, level: 'debug' }),
+    new winston.transports.Console({
+      level: 'info',
+      format: combine(timestamp(), printf(info => `${info.timestamp} ${artist} - ${name} (${id}) :: ${info.message}`)),
+    }),
+    new winston.transports.File({
+      level: 'debug',
+      format: combine(timestamp(), printf(info => `${info.timestamp}  ${info.message}`)),
+      filename: `app/log/${id}.log`,
+    }),
   ],
 });
 
