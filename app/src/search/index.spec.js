@@ -4,16 +4,6 @@ const assert = require('assert');
 const searchAlbum = require('./index');
 const { actions } = require('../redux/state');
 
-function monkeypatchActions() {
-  actions.addSearch = sinon.stub();
-  actions.addAlbum = sinon.stub();
-  actions.setLastRelease = sinon.stub();
-  actions.setLastSearchPage = sinon.stub();
-  actions.addCredits = sinon.stub();
-  actions.clearSearch = sinon.spy();
-  actions.removeSearch = sinon.spy();
-}
-
 const blankRelease = id => ({ id, tracklist: [{ title: 'Track #1' }] });
 
 const pages = [{
@@ -31,7 +21,6 @@ const pages = [{
 }];
 
 function setup(times, done) {
-  monkeypatchActions();
   const context = {};
   context.discogs = {
     db: {
@@ -62,18 +51,6 @@ function setup(times, done) {
   return context;
 }
 
-function resetActionStubs() {
-  [
-    'addSearch',
-    'addAlbum',
-    'setLastRelease',
-    'setLastSearchPage',
-    'addCredits',
-    'clearSearch',
-    'removeSearch',
-  ].forEach(action => actions[action].resetHistory());
-}
-
 const album = {
   id: 'A1',
   name: 'Album',
@@ -86,6 +63,16 @@ const album = {
 };
 
 describe('Search function', () => {
+  beforeEach(() => {
+    actions.addSearch = sinon.stub();
+    actions.addAlbum = sinon.stub();
+    actions.setLastRelease = sinon.stub();
+    actions.setLastSearchPage = sinon.stub();
+    actions.addCredits = sinon.stub();
+    actions.clearSearch = sinon.spy();
+    actions.removeSearch = sinon.spy();
+  });
+
   context('Nothing fails', () => {
     beforeEach(function (done) {
       Object.assign(this, setup(8, done));
@@ -172,8 +159,6 @@ describe('Search function', () => {
     it('Logs info about release that is surely no match', function () {
       assert(this.logger.debug.getCalls()[0].args[0].endsWith('Artist - Album (A1) :: R-5 tracklist length (2) does not match the album\'s (1)'));
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs search throws an exception', () => {
@@ -188,8 +173,6 @@ describe('Search function', () => {
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs results processing throws an exception', () => {
@@ -204,8 +187,6 @@ describe('Search function', () => {
     it('Error logger is called', function () {
       assert(this.logger.error.calledOnce);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs search promise rejects', () => {
@@ -223,8 +204,6 @@ describe('Search function', () => {
     it('search is cleared', () => {
       assert(actions.clearSearch.calledOnce);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs search promise rejects because of timeout', () => {
@@ -261,8 +240,6 @@ describe('Search function', () => {
       it('search is NOT cleared', () => {
         assert.equal(actions.clearSearch.getCalls().length, 0);
       });
-
-      afterEach(resetActionStubs);
     });
 
     describe('Second page', () => {
@@ -299,8 +276,6 @@ describe('Search function', () => {
       it('search is NOT cleared', () => {
         assert.equal(actions.clearSearch.getCalls().length, 0);
       });
-
-      afterEach(resetActionStubs);
     });
   });
 
@@ -338,8 +313,6 @@ describe('Search function', () => {
     it('search is NOT cleared', () => {
       assert.equal(actions.clearSearch.getCalls().length, 0);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs release retrieval rejects because of 429', () => {
@@ -376,8 +349,6 @@ describe('Search function', () => {
     it('search is NOT cleared', () => {
       assert.equal(actions.clearSearch.getCalls().length, 0);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs search rejects because of 429', () => {
@@ -414,8 +385,6 @@ describe('Search function', () => {
     it('search is NOT cleared', () => {
       assert.equal(actions.clearSearch.getCalls().length, 0);
     });
-
-    afterEach(resetActionStubs);
   });
 
   describe('Discogs get release rejects because of anything else', () => {
@@ -452,7 +421,15 @@ describe('Search function', () => {
     it('search is aborted', () => {
       assert(actions.removeSearch.calledOnce);
     });
-
-    afterEach(resetActionStubs);
   });
+
+  afterEach(() => [
+    'addSearch',
+    'addAlbum',
+    'setLastRelease',
+    'setLastSearchPage',
+    'addCredits',
+    'clearSearch',
+    'removeSearch',
+  ].forEach(action => actions[action].resetHistory()));
 });
