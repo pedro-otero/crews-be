@@ -68,6 +68,12 @@ module.exports = (app) => {
     },
   });
 
+  // CORS header
+  app.use('/', (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  });
+
   // Routes setup
   // 1. Fetches album from Spotify
   app.use('/data/album', spotify);
