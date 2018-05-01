@@ -1,7 +1,5 @@
-const minimist = require('minimist');
-
 // Check that mandatory command line arguments are present
-const args = minimist(process.argv.slice(2));
+const args = process.env;
 const missing = ['agent', 'consumerKey', 'consumerSecret', 'clientId', 'clientSecret'].filter(arg => !args[arg]);
 if (missing.length) {
   throw Error(`FATAL. Missing arguments: ${missing.join(', ')}`);

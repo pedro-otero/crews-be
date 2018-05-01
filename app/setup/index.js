@@ -1,6 +1,5 @@
 const Throxy = require('throxy');
 const Disconnect = require('disconnect');
-const minimist = require('minimist');
 const winston = require('winston');
 const SpotifyWebApi = require('spotify-web-api-node');
 
@@ -21,7 +20,7 @@ const {
   consumerSecret,
   throttleTime = 1100,
   PAUSE_NEEDED_AFTER_429 = 30000,
-} = minimist(process.argv.slice(2));
+} = process.env;
 
 
 const discogs = {
