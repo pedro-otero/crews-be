@@ -1,0 +1,26 @@
+`master-express` is an Express application that finds Spotify album credits in [Discogs](1). It exposes one endpoint that, given the album id, requests the album data from [Spotify API](2) and immediately after searches for it in Discogs. As it finds credits for it, it updates the Redux store with such information.
+
+Application keys are needed for both [Spotify](2) and [Discogs](3).
+
+# Search method
+
+The Discogs API exposes a [search endpoint](4). The details of the results then have to be fetched one by one using the [release endpoint](5).
+
+## Discogs API limits
+Discogs API requests are [limited](6). Some albums can throw tens and even hundreds of results. This can make some searches very long to complete. It is possible though, and considerably likely, that the first results are the most relevant. With this in mind the `master-express` app exhibits the following behaviors:
+
+- All the requests made to Discogs are throttled to avoid reaching the limit. I made a specific NPM package ([throxy](7)) solely for this.
+- The `429 Too Many Requests` has still been observed rarely (known issue) so it's handled.
+- The album endpoint response has a `progress` value. This does not reflect found data, just how many __operations__ have been performed to complete the search. The total amount of operations is given by the sum of the times the Discogs search endpoint has to be called and the amount of releases that need to be individually requested.
+- The album endpoint response has a `bestMatch` object that contains all the found data for the album. Subsequent requests to the album endpoint will have it updated or not as the `progress` increases.
+- Search operations are performed in strict sequential behavior. Otherwise a single search would hog the operations queue (the one that [throxy](7) handles).
+
+Clients are suppossed to poll the album endpoint until `progress` reaches 100. All this also allows to start many searches at the same time and use the Discogs API resources equally for all the clients.
+
+[1]:https://www.discogs.com/
+[2]:https://beta.developer.spotify.com/documentation/web-api/
+[3]:https://www.discogs.com/developers/
+[4]:https://www.discogs.com/developers/#page:database,header:database-search
+[5]:https://www.discogs.com/developers/#page:database,header:database-release
+[6]:https://www.discogs.com/developers/#page:home,header:home-rate-limiting
+[7]:https://www.npmjs.com/package/throxy
