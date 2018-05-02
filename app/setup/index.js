@@ -70,7 +70,7 @@ module.exports = (app) => {
 
   // CORS header
   app.use('/', (req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ALLOW_ORIGIN || '*');
     next();
   });
 
