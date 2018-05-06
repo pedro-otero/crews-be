@@ -31,6 +31,10 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 |clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
 |PORT|Port where Express listens to requests||3000|
 
+# Logging
+
+The app outputs info about the searches both to console and to disk (`/log` folder). In the console, a tag with the name of the album and artist being searched lets you know what every message is about. On disk, the logs folder contains a file for every album. The name of such file is the Spotify album ID. Logging is done using [winston](8)
+
 [1]:https://www.discogs.com/
 [2]:https://beta.developer.spotify.com/documentation/web-api/
 [3]:https://www.discogs.com/developers/
@@ -38,3 +42,4 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 [5]:https://www.discogs.com/developers/#page:database,header:database-release
 [6]:https://www.discogs.com/developers/#page:home,header:home-rate-limiting
 [7]:https://www.npmjs.com/package/throxy
+[7]:https://github.com/winstonjs/winston
