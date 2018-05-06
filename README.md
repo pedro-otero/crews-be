@@ -39,7 +39,7 @@ The app outputs info about the searches both to console and to disk (`/log` fold
 
 1. Clone repo and  `npm install`
 2. Create your [Spotify](2) and [Discogs](3) applications and have their keys handy
-3. Drop your env vars in an `.env.local` file.
+3. Drop your env vars in a `.env` file.
 4. Run `npm start`.
 4. Request an album at `localhost:<PORT>/data/album/:spotifyAlbumId`
 
