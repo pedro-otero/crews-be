@@ -35,6 +35,19 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 
 The app outputs info about the searches both to console and to disk (`/log` folder). In the console, a tag with the name of the album and artist being searched lets you know what every message is about. On disk, the logs folder contains a file for every album. The name of such file is the Spotify album ID. Logging is done using [winston](8)
 
+# Usage
+
+1. Clone repo and  `npm install`
+2. Create your [Spotify](2) and [Discogs](3) applications and have their keys handy
+3. Drop your env vars in an `.env.local` file.
+4. Run `npm start`.
+4. Request an album at `localhost:<PORT>/data/album/:spotifyAlbumId`
+
+You'll notice the app responds very quickly to the client with an empty `bestMatch` with 0 progress. That just means the search started. You can keep requesting the album and check how the progress goes, but the logging will also inform you about it. Ideally, a web client should poll the endpoint to find out about new data nd stop when `progress` is 100. Since the Discogs API is the main limitant here and it's restricted to one request per second, it's not recommended to request the album more than once per second, since there won't be anything new before that.
+
+Once the search finishes the data remains in the Redux store for as long as the app is in memory, so subsequent requests for the album should show all the data found about the album.
+
+
 [1]:https://www.discogs.com/
 [2]:https://beta.developer.spotify.com/documentation/web-api/
 [3]:https://www.discogs.com/developers/
