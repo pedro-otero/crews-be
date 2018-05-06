@@ -2,11 +2,10 @@
 
 Application keys are needed for both [Spotify](2) and [Discogs](3).
 
-# Search method
+# Search logic
 
 The Discogs API exposes a [search endpoint](4). The details of the results then have to be fetched one by one using the [release endpoint](5).
 
-## Discogs API limits
 Discogs API requests are [limited](6). Some albums can throw tens and even hundreds of results. This can make some searches very long to complete. It is possible though, and considerably likely, that the first results are the most relevant. With this in mind the `master-express` app exhibits the following behaviors:
 
 - All the requests made to Discogs are throttled to avoid reaching the limit. I made a specific NPM package ([throxy](7)) solely for this.
@@ -16,6 +15,21 @@ Discogs API requests are [limited](6). Some albums can throw tens and even hundr
 - Search operations are performed in strict sequential behavior. Otherwise a single search would hog the operations queue (the one that [throxy](7) handles).
 
 Clients are suppossed to poll the album endpoint until `progress` reaches 100. All this also allows to start many searches at the same time and use the Discogs API resources equally for all the clients.
+
+# Configuration
+
+`master-express` accepts the following environment configuration variables:
+
+|Name          |Description|Required|Default|
+|--------------|-----------|--------|-------|
+|consumerKey   |Discogs `consumerKey` value, given when an app is created in the [Discogs developers site](3)|:white_check_mark:||
+|consumerSecret|Discogs `consumerSecret` value, given when an app is created in the [Discogs developers site](3)|:white_check_mark:||
+|throttleTime|Amount of milliseconds that the general queue of Discogs takes between operations. This is related to [Discogs API rate limits](6)||1100|
+|PAUSE_NEEDED_AFTER_429|Amount of milliseconds that the queue of operations is paused after getting 429 from Discogs. That means that no Discogs requests are performed during that time||30000|
+|clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
+|clientSecret|Given by Spotify when creating a [new application](3)|:white_check_mark:||
+|clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
+|PORT|Port where Express listens to requests||3000|
 
 [1]:https://www.discogs.com/
 [2]:https://beta.developer.spotify.com/documentation/web-api/
