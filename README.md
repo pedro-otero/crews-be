@@ -24,7 +24,7 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 |--------------|-----------|--------|-------|
 |consumerKey   |Discogs `consumerKey` value, given when an app is created in the [Discogs developers site](3)|:white_check_mark:||
 |consumerSecret|Discogs `consumerSecret` value, given when an app is created in the [Discogs developers site](3)|:white_check_mark:||
-|throttleTime|Amount of milliseconds that the general queue of Discogs takes between operations. This is related to [Discogs API rate limits](6)||1100|
+|throttleTime|Amount of milliseconds that the general queue of Discogs takes between operations. This is related to [Discogs API rate limits](6)||1100 (this is also the __recommended__ value)|
 |PAUSE_NEEDED_AFTER_429|Amount of milliseconds that the queue of operations is paused after getting 429 from Discogs. That means that no Discogs requests are performed during that time||30000|
 |clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
 |clientSecret|Given by Spotify when creating a [new application](3)|:white_check_mark:||
