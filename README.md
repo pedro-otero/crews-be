@@ -14,7 +14,7 @@ Discogs API requests are [limited](6). Some albums can throw tens and even hundr
 - The album endpoint response has a `bestMatch` object that contains all the found data for the album. Subsequent requests to the album endpoint will have it updated or not as the `progress` increases.
 - Search operations are performed in strict sequential behavior. Otherwise a single search would hog the operations queue (the one that [throxy](7) handles).
 
-Clients are suppossed to poll the album endpoint until `progress` reaches 100. All this also allows to start many searches at the same time and use the Discogs API resources equally for all the clients.
+Clients are suppossed to poll the album endpoint until `progress` reaches 100. All this also allows to start many searches at the same time and use the Discogs API resources efficiently for all the clients.
 
 # Configuration
 
