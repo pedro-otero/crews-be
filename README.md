@@ -4,7 +4,7 @@ Application keys are needed for both [Spotify](2) and [Discogs](3).
 
 # Configuration
 
-`master-express` accepts the following environment configuration variables:
+The app accepts the following environment configuration variables:
 
 |Name          |Description|Required|Default|
 |--------------|-----------|--------|-------|
@@ -33,7 +33,7 @@ Once the search finishes the data remains in the Redux store for as long as the 
 
 The Discogs API exposes a [search endpoint](4). The details of the results then have to be fetched one by one using the [release endpoint](5).
 
-Discogs API requests are [limited](6). Some albums can throw tens and even hundreds of results. This can make some searches very long to complete. It is possible though, and considerably likely, that the first results are the most relevant. With this in mind the `master-express` app exhibits the following behaviors:
+Discogs API requests are [limited](6). Some albums can throw tens and even hundreds of results. This can make some searches very long to complete. It is possible though, and considerably likely, that the first results are the most relevant. With this in mind the app exhibits the following behaviors:
 
 - All the requests made to Discogs are throttled to avoid reaching the limit. I made a specific NPM package ([throxy](7)) solely for this.
 - The `429 Too Many Requests` has still been observed rarely (known issue) so it's handled.
