@@ -28,6 +28,8 @@ describe('Credit reducer', () => {
       name: 'Pé2', role: 'R2', track: 'T2',
     }, {
       name: 'P3', role: 'R3', track: 'T3',
+    }, {
+      name: 'Pé5', role: 'R5', track: 'T5',
     }], {
       type: ADD_CREDITS,
       credits: [{
@@ -38,11 +40,15 @@ describe('Credit reducer', () => {
         name: 'P4', role: 'R4', track: 'T4',
       }, {
         name: 'P3', role: 'R3', track: 'T4',
+      }, {
+        name: 'P3', role: 'R3', track: 'T4',
+      }, {
+        name: 'Pé5', role: 'R5', track: 'T5',
       }],
     });
 
     it('test length', () => {
-      assert.equal(credits.length, 5);
+      assert.equal(credits.length, 6);
     });
 
     it('has accented Pe1', () => {
@@ -71,6 +77,10 @@ describe('Credit reducer', () => {
 
     it('compares credits by the role when name is the same', () => {
       assert(credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T4'));
+    });
+
+    it('has only one Pé5', () => {
+      assert.equal(credits.filter(c => c.name === 'Pé5' && c.role === 'R5' && c.track === 'T5').length, 1);
     });
   });
 });
