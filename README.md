@@ -48,6 +48,10 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 
 The app outputs info about the searches both to console and to disk (`/log` folder). In the console, a tag with the name of the album and artist being searched lets you know what every message is about. On disk, the logs folder contains a file for every album. The name of such file is the Spotify album ID. Logging is done using [winston](8)
 
+# Tests
+
+Test are contained in `*.spec.js` files along the module they're testing. Frameworks used are [mocha](10), [sinon](9) and Node's [assert](8).
+
 
 [1]:https://www.discogs.com/
 [2]:https://beta.developer.spotify.com/documentation/web-api/
@@ -57,3 +61,6 @@ The app outputs info about the searches both to console and to disk (`/log` fold
 [6]:https://www.discogs.com/developers/#page:home,header:home-rate-limiting
 [7]:https://www.npmjs.com/package/throxy
 [7]:https://github.com/winstonjs/winston
+[8]:https://nodejs.org/api/assert.html
+[9]:https://github.com/sinonjs/sinon
+[10]:https://github.com/mochajs/mocha
