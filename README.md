@@ -2,6 +2,10 @@
 
 Application keys are needed for both [Spotify](2) and [Discogs](3).
 
+Application is deployed at [Heroku](12)
+
+[Try it out](11)
+
 # Configuration
 
 The app accepts the following environment configuration variables:
@@ -64,3 +68,5 @@ Test are contained in `*.spec.js` files along the module they're testing. Framew
 [8]:https://nodejs.org/api/assert.html
 [9]:https://github.com/sinonjs/sinon
 [10]:https://github.com/mochajs/mocha
+[11]:http://master-express.herokuapp.com/data/album/3e3PxWKqv7lyZaR5d02abW
+[12]:http://master-express.herokuapp.com
