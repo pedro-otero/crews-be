@@ -15,7 +15,7 @@ The app accepts the following environment configuration variables:
 |clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
 |clientSecret|Given by Spotify when creating a [new application](3)|:white_check_mark:||
 |clientId|Given by Spotify when creating a [new application](3)|:white_check_mark:||
-|PORT|Port where Express listens to requests||3000|
+|PORT|Port where Express listens to requests||3001|
 |CORS_ALLOW_ORIGIN|Value of the `Access-Control-Allow-Origin` header in the response||`*`|
 
 # Usage
