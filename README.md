@@ -16,9 +16,9 @@ The app accepts the following environment configuration variables:
 |consumerSecret|Discogs `consumerSecret` value, given when an app is created in the [Discogs developers site][3]|:white_check_mark:||
 |throttleTime|Amount of milliseconds that the general queue of Discogs takes between operations. This is related to [Discogs API rate limits][6]||1100 (this is also the __recommended__ value)|
 |PAUSE_NEEDED_AFTER_429|Amount of milliseconds that the queue of operations is paused after getting 429 from Discogs. That means that no Discogs requests are performed during that time||30000|
-|clientId|Given by Spotify when creating a [new application][3]|:white_check_mark:||
-|clientSecret|Given by Spotify when creating a [new application][3]|:white_check_mark:||
-|clientId|Given by Spotify when creating a [new application][3]|:white_check_mark:||
+|clientId|Given by Spotify when creating a [new application][2]|:white_check_mark:||
+|clientSecret|Given by Spotify when creating a [new application][2]|:white_check_mark:||
+|clientId|Given by Spotify when creating a [new application][2]|:white_check_mark:||
 |PORT|Port where Express listens to requests||3001|
 |CORS_ALLOW_ORIGIN|Value of the `Access-Control-Allow-Origin` header in the response||`*`|
 
@@ -50,7 +50,7 @@ Clients are suppossed to poll the album endpoint until `progress` reaches 100. A
 
 # Logging
 
-The app outputs info about the searches both to console and to disk (`/log` folder). In the console, a tag with the name of the album and artist being searched lets you know what every message is about. On disk, the logs folder contains a file for every album. The name of such file is the Spotify album ID. Logging is done using [winston][8]
+The app outputs info about the searches both to console and to disk (`/log` folder). In the console, a tag with the name of the album and artist being searched lets you know what every message is about. On disk, the logs folder contains a file for every album. The name of such file is the Spotify album ID. Logging is done using [winston][13]
 
 # Tests
 
@@ -64,9 +64,10 @@ Test are contained in `*.spec.js` files along the module they're testing. Framew
 [5]:https://www.discogs.com/developers/#page:database,header:database-release
 [6]:https://www.discogs.com/developers/#page:home,header:home-rate-limiting
 [7]:https://www.npmjs.com/package/throxy
-[7]:https://github.com/winstonjs/winston
 [8]:https://nodejs.org/api/assert.html
 [9]:https://github.com/sinonjs/sinon
 [10]:https://github.com/mochajs/mocha
 [11]:http://master-express.herokuapp.com/data/album/3e3PxWKqv7lyZaR5d02abW
 [12]:http://master-express.herokuapp.com
+[13]:https://github.com/winstonjs/winston
+
