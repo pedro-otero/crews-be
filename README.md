@@ -1,4 +1,4 @@
-`master-express` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the Redux store with such information.
+`crews-be` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the Redux store with such information. It's the backend that supports the `crews` app also available in my Github profile.
 
 Application keys are needed for both [Spotify][2] and [Discogs][3].
 
@@ -67,7 +67,7 @@ Test are contained in `*.spec.js` files along the module they're testing. Framew
 [8]:https://nodejs.org/api/assert.html
 [9]:https://github.com/sinonjs/sinon
 [10]:https://github.com/mochajs/mocha
-[11]:http://master-express.herokuapp.com/data/album/3e3PxWKqv7lyZaR5d02abW
-[12]:http://master-express.herokuapp.com
+[11]:http://crews-be.herokuapp.com/data/album/3e3PxWKqv7lyZaR5d02abW
+[12]:http://crews-be.herokuapp.com
 [13]:https://github.com/winstonjs/winston
 
