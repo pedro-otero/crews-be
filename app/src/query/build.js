@@ -1,7 +1,7 @@
 const roles = require('./roles');
 
 module.exports = (spotifyAlbum, credits) => ({
-  tracks: spotifyAlbum.tracks.items.map(track => ({
+  tracks: spotifyAlbum.tracks.map(track => ({
     id: track.id,
     title: track.name,
     trackCredits: credits.filter(credit => credit.track === track.id),
