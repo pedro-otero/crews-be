@@ -91,6 +91,14 @@ describe('Build', () => {
         name: 'P6',
         role: 'Written By',
         track: 'T2',
+      }, {
+        name: 'P7',
+        role: 'Featuring',
+        track: 'T2',
+      }, {
+        name: 'P7',
+        role: 'feat.',
+        track: 'T2',
       }];
       const album = {
         tracks: {
@@ -140,6 +148,10 @@ describe('Build', () => {
 
     it('T2 only has one composer', function () {
       assert(this.bundle.tracks[1].composers.length === 1 && this.bundle.tracks[1].composers[0] === 'P6');
+    });
+
+    it('T2 only has one featured artist', function () {
+      assert(this.bundle.tracks[1].featured.length === 1 && this.bundle.tracks[1].featured[0] === 'P7');
     });
   });
 });
