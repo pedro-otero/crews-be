@@ -14,7 +14,8 @@ module.exports = (spotifyAlbum, credits) => ({
       .reduce((unique, item) => (unique.indexOf(item) < 0 ? [...unique, item] : unique), []),
     composers: trackCredits
       .filter(c => roles.composers.includes(c.role))
-      .map(c => c.name),
+      .map(c => c.name)
+      .reduce((unique, item) => (unique.indexOf(item) < 0 ? [...unique, item] : unique), []),
     featured: trackCredits
       .filter(c => roles.featured.includes(c.role))
       .map(c => c.name),

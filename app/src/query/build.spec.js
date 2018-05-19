@@ -83,6 +83,14 @@ describe('Build', () => {
         name: 'P5',
         role: 'Produced By',
         track: 'T2',
+      }, {
+        name: 'P6',
+        role: 'Composed By',
+        track: 'T2',
+      }, {
+        name: 'P6',
+        role: 'Written By',
+        track: 'T2',
       }];
       const album = {
         tracks: {
@@ -128,6 +136,10 @@ describe('Build', () => {
 
     it('T2 only has one producer', function () {
       assert(this.bundle.tracks[1].producers.length === 1 && this.bundle.tracks[1].producers[0] === 'P5');
+    });
+
+    it('T2 only has one composer', function () {
+      assert(this.bundle.tracks[1].composers.length === 1 && this.bundle.tracks[1].composers[0] === 'P6');
     });
   });
 });
