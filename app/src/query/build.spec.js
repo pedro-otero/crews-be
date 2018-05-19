@@ -75,12 +75,39 @@ describe('Build', () => {
         name: 'P3',
         role: 'feat.',
         track: 'T1',
+      }, {
+        name: 'P5',
+        role: 'Producer',
+        track: 'T2',
+      }, {
+        name: 'P5',
+        role: 'Produced By',
+        track: 'T2',
+      }, {
+        name: 'P6',
+        role: 'Composed By',
+        track: 'T2',
+      }, {
+        name: 'P6',
+        role: 'Written By',
+        track: 'T2',
+      }, {
+        name: 'P7',
+        role: 'Featuring',
+        track: 'T2',
+      }, {
+        name: 'P7',
+        role: 'feat.',
+        track: 'T2',
       }];
       const album = {
         tracks: {
           items: [{
             id: 'T1',
             name: 'Track 1',
+          }, {
+            id: 'T2',
+            name: 'Track 2',
           }],
         },
       };
@@ -113,6 +140,18 @@ describe('Build', () => {
 
     it('does not put P4 (composer) in the general credits list', function () {
       assert(!Object.keys(this.bundle.tracks[0].credits).includes('P4'));
+    });
+
+    it('T2 only has one producer', function () {
+      assert(this.bundle.tracks[1].producers.length === 1 && this.bundle.tracks[1].producers[0] === 'P5');
+    });
+
+    it('T2 only has one composer', function () {
+      assert(this.bundle.tracks[1].composers.length === 1 && this.bundle.tracks[1].composers[0] === 'P6');
+    });
+
+    it('T2 only has one featured artist', function () {
+      assert(this.bundle.tracks[1].featured.length === 1 && this.bundle.tracks[1].featured[0] === 'P7');
     });
   });
 });

@@ -1,5 +1,7 @@
 const roles = require('./roles');
 
+const duplicates = (unique, item) => (unique.indexOf(item) < 0 ? [...unique, item] : unique);
+
 module.exports = (spotifyAlbum, credits) => ({
   tracks: spotifyAlbum.tracks.items.map(track => ({
     id: track.id,
@@ -10,13 +12,16 @@ module.exports = (spotifyAlbum, credits) => ({
     title,
     producers: trackCredits
       .filter(c => roles.producers.includes(c.role))
-      .map(c => c.name),
+      .map(c => c.name)
+      .reduce(duplicates, []),
     composers: trackCredits
       .filter(c => roles.composers.includes(c.role))
-      .map(c => c.name),
+      .map(c => c.name)
+      .reduce(duplicates, []),
     featured: trackCredits
       .filter(c => roles.featured.includes(c.role))
-      .map(c => c.name),
+      .map(c => c.name)
+      .reduce(duplicates, []),
     credits: trackCredits
       .filter(credit => !Object.keys(roles).reduce((all, type) => all.concat(roles[type]), [])
         .includes(credit.role))
