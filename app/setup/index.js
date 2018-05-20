@@ -36,7 +36,7 @@ const {
   transports,
   format: { combine, printf, timestamp },
 } = winston;
-const loggerCreator = ({ id, artists: [{ name: artist }], name }) => createLogger({
+const loggerCreator = ({ id, artist, name }) => createLogger({
   transports: [
     new transports.Console({
       level: 'info',

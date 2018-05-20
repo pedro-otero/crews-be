@@ -11,6 +11,7 @@ describe('Albums action creators', () => {
       this.action = create({
         id: 1,
         name: 'Album name',
+        artists: [{ name: 'The Artist' }],
         tracks: {
           items: [{ id: 'T1' }],
         },
@@ -27,6 +28,10 @@ describe('Albums action creators', () => {
 
     it('sets album name', function () {
       assert.equal(this.action.album.name, 'Album name');
+    });
+
+    it('sets album artist', function () {
+      assert.equal(this.action.album.artist, 'The Artist');
     });
 
     it('removes pagination from tracks and makes it an aray', function () {

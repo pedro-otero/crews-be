@@ -56,7 +56,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
 
   const run = ({ type, data }) => ({
     search: page => db.search({
-      artist: album.artists[0].name,
+      artist: album.artist,
       release_title: album.name.replace(/(.+) \((.+)\)/, '$1'),
       type: 'release',
       per_page: 100,
