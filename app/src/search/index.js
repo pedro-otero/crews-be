@@ -32,7 +32,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
   const sendRelease = (release) => {
     LOGGER.info(MESSAGES.release(release, currentTask.data + 1, lastPage));
     actions.setLastRelease(album.id, release);
-    if (release.tracklist.length === album.tracks.items.length) {
+    if (release.tracklist.length === album.tracks.length) {
       actions.addCredits(album, release);
     } else {
       LOGGER.debug(MESSAGES.albumMismatch(release));
