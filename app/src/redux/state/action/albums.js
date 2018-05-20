@@ -10,7 +10,7 @@ const addAlbum = ({
     id,
     name,
     artist,
-    tracks: items,
+    tracks: items.map(i => ({ id: i.id, name: i.name })),
   }),
 });
 

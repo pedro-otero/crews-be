@@ -13,7 +13,7 @@ describe('Albums action creators', () => {
         name: 'Album name',
         artists: [{ name: 'The Artist' }],
         tracks: {
-          items: [{ id: 'T1' }],
+          items: [{ id: 'T1', name: 'Track #1' }],
         },
       });
     });
@@ -36,6 +36,10 @@ describe('Albums action creators', () => {
 
     it('removes pagination from tracks and makes it an aray', function () {
       assert.equal(this.action.album.tracks[0].id, 'T1');
+    });
+
+    it('sets tracks name', function () {
+      assert.equal(this.action.album.tracks[0].name, 'Track #1');
     });
   });
 });
