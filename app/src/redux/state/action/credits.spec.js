@@ -299,6 +299,7 @@ describe('Credits action creator', () => {
         });
       });
     });
+
     describe('Can work with mixed multi ranges and position types', () => {
       it('P1 worked on T19 as R1', function () {
         assert(exists(this.action.credits, 'T19', 'P1', 'R1'));
