@@ -38,6 +38,7 @@ describe('Credits action creator', () => {
       { id: 'T23' },
       { id: 'T24' },
       { id: 'T25' },
+      { id: 'T26' },
     ],
   };
 
@@ -146,6 +147,18 @@ describe('Credits action creator', () => {
           position: 'Pos24',
         }, {
           position: 'Pos25',
+        }, {
+          position: '26',
+          extraartists: [{
+            name: 'P26-1',
+            role: 'Written-By',
+          }, {
+            name: 'P26-2',
+            role: 'Produced By',
+          }, {
+            name: 'P26-3',
+            role: 'feat.',
+          }],
         }],
       };
       this.action = create(album, release);
@@ -297,6 +310,7 @@ describe('Credits action creator', () => {
         });
       });
     });
+
     describe('Can work with mixed multi ranges and position types', () => {
       it('P1 worked on T19 as R1', function () {
         assert(exists(this.action.credits, 'T19', 'P1', 'R1'));
@@ -320,6 +334,20 @@ describe('Credits action creator', () => {
 
       it('P1 worked on T25 as R1', function () {
         assert(exists(this.action.credits, 'T25', 'P1', 'R1'));
+      });
+    });
+
+    describe('Special roles', () => {
+      it('Composers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-1', 'Composer'));
+      });
+
+      it('Producers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-2', 'Producer'));
+      });
+
+      it('Featured', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-3', 'Featured'));
       });
     });
   });

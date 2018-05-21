@@ -1,5 +1,3 @@
-const roles = require('./roles');
-
 module.exports = (spotifyAlbum, credits) => ({
   tracks: spotifyAlbum.tracks.map(track => ({
     id: track.id,
@@ -9,17 +7,16 @@ module.exports = (spotifyAlbum, credits) => ({
     id,
     title,
     producers: trackCredits
-      .filter(c => roles.producers.includes(c.role))
+      .filter(c => c.role === 'Producer')
       .map(c => c.name),
     composers: trackCredits
-      .filter(c => roles.composers.includes(c.role))
+      .filter(c => c.role === 'Composer')
       .map(c => c.name),
     featured: trackCredits
-      .filter(c => roles.featured.includes(c.role))
+      .filter(c => c.role === 'Featured')
       .map(c => c.name),
     credits: trackCredits
-      .filter(credit => !Object.keys(roles).reduce((all, type) => all.concat(roles[type]), [])
-        .includes(credit.role))
+      .filter(credit => !['Producer', 'Composer', 'Featured'].includes(credit.role))
       .reduce((tree, credit) => Object.assign({}, tree, ({
         [credit.name]: (tree[credit.name] || []).concat([credit.role]),
       })), {}),
