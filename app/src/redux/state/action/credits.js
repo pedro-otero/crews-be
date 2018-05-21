@@ -5,6 +5,9 @@ const mappedRole = (role) => {
   if (roles.composers.includes(role)) {
     return 'Composer';
   }
+  if (roles.producers.includes(role)) {
+    return 'Producer';
+  }
   return role;
 };
 

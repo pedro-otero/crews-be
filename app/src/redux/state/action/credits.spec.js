@@ -152,8 +152,11 @@ describe('Credits action creator', () => {
         }, {
           position: '26',
           extraartists: [{
-            name: 'P26',
+            name: 'P26-1',
             role: 'Written-By',
+          }, {
+            name: 'P26-2',
+            role: 'Produced By',
           }],
         }],
       };
@@ -335,7 +338,11 @@ describe('Credits action creator', () => {
 
     describe('Special roles', () => {
       it('Composers', function () {
-        assert(exists(this.action.credits, 'T26', 'P26', 'Composer'));
+        assert(exists(this.action.credits, 'T26', 'P26-1', 'Composer'));
+      });
+
+      it('Producers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-2', 'Producer'));
       });
     });
   });
