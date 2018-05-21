@@ -39,6 +39,7 @@ describe('Credits action creator', () => {
         { id: 'T23' },
         { id: 'T24' },
         { id: 'T25' },
+        { id: 'T26' },
       ],
     },
   };
@@ -148,6 +149,12 @@ describe('Credits action creator', () => {
           position: 'Pos24',
         }, {
           position: 'Pos25',
+        }, {
+          position: '26',
+          extraartists: [{
+            name: 'P26',
+            role: 'Written-By',
+          }],
         }],
       };
       this.action = create(album, release);
@@ -323,6 +330,12 @@ describe('Credits action creator', () => {
 
       it('P1 worked on T25 as R1', function () {
         assert(exists(this.action.credits, 'T25', 'P1', 'R1'));
+      });
+    });
+
+    describe('Special roles', () => {
+      it('Composers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26', 'Composer'));
       });
     });
   });
