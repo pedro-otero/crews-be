@@ -5,7 +5,7 @@ describe('Build', () => {
   describe('creates an empty bundle with an empty album', () => {
     before(function () {
       const credits = [{}];
-      const album = { tracks: { items: [] } };
+      const album = { tracks: [] };
       this.bundle = build(album, credits);
     });
 
@@ -18,12 +18,10 @@ describe('Build', () => {
     before(function () {
       const credits = [{}];
       const album = {
-        tracks: {
-          items: [{
-            id: 'T1',
-            name: 'Track 1',
-          }],
-        },
+        tracks: [{
+          id: 'T1',
+          name: 'Track 1',
+        }],
       };
       this.bundle = build(album, credits);
     });
@@ -77,12 +75,10 @@ describe('Build', () => {
         track: 'T1',
       }];
       const album = {
-        tracks: {
-          items: [{
-            id: 'T1',
-            name: 'Track 1',
-          }],
-        },
+        tracks: [{
+          id: 'T1',
+          name: 'Track 1',
+        }],
       };
       this.bundle = build(album, credits);
     });

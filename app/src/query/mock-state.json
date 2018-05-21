@@ -94,68 +94,50 @@
   "albums": [
     {
       "id": "query-progress-0-no-retrieved-releases",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "progress-0-no-search-results-retrieved",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "progress-100-no-search-results-found",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "partial-one-page-50%",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "partial-2p-1-fully-loaded-67%",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "partial-2p-1-fully-loaded-second-partially-75%",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "full",
-      "tracks": {
-        "items": []
-      }
+      "tracks": []
     },
     {
       "id": "query-pick-best-match",
-      "tracks": {
-        "items": [
-          {
-            "name": "track"
-          }
-        ]
-      }
+      "tracks": [
+        {
+          "name": "track"
+        }
+      ]
     },
     {
       "id": "query-no-match",
-      "tracks": {
-        "items": [
-          {
-            "name": "track 1"
-          },
-          {
-            "name": "track 2"
-          }
-        ]
-      }
+      "tracks": [
+        {
+          "name": "track 1"
+        },
+        {
+          "name": "track 2"
+        }
+      ]
     }
   ],
   "results": [],

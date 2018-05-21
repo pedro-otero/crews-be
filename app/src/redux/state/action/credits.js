@@ -16,7 +16,7 @@ const mappedRole = (role) => {
 
 const splitTrim = (value, separator) => value.split(separator).map(v => v.trim());
 
-module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
+module.exports = ({ tracks: items }, { tracklist, extraartists: releaseExtraArtists }) => {
   const translatePosition = position => tracklist.findIndex(t => t.position === position);
   const inRange = (trackString, separator, position) => {
     const extremes = splitTrim(trackString, separator);
