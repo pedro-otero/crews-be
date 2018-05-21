@@ -1,4 +1,4 @@
-const roles = require('./roles');
+const roles = require('../roles');
 
 module.exports = (spotifyAlbum, credits) => ({
   tracks: spotifyAlbum.tracks.items.map(track => ({
