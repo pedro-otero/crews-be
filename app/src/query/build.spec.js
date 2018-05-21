@@ -69,11 +69,11 @@ describe('Build', () => {
         track: 'T1',
       }, {
         name: 'P4',
-        role: 'Written-By',
+        role: 'Composer',
         track: 'T1',
       }, {
         name: 'P3',
-        role: 'feat.',
+        role: 'Featured',
         track: 'T1',
       }];
       const album = {
