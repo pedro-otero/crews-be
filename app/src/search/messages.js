@@ -19,7 +19,7 @@ module.exports = album => ({
     return `P(${indicator(page, pages)}) I(${indicator(releaseNumber, results.length)}) R-${rId} (M-${masterId}) OK`;
   },
 
-  albumMismatch: release => `R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.items.length})`,
+  albumMismatch: release => `R-${release.id} tracklist length (${release.tracklist.length}) does not match the album's (${album.tracks.length})`,
 
   searchPageTimeout: page => `SEARCH P-${page} TIMEOUT`,
 

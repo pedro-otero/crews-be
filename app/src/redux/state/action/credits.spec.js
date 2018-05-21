@@ -12,35 +12,34 @@ describe('Credits action creator', () => {
     credit.role === role);
 
   const album = {
-    tracks: {
-      items: [
-        { id: 'T1' },
-        { id: 'T2' },
-        { id: 'T3' },
-        { id: 'T4' },
-        { id: 'T5' },
-        { id: 'T6' },
-        { id: 'T7' },
-        { id: 'T8' },
-        { id: 'T9' },
-        { id: 'T10' },
-        { id: 'T11' },
-        { id: 'T12' },
-        { id: 'T13' },
-        { id: 'T14' },
-        { id: 'T15' },
-        { id: 'T16' },
-        { id: 'T17' },
-        { id: 'T18' },
-        { id: 'T19' },
-        { id: 'T20' },
-        { id: 'T21' },
-        { id: 'T22' },
-        { id: 'T23' },
-        { id: 'T24' },
-        { id: 'T25' },
-      ],
-    },
+    tracks: [
+      { id: 'T1' },
+      { id: 'T2' },
+      { id: 'T3' },
+      { id: 'T4' },
+      { id: 'T5' },
+      { id: 'T6' },
+      { id: 'T7' },
+      { id: 'T8' },
+      { id: 'T9' },
+      { id: 'T10' },
+      { id: 'T11' },
+      { id: 'T12' },
+      { id: 'T13' },
+      { id: 'T14' },
+      { id: 'T15' },
+      { id: 'T16' },
+      { id: 'T17' },
+      { id: 'T18' },
+      { id: 'T19' },
+      { id: 'T20' },
+      { id: 'T21' },
+      { id: 'T22' },
+      { id: 'T23' },
+      { id: 'T24' },
+      { id: 'T25' },
+      { id: 'T26' },
+    ],
   };
 
   describe('adds credits', () => {
@@ -148,6 +147,18 @@ describe('Credits action creator', () => {
           position: 'Pos24',
         }, {
           position: 'Pos25',
+        }, {
+          position: '26',
+          extraartists: [{
+            name: 'P26-1',
+            role: 'Written-By',
+          }, {
+            name: 'P26-2',
+            role: 'Produced By',
+          }, {
+            name: 'P26-3',
+            role: 'feat.',
+          }],
         }],
       };
       this.action = create(album, release);
@@ -299,6 +310,7 @@ describe('Credits action creator', () => {
         });
       });
     });
+
     describe('Can work with mixed multi ranges and position types', () => {
       it('P1 worked on T19 as R1', function () {
         assert(exists(this.action.credits, 'T19', 'P1', 'R1'));
@@ -322,6 +334,20 @@ describe('Credits action creator', () => {
 
       it('P1 worked on T25 as R1', function () {
         assert(exists(this.action.credits, 'T25', 'P1', 'R1'));
+      });
+    });
+
+    describe('Special roles', () => {
+      it('Composers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-1', 'Composer'));
+      });
+
+      it('Producers', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-2', 'Producer'));
+      });
+
+      it('Featured', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-3', 'Featured'));
       });
     });
   });

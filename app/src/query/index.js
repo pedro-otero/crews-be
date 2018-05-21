@@ -26,7 +26,7 @@ module.exports = store => function (id) {
   })();
 
   const bestMatch = (() => {
-    const { tracks: { items: tracks } } = album;
+    const { tracks } = album;
     const albumCredits = credits
       .filter(credit => tracks.map(track => track.id).includes(credit.track));
     return buildAlbum(album, albumCredits);

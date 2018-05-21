@@ -2,9 +2,16 @@ const {
   ADD_ALBUM,
 } = require('./constants');
 
-const addAlbum = album => ({
+const addAlbum = ({
+  id, artists: [{ name: artist }], name, tracks: { items },
+}) => ({
   type: ADD_ALBUM,
-  album,
+  album: {
+    id,
+    name,
+    artist,
+    tracks: items.map(i => ({ id: i.id, name: i.name })),
+  },
 });
 
 module.exports = addAlbum;

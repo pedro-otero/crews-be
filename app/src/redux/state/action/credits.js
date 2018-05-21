@@ -1,8 +1,22 @@
 const { ADD_CREDITS } = require('./constants');
+const roles = require('./roles');
+
+const mappedRole = (role) => {
+  if (roles.composers.includes(role)) {
+    return 'Composer';
+  }
+  if (roles.producers.includes(role)) {
+    return 'Producer';
+  }
+  if (roles.featured.includes(role)) {
+    return 'Featured';
+  }
+  return role;
+};
 
 const splitTrim = (value, separator) => value.split(separator).map(v => v.trim());
 
-module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtraArtists }) => {
+module.exports = ({ tracks: items }, { tracklist, extraartists: releaseExtraArtists }) => {
   const translatePosition = position => tracklist.findIndex(t => t.position === position);
   const inRange = (trackString, separator, position) => {
     const extremes = splitTrim(trackString, separator);
@@ -37,7 +51,7 @@ module.exports = ({ tracks: { items } }, { tracklist, extraartists: releaseExtra
     })).reduce(
       (accum, { id, credits }) =>
         accum.concat(credits
-          .map(({ name, role }) => ({ track: id, name, role }))),
+          .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
       []
     ),
   };

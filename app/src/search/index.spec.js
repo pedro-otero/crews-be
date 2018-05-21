@@ -54,12 +54,10 @@ function setup(times, done) {
 const album = {
   id: 'A1',
   name: 'Album',
-  artists: [{ name: 'Artist' }],
-  tracks: {
-    items: [{
-      id: 'T1', name: 'Track #1',
-    }],
-  },
+  artist: 'Artist',
+  tracks: [{
+    id: 'T1', name: 'Track #1',
+  }],
 };
 
 describe('Search function', () => {
