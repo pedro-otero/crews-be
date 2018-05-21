@@ -157,6 +157,9 @@ describe('Credits action creator', () => {
           }, {
             name: 'P26-2',
             role: 'Produced By',
+          }, {
+            name: 'P26-3',
+            role: 'feat.',
           }],
         }],
       };
@@ -343,6 +346,10 @@ describe('Credits action creator', () => {
 
       it('Producers', function () {
         assert(exists(this.action.credits, 'T26', 'P26-2', 'Producer'));
+      });
+
+      it('Featured', function () {
+        assert(exists(this.action.credits, 'T26', 'P26-3', 'Featured'));
       });
     });
   });

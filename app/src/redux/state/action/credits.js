@@ -8,6 +8,9 @@ const mappedRole = (role) => {
   if (roles.producers.includes(role)) {
     return 'Producer';
   }
+  if (roles.featured.includes(role)) {
+    return 'Featured';
+  }
   return role;
 };
 
