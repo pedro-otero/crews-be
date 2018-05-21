@@ -1,5 +1,5 @@
 const { ADD_CREDITS } = require('./constants');
-const roles = require('../../../roles');
+const roles = require('./roles');
 
 const mappedRole = (role) => {
   if (roles.composers.includes(role)) {
