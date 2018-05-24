@@ -61,5 +61,10 @@ describe('State module', () => {
         lastRelease: null,
       });
     });
+
+    after(() => {
+      actions.removeSearch('S1');
+      assert.equal(store.getState().searches.length, 0);
+    });
   });
 });

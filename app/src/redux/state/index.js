@@ -60,6 +60,9 @@ exports.actions = Object.assign(
         }),
       ].concat(searches.filter(search => search.id !== id));
     },
+    removeSearch: (id) => {
+      searches = searches.filter(s => s.id !== id);
+    },
   }
 );
 
