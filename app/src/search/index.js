@@ -1,4 +1,4 @@
-const { actions } = require('../redux/state');
+const { actions } = require('../state');
 
 const createMessagesFactory = require('./messages');
 

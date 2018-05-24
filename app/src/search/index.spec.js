@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 
 const searchAlbum = require('./index');
-const { actions } = require('../redux/state');
+const { actions } = require('../state');
 
 const blankRelease = id => ({ id, tracklist: [{ title: 'Track #1' }] });
 
