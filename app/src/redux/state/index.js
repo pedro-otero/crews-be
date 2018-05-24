@@ -52,6 +52,14 @@ exports.actions = Object.assign(
         Object.assign({}, searches.find(search => search.id === id), { lastRelease }),
       ].concat(searches.filter(search => search.id !== id));
     },
+    clearSearch: (id) => {
+      searches = [
+        Object.assign({}, searches.find(search => search.id === id), {
+          lastRelease: null,
+          lastSearchPage: null,
+        }),
+      ].concat(searches.filter(search => search.id !== id));
+    },
   }
 );
 

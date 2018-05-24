@@ -52,5 +52,14 @@ describe('State module', () => {
       actions.setLastRelease('S1', 5);
       assert.equal(store.getState().searches[0].lastRelease, 5);
     });
+
+    it('clears search', () => {
+      actions.clearSearch('S1');
+      assert.deepEqual(store.getState().searches[0], {
+        id: 'S1',
+        lastSearchPage: null,
+        lastRelease: null,
+      });
+    });
   });
 });
