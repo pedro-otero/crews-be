@@ -19,4 +19,9 @@ describe('State module', () => {
       tracks: [{ id: 'T1', name: 'Track #1' }],
     });
   });
+
+  it('adds searches', () => {
+    actions.addSearch('S1');
+    assert.deepEqual(store.getState().searches, [{ id: 'S1' }]);
+  });
 });

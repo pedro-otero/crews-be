@@ -6,6 +6,7 @@ const getCredits = require('./action/credits');
 const store = createStore(combineReducers(reducers));
 
 const albums = [];
+const searches = [];
 let credits = [];
 
 exports.actions = Object.assign(
@@ -25,6 +26,9 @@ exports.actions = Object.assign(
       const newCredits = getCredits(album, release);
       credits = reduceCredits(credits, newCredits);
     },
+    addSearch: (id) => {
+      searches.push({ id });
+    },
   }
 );
 
@@ -33,6 +37,7 @@ const realGetState = store.getState;
 store.getState = () => Object.assign(realGetState(), {
   albums,
   credits,
+  searches,
 });
 
 exports.store = store;
