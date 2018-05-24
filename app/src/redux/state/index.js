@@ -47,6 +47,11 @@ exports.actions = Object.assign(
         }),
       ].concat(searches.filter(search => search.id !== id));
     },
+    setLastRelease: (id, lastRelease) => {
+      searches = [
+        Object.assign({}, searches.find(search => search.id === id), { lastRelease }),
+      ].concat(searches.filter(search => search.id !== id));
+    },
   }
 );
 

@@ -47,5 +47,10 @@ describe('State module', () => {
         releases: [1],
       });
     });
+
+    it('sets last release', () => {
+      actions.setLastRelease('S1', 5);
+      assert.equal(store.getState().searches[0].lastRelease, 5);
+    });
   });
 });
