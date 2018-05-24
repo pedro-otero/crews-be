@@ -62,7 +62,7 @@ module.exports = (app) => {
     locals: {
       store,
       actions,
-      searchAlbum: createSearchFunction(discogs, loggerCreator),
+      searchAlbum: createSearchFunction(discogs, loggerCreator, actions),
       Query,
       spotify: createSpotifyModule(SpotifyWebApi),
     },
