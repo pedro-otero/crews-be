@@ -1,5 +1,3 @@
-const { actions } = require('../state');
-
 const createMessagesFactory = require('./messages');
 
 const {
@@ -11,7 +9,7 @@ const {
   releaseTask,
 } = require('./utils');
 
-module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger) => (album) => {
+module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (album) => {
   const LOGGER = createLogger(album);
   const MESSAGES = createMessagesFactory(album);
   const tasks = [searchPage(1)];
