@@ -20,8 +20,13 @@ describe('State module', () => {
     });
   });
 
-  it('adds searches', () => {
-    actions.addSearch('S1');
-    assert.deepEqual(store.getState().searches, [{ id: 'S1' }]);
+  describe('searches', () => {
+    before(() => {
+      actions.addSearch('S1');
+    });
+
+    it('adds', () => {
+      assert.deepEqual(store.getState().searches, [{ id: 'S1' }]);
+    });
   });
 });
