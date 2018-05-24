@@ -6,7 +6,7 @@ const getCredits = require('./action/credits');
 const store = createStore(combineReducers(reducers));
 
 const albums = [];
-const searches = [];
+let searches = [];
 let credits = [];
 
 exports.actions = Object.assign(
@@ -28,6 +28,24 @@ exports.actions = Object.assign(
     },
     addSearch: (id) => {
       searches.push({ id });
+    },
+    setLastSearchPage: (id, {
+      pagination: {
+        page, pages, items, per_page: perPage,
+      },
+      results,
+    }) => {
+      searches = [
+        Object.assign({}, searches.find(search => search.id === id), {
+          lastSearchPage: {
+            page,
+            pages,
+            items,
+            perPage,
+            releases: results.map(result => result.id),
+          },
+        }),
+      ].concat(searches.filter(search => search.id !== id));
     },
   }
 );
