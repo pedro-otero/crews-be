@@ -1,8 +1,5 @@
 const assert = require('assert');
 
-const {
-  ADD_CREDITS,
-} = require('../action/constants');
 const create = require('./credits');
 
 describe('Credits action creator', () => {
@@ -161,122 +158,118 @@ describe('Credits action creator', () => {
           }],
         }],
       };
-      this.action = create(album, release);
-    });
-
-    it('type', function () {
-      assert.equal(this.action.type, ADD_CREDITS);
+      this.credits = create(album, release);
     });
 
     it('extracts single role track credit', function () {
-      assert(exists(this.action.credits, 'T1', 'P1', 'R1'));
+      assert(exists(this.credits, 'T1', 'P1', 'R1'));
     });
 
     it('extracts single role track credit', function () {
-      assert(exists(this.action.credits, 'T1', 'P1', 'R1'));
+      assert(exists(this.credits, 'T1', 'P1', 'R1'));
     });
 
     describe('extracts multi role track credit', () => {
       it('P2 worked on T2 as R21', function () {
-        assert(exists(this.action.credits, 'T2', 'P2', 'R21'));
+        assert(exists(this.credits, 'T2', 'P2', 'R21'));
       });
 
       it('P2 worked on T2 as R22', function () {
-        assert(exists(this.action.credits, 'T2', 'P2', 'R22'));
+        assert(exists(this.credits, 'T2', 'P2', 'R22'));
       });
     });
 
     it('extracts single role release credit', function () {
-      assert(exists(this.action.credits, 'T3', 'P3', 'R3'));
+      assert(exists(this.credits, 'T3', 'P3', 'R3'));
     });
 
     describe('extracts multi role release credit', () => {
       it('P4 worked on T4 as R41', function () {
-        assert(exists(this.action.credits, 'T4', 'P4', 'R41'));
+        assert(exists(this.credits, 'T4', 'P4', 'R41'));
       });
 
       it('P4 worked on T4 as R42', function () {
-        assert(exists(this.action.credits, 'T4', 'P4', 'R42'));
+        assert(exists(this.credits, 'T4', 'P4', 'R42'));
       });
     });
 
     describe('extracts hyphen-rage multi track release credit', () => {
       it('P567 worked on T5 as R51', function () {
-        assert(exists(this.action.credits, 'T5', 'P567', 'R51'));
+        assert(exists(this.credits, 'T5', 'P567', 'R51'));
       });
 
       it('P567 worked on T6 as R51', function () {
-        assert(exists(this.action.credits, 'T6', 'P567', 'R51'));
+        assert(exists(this.credits, 'T6', 'P567', 'R51'));
       });
 
       it('P567 worked on T7 as R51', function () {
-        assert(exists(this.action.credits, 'T7', 'P567', 'R51'));
+        assert(exists(this.credits, 'T7', 'P567', 'R51'));
       });
 
       it('No one worked on T8', function () {
-        assert(!this.action.credits.find(credit => credit.track === 'T8'));
+        assert(!this.credits.find(credit => credit.track === 'T8'));
       });
     });
 
     describe('extracts comma separated multi track release credit', () => {
       it('P910 worked on T9 as R910', function () {
-        assert(exists(this.action.credits, 'T9', 'P910', 'R910'));
+        assert(exists(this.credits, 'T9', 'P910', 'R910'));
       });
 
       it('P920 worked on T10 as R910', function () {
-        assert(exists(this.action.credits, 'T10', 'P910', 'R910'));
+        assert(exists(this.credits, 'T10', 'P910', 'R910'));
       });
     });
 
     describe('extracts mixed range type multi track release credit', () => {
       it('P111315 worked on T11 as R111315', function () {
-        assert(exists(this.action.credits, 'T11', 'P111315', 'R111315'));
+        assert(exists(this.credits, 'T11', 'P111315', 'R111315'));
       });
 
       it('P111315 worked on T13 as R111315', function () {
-        assert(exists(this.action.credits, 'T13', 'P111315', 'R111315'));
+        assert(exists(this.credits, 'T13', 'P111315', 'R111315'));
       });
 
       it('P111315 worked on T14 as R111315', function () {
-        assert(exists(this.action.credits, 'T14', 'P111315', 'R111315'));
+        assert(exists(this.credits, 'T14', 'P111315', 'R111315'));
       });
 
       it('P111315 worked on T15 as R111315', function () {
-        assert(exists(this.action.credits, 'T15', 'P111315', 'R111315'));
+        assert(exists(this.credits, 'T15', 'P111315', 'R111315'));
       });
 
       it('No one worked on T12', function () {
-        assert(!this.action.credits.find(credit => credit.track === 'T12'));
+        assert(!this.credits.find(credit => credit.track === 'T12'));
       });
     });
 
     it('Ignores release extra artists without role nor tracks', function () {
-      assert(!this.action.credits.find(credit => credit.name === 'P16'));
+      assert(!this.credits.find(credit => credit.name === 'P16'));
     });
 
     it('Ignores release extra artists without tracks', function () {
-      assert(!this.action.credits.find(credit => credit.name === 'P17'));
+      assert(!this.credits.find(credit => credit.name === 'P17'));
     });
 
     it('No one worked on track 16', function () {
-      assert(!this.action.credits.find(credit => credit.track === 'T16'));
+      assert(!this.credits.find(credit => credit.track === 'T16'));
     });
 
     it('No one worked on track 17', function () {
-      assert(!this.action.credits.find(credit => credit.track === 'T17'));
+      assert(!this.credits.find(credit => credit.track === 'T17'));
     });
 
     describe('extracts literal (with to) range type multi track release credit', () => {
       it('P181920 worked on T18 as R181920', function () {
-        assert(exists(this.action.credits, 'T18', 'P181920', 'R181920'));
+        assert(exists(this.credits, 'T18', 'P181920', 'R181920'));
       });
 
       it('P181920 worked on T19 as R181920', function () {
-        assert(exists(this.action.credits, 'T19', 'P181920', 'R181920'));
+        assert(exists(this.credits, 'T19', 'P181920', 'R181920'));
       });
 
       it('P181920 worked on T20 as R181920', function () {
-        assert(exists(this.action.credits, 'T20', 'P181920', 'R181920'));
+        assert(exists(this.credits, 'T20', 'P181920', 'R181920'));
       });
     });
 
@@ -285,27 +278,27 @@ describe('Credits action creator', () => {
     // A1, A2, A3, B1, B2...
     describe('Can work with non numeric positions in release credits', () => {
       it('individually', function () {
-        assert(exists(this.action.credits, 'T21', 'P21', 'R21'));
+        assert(exists(this.credits, 'T21', 'P21', 'R21'));
       });
 
       describe('in a range', () => {
         describe('literal', () => {
           it('P2223 worked on T22 as R2223', function () {
-            assert(exists(this.action.credits, 'T22', 'P2223', 'R2223'));
+            assert(exists(this.credits, 'T22', 'P2223', 'R2223'));
           });
 
           it('P2223 worked on T23 as R2223', function () {
-            assert(exists(this.action.credits, 'T23', 'P2223', 'R2223'));
+            assert(exists(this.credits, 'T23', 'P2223', 'R2223'));
           });
         });
 
         describe('hyphenated', () => {
           it('P2425 worked on T24 as R2425', function () {
-            assert(exists(this.action.credits, 'T24', 'P2425', 'R2425'));
+            assert(exists(this.credits, 'T24', 'P2425', 'R2425'));
           });
 
           it('P2425 worked on T25 as R2425', function () {
-            assert(exists(this.action.credits, 'T25', 'P2425', 'R2425'));
+            assert(exists(this.credits, 'T25', 'P2425', 'R2425'));
           });
         });
       });
@@ -313,41 +306,41 @@ describe('Credits action creator', () => {
 
     describe('Can work with mixed multi ranges and position types', () => {
       it('P1 worked on T19 as R1', function () {
-        assert(exists(this.action.credits, 'T19', 'P1', 'R1'));
+        assert(exists(this.credits, 'T19', 'P1', 'R1'));
       });
 
       it('P1 worked on T20 as R1', function () {
-        assert(exists(this.action.credits, 'T20', 'P1', 'R1'));
+        assert(exists(this.credits, 'T20', 'P1', 'R1'));
       });
 
       it('P1 worked on T21 as R1', function () {
-        assert(exists(this.action.credits, 'T21', 'P1', 'R1'));
+        assert(exists(this.credits, 'T21', 'P1', 'R1'));
       });
 
       it('P1 worked on T23 as R1', function () {
-        assert(exists(this.action.credits, 'T23', 'P1', 'R1'));
+        assert(exists(this.credits, 'T23', 'P1', 'R1'));
       });
 
       it('P1 worked on T24 as R1', function () {
-        assert(exists(this.action.credits, 'T24', 'P1', 'R1'));
+        assert(exists(this.credits, 'T24', 'P1', 'R1'));
       });
 
       it('P1 worked on T25 as R1', function () {
-        assert(exists(this.action.credits, 'T25', 'P1', 'R1'));
+        assert(exists(this.credits, 'T25', 'P1', 'R1'));
       });
     });
 
     describe('Special roles', () => {
       it('Composers', function () {
-        assert(exists(this.action.credits, 'T26', 'P26-1', 'Composer'));
+        assert(exists(this.credits, 'T26', 'P26-1', 'Composer'));
       });
 
       it('Producers', function () {
-        assert(exists(this.action.credits, 'T26', 'P26-2', 'Producer'));
+        assert(exists(this.credits, 'T26', 'P26-2', 'Producer'));
       });
 
       it('Featured', function () {
-        assert(exists(this.action.credits, 'T26', 'P26-3', 'Featured'));
+        assert(exists(this.credits, 'T26', 'P26-3', 'Featured'));
       });
     });
   });

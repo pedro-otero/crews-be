@@ -1,16 +1,13 @@
 const assert = require('assert');
 
-const {
-  ADD_CREDITS,
-} = require('../action/constants');
 const reduce = require('./credits');
 
 describe('Credit reducer', () => {
   describe('adds credits', () => {
-    const credits = reduce([], {
-      type: ADD_CREDITS,
-      credits: [{ name: 'x', role: 'y', track: 'z' }],
-    });
+    const credits = reduce(
+      [],
+      [{ name: 'x', role: 'y', track: 'z' }]
+    );
 
     it('test length', () => {
       assert.equal(credits.length, 1);
@@ -32,24 +29,21 @@ describe('Credit reducer', () => {
       name: 'Pé5', role: 'R5', track: 'T5',
     }, {
       name: 'Pe6', role: 'R6', track: 'T6',
-    }], {
-      type: ADD_CREDITS,
-      credits: [{
-        name: 'Pé1', role: 'R1', track: 'T1',
-      }, {
-        name: 'Pe2', role: 'R2', track: 'T2',
-      }, {
-        name: 'P4', role: 'R4', track: 'T4',
-      }, {
-        name: 'P3', role: 'R3', track: 'T4',
-      }, {
-        name: 'P3', role: 'R3', track: 'T4',
-      }, {
-        name: 'Pé5', role: 'R5', track: 'T5',
-      }, {
-        name: 'Pe6', role: 'R6', track: 'T6',
-      }],
-    });
+    }], [{
+      name: 'Pé1', role: 'R1', track: 'T1',
+    }, {
+      name: 'Pe2', role: 'R2', track: 'T2',
+    }, {
+      name: 'P4', role: 'R4', track: 'T4',
+    }, {
+      name: 'P3', role: 'R3', track: 'T4',
+    }, {
+      name: 'P3', role: 'R3', track: 'T4',
+    }, {
+      name: 'Pé5', role: 'R5', track: 'T5',
+    }, {
+      name: 'Pe6', role: 'R6', track: 'T6',
+    }]);
 
     it('test length', () => {
       assert.equal(credits.length, 7);
