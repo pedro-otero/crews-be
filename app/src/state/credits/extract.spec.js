@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const create = require('./extract-credits');
+const create = require('./extract');
 
 describe('Credits action creator', () => {
   const exists = (credits, track, name, role) => credits.find(credit =>

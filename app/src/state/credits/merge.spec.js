@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const reduce = require('./credits');
+const reduce = require('./merge');
 
 describe('Credit reducer', () => {
   describe('adds credits', () => {

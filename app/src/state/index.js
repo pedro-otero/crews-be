@@ -1,5 +1,5 @@
-const reduceCredits = require('./credits');
-const getCredits = require('./extract-credits');
+const reduceCredits = require('./credits/merge');
+const getCredits = require('./credits/extract');
 
 const albums = [];
 let searches = [];
