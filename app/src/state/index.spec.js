@@ -53,7 +53,7 @@ describe('State module', () => {
       assert.equal(state.data().searches[0].lastRelease, 5);
     });
 
-    describe('Credits action creator', () => {
+    describe('Credits', () => {
       const exists = (credits, track, name, role) => credits.find(credit =>
         credit.track === track &&
         credit.name === name &&
