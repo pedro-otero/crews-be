@@ -57,7 +57,7 @@ module.exports = {
   removeSearch: (id) => {
     searches = searches.filter(s => s.id !== id);
   },
-  getState: () => ({
+  data: () => ({
     albums,
     credits,
     searches,

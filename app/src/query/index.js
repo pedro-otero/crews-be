@@ -3,7 +3,7 @@ const buildAlbum = require('./build');
 module.exports = state => function (id) {
   const {
     searches, albums, credits,
-  } = state.getState();
+  } = state.data();
 
   const search = searches.find(item => item.id === id);
   if (!search) { return null; }

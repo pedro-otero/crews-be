@@ -13,7 +13,7 @@ describe('Search middleware', () => {
     });
     app.locals.state = {
       addSearch: sinon.stub(),
-      getState: () => ({
+      data: () => ({
         searches: [], albums: [{ id: 1 }],
       }),
     };
@@ -34,7 +34,7 @@ describe('Search middleware', () => {
     app.locals.state = {
       searchAlbum: sinon.stub(),
       addSearch: sinon.stub(),
-      getState: () => ({
+      data: () => ({
         searches: [{ id: '1' }],
       }),
     };

@@ -12,7 +12,7 @@ describe('State module', () => {
         items: [{ id: 'T1', name: 'Track #1', x: 'y' }],
       },
     });
-    assert.deepEqual(state.getState().albums[0], {
+    assert.deepEqual(state.data().albums[0], {
       id: 1,
       name: 'Album name',
       artist: 'The Artist',
@@ -26,7 +26,7 @@ describe('State module', () => {
     });
 
     it('adds', () => {
-      assert.deepEqual(state.getState().searches, [{ id: 'S1' }]);
+      assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
     });
 
     it('sets last search page', () => {
@@ -39,7 +39,7 @@ describe('State module', () => {
         },
         results: [{ id: 1 }],
       });
-      assert.deepEqual(state.getState().searches[0].lastSearchPage, {
+      assert.deepEqual(state.data().searches[0].lastSearchPage, {
         page: 1,
         pages: 2,
         items: 500,
@@ -50,12 +50,12 @@ describe('State module', () => {
 
     it('sets last release', () => {
       state.setLastRelease('S1', { id: 5 });
-      assert.equal(state.getState().searches[0].lastRelease, 5);
+      assert.equal(state.data().searches[0].lastRelease, 5);
     });
 
     it('clears search', () => {
       state.clearSearch('S1');
-      assert.deepEqual(state.getState().searches[0], {
+      assert.deepEqual(state.data().searches[0], {
         id: 'S1',
         lastSearchPage: null,
         lastRelease: null,
@@ -64,7 +64,7 @@ describe('State module', () => {
 
     after(() => {
       state.removeSearch('S1');
-      assert.equal(state.getState().searches.length, 0);
+      assert.equal(state.data().searches.length, 0);
     });
   });
 });

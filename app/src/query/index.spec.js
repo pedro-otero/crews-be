@@ -6,7 +6,7 @@ const mockState = require('./mock-state');
 describe('Query', () => {
   before(function () {
     this.state = {
-      getState: () => mockState,
+      data: () => mockState,
     };
   });
 

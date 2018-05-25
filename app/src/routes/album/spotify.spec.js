@@ -12,7 +12,7 @@ function setup() {
     res.status(200).send('NEXT CALLED');
   });
   this.state = {
-    getState: () => ({
+    data: () => ({
       albums: [{ id: 'A2' }],
     }),
     addAlbum: sinon.stub(),
