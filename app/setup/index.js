@@ -3,7 +3,7 @@ const Disconnect = require('disconnect');
 const winston = require('winston');
 const SpotifyWebApi = require('spotify-web-api-node');
 
-const { store, actions } = require('../src/state');
+const state = require('../src/state');
 const createSearchFunction = require('../src/search');
 const createSpotifyModule = require('../src/api/spotify');
 const Query = require('../src/query');
@@ -60,9 +60,8 @@ module.exports = (app) => {
   /* App locals setup */
   Object.assign(app, {
     locals: {
-      store,
-      actions,
-      searchAlbum: createSearchFunction(discogs, loggerCreator, actions),
+      state,
+      searchAlbum: createSearchFunction(discogs, loggerCreator, state),
       Query,
       spotify: createSpotifyModule(SpotifyWebApi),
     },

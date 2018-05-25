@@ -1,10 +1,10 @@
 const assert = require('assert');
 
-const { actions, store } = require('./index');
+const state = require('./index');
 
 describe('State module', () => {
   it('adds albums', () => {
-    actions.addAlbum({
+    state.addAlbum({
       id: 1,
       name: 'Album name',
       artists: [{ name: 'The Artist' }],
@@ -12,7 +12,7 @@ describe('State module', () => {
         items: [{ id: 'T1', name: 'Track #1', x: 'y' }],
       },
     });
-    assert.deepEqual(store.getState().albums[0], {
+    assert.deepEqual(state.getState().albums[0], {
       id: 1,
       name: 'Album name',
       artist: 'The Artist',
@@ -22,15 +22,15 @@ describe('State module', () => {
 
   describe('searches', () => {
     before(() => {
-      actions.addSearch('S1');
+      state.addSearch('S1');
     });
 
     it('adds', () => {
-      assert.deepEqual(store.getState().searches, [{ id: 'S1' }]);
+      assert.deepEqual(state.getState().searches, [{ id: 'S1' }]);
     });
 
     it('sets last search page', () => {
-      actions.setLastSearchPage('S1', {
+      state.setLastSearchPage('S1', {
         pagination: {
           page: 1,
           pages: 2,
@@ -39,7 +39,7 @@ describe('State module', () => {
         },
         results: [{ id: 1 }],
       });
-      assert.deepEqual(store.getState().searches[0].lastSearchPage, {
+      assert.deepEqual(state.getState().searches[0].lastSearchPage, {
         page: 1,
         pages: 2,
         items: 500,
@@ -49,13 +49,13 @@ describe('State module', () => {
     });
 
     it('sets last release', () => {
-      actions.setLastRelease('S1', 5);
-      assert.equal(store.getState().searches[0].lastRelease, 5);
+      state.setLastRelease('S1', 5);
+      assert.equal(state.getState().searches[0].lastRelease, 5);
     });
 
     it('clears search', () => {
-      actions.clearSearch('S1');
-      assert.deepEqual(store.getState().searches[0], {
+      state.clearSearch('S1');
+      assert.deepEqual(state.getState().searches[0], {
         id: 'S1',
         lastSearchPage: null,
         lastRelease: null,
@@ -63,8 +63,8 @@ describe('State module', () => {
     });
 
     after(() => {
-      actions.removeSearch('S1');
-      assert.equal(store.getState().searches.length, 0);
+      state.removeSearch('S1');
+      assert.equal(state.getState().searches.length, 0);
     });
   });
 });

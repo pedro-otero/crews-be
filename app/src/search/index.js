@@ -9,7 +9,7 @@ const {
   releaseTask,
 } = require('./utils');
 
-module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (album) => {
+module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, state) => (album) => {
   const LOGGER = createLogger(album);
   const MESSAGES = createMessagesFactory(album);
   const tasks = [searchPage(1)];
@@ -19,7 +19,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (alb
 
   const results = (page) => {
     LOGGER.info(MESSAGES.results(page));
-    actions.setLastSearchPage(album.id, page);
+    state.setLastSearchPage(album.id, page);
     tasks.push(...page.results.map((_, data) => (releaseTask(data))));
     if (isThereNext(page)) {
       tasks.push(searchNext(page));
@@ -29,9 +29,9 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (alb
 
   const sendRelease = (release) => {
     LOGGER.info(MESSAGES.release(release, currentTask.data + 1, lastPage));
-    actions.setLastRelease(album.id, release);
+    state.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.length) {
-      actions.addCredits(album, release);
+      state.addCredits(album, release);
     } else {
       LOGGER.debug(MESSAGES.albumMismatch(release));
     }
@@ -49,7 +49,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (alb
 
   const logError = (error) => {
     LOGGER.error(MESSAGES.exception(error));
-    actions.clearSearch(album.id);
+    state.clearSearch(album.id);
   };
 
   const run = ({ type, data }) => ({
@@ -90,7 +90,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, actions) => (alb
           throw error;
         }
       }).catch((error) => {
-        actions.removeSearch(album.id);
+        state.removeSearch(album.id);
         logError(error);
         tasks.splice(0, tasks.length);
       }).then(() => {

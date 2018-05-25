@@ -5,12 +5,12 @@ const router = express.Router();
 module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
   const {
     app: {
-      locals: { spotify, actions, store },
+      locals: { spotify, state },
     },
     params: { spotifyAlbumId },
   } = req;
 
-  const album = store.getState().albums.find(a => a.id === spotifyAlbumId);
+  const album = state.getState().albums.find(a => a.id === spotifyAlbumId);
   if (album) {
     next();
   } else {
@@ -18,7 +18,7 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
       .then(
         api => api.getAlbum(spotifyAlbumId)
           .then(({ body }) => {
-            actions.addAlbum(body);
+            state.addAlbum(body);
             next();
           }, () => res.status(404).end()),
         () => res.status(500).end()

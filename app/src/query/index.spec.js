@@ -5,7 +5,7 @@ const mockState = require('./mock-state');
 
 describe('Query', () => {
   before(function () {
-    this.store = {
+    this.state = {
       getState: () => mockState,
     };
   });
@@ -13,7 +13,7 @@ describe('Query', () => {
   const test = (id, cause, progress) => {
     context(cause, () => {
       before(function () {
-        this.query = Query(this.store)(id);
+        this.query = Query(this.state)(id);
       });
 
       it('has correct id', function () {
@@ -35,12 +35,12 @@ describe('Query', () => {
   test('full', 'full', 100);
 
   it('safely finds no match', function () {
-    const query = Query(this.store)('query-no-match');
+    const query = Query(this.state)('query-no-match');
     assert(query.bestMatch);
   });
 
   it('returns null if there is no album data', function () {
-    const query = Query(this.store)('nothing');
+    const query = Query(this.state)('nothing');
     assert(query === null);
   });
 });

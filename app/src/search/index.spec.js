@@ -59,7 +59,7 @@ const album = {
   }],
 };
 
-const actions = {
+const state = {
   addSearch: sinon.stub(),
   addAlbum: sinon.stub(),
   setLastRelease: sinon.stub(),
@@ -73,7 +73,7 @@ describe('Search function', () => {
   context('Nothing fails', () => {
     beforeEach(function (done) {
       Object.assign(this, setup(8, done));
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     describe('Calls database methods', () => {
@@ -107,11 +107,11 @@ describe('Search function', () => {
     });
 
     it('sets all 5 releases as last release', () => {
-      assert.equal(actions.setLastRelease.callCount, 5);
+      assert.equal(state.setLastRelease.callCount, 5);
     });
 
     it('gets credits for only the 4 releases that have the same amount of tracks', () => {
-      assert.equal(actions.addCredits.callCount, 4);
+      assert.equal(state.addCredits.callCount, 4);
     });
 
 
@@ -150,7 +150,7 @@ describe('Search function', () => {
     });
 
     it('sets the 4 releases as last release', () => {
-      assert.equal(actions.setLastSearchPage.callCount, 2);
+      assert.equal(state.setLastSearchPage.callCount, 2);
     });
 
     it('Logs info about release that is surely no match', function () {
@@ -163,8 +163,8 @@ describe('Search function', () => {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().throws();
       this.logger.error = sinon.stub().callsFake(() => done());
-      actions.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      state.finish = sinon.stub().callsFake(() => done());
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -177,8 +177,8 @@ describe('Search function', () => {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().resolves({});
       this.logger.error = sinon.stub().callsFake(() => done());
-      actions.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      state.finish = sinon.stub().callsFake(() => done());
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -190,8 +190,8 @@ describe('Search function', () => {
     beforeEach(function (done) {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().rejects(Error('ERROR'));
-      actions.clearSearch = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      state.clearSearch = sinon.stub().callsFake(() => done());
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -199,7 +199,7 @@ describe('Search function', () => {
     });
 
     it('search is cleared', () => {
-      assert(actions.clearSearch.calledOnce);
+      assert(state.clearSearch.calledOnce);
     });
   });
 
@@ -219,7 +219,7 @@ describe('Search function', () => {
             .resolves(pages[1]),
           getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
         };
-        searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+        searchAlbum(this.discogs, () => this.logger, state)(album).start();
       });
 
       it('Error logger is called', function () {
@@ -235,7 +235,7 @@ describe('Search function', () => {
       });
 
       it('search is NOT cleared', () => {
-        assert.equal(actions.clearSearch.getCalls().length, 0);
+        assert.equal(state.clearSearch.getCalls().length, 0);
       });
     });
 
@@ -255,7 +255,7 @@ describe('Search function', () => {
             .resolves(pages[1]),
           getRelease: sinon.stub().callsFake(id => Promise.resolve(blankRelease(id))),
         };
-        searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+        searchAlbum(this.discogs, () => this.logger, state)(album).start();
       });
 
       it('Error logger is called', function () {
@@ -271,7 +271,7 @@ describe('Search function', () => {
       });
 
       it('search is NOT cleared', () => {
-        assert.equal(actions.clearSearch.getCalls().length, 0);
+        assert.equal(state.clearSearch.getCalls().length, 0);
       });
     });
   });
@@ -292,7 +292,7 @@ describe('Search function', () => {
         getRelease: releaseStub,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -308,7 +308,7 @@ describe('Search function', () => {
     });
 
     it('search is NOT cleared', () => {
-      assert.equal(actions.clearSearch.getCalls().length, 0);
+      assert.equal(state.clearSearch.getCalls().length, 0);
     });
   });
 
@@ -328,7 +328,7 @@ describe('Search function', () => {
         PAUSE_NEEDED_AFTER_429: 1,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -344,7 +344,7 @@ describe('Search function', () => {
     });
 
     it('search is NOT cleared', () => {
-      assert.equal(actions.clearSearch.getCalls().length, 0);
+      assert.equal(state.clearSearch.getCalls().length, 0);
     });
   });
 
@@ -364,7 +364,7 @@ describe('Search function', () => {
         PAUSE_NEEDED_AFTER_429: 1,
       };
       this.logger.finish = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -380,7 +380,7 @@ describe('Search function', () => {
     });
 
     it('search is NOT cleared', () => {
-      assert.equal(actions.clearSearch.getCalls().length, 0);
+      assert.equal(state.clearSearch.getCalls().length, 0);
     });
   });
 
@@ -404,7 +404,7 @@ describe('Search function', () => {
         PAUSE_NEEDED_AFTER_429: 1,
       };
       this.logger.error = sinon.stub().callsFake(() => done());
-      searchAlbum(this.discogs, () => this.logger, actions)(album).start();
+      searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
     it('Error logger is called', function () {
@@ -416,7 +416,7 @@ describe('Search function', () => {
     });
 
     it('search is aborted', () => {
-      assert(actions.removeSearch.calledOnce);
+      assert(state.removeSearch.calledOnce);
     });
   });
 
@@ -428,5 +428,5 @@ describe('Search function', () => {
     'addCredits',
     'clearSearch',
     'removeSearch',
-  ].forEach(action => actions[action].resetHistory()));
+  ].forEach(action => state[action].resetHistory()));
 });

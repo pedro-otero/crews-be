@@ -5,7 +5,7 @@ const albums = [];
 let searches = [];
 let credits = [];
 
-exports.actions = {
+module.exports = {
   addAlbum: ({
     id, artists: [{ name: artist }], name, tracks: { items },
   }) => {
@@ -57,9 +57,6 @@ exports.actions = {
   removeSearch: (id) => {
     searches = searches.filter(s => s.id !== id);
   },
-};
-
-exports.store = {
   getState: () => ({
     albums,
     credits,

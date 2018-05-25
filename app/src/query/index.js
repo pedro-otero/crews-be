@@ -1,9 +1,9 @@
 const buildAlbum = require('./build');
 
-module.exports = store => function (id) {
+module.exports = state => function (id) {
   const {
     searches, albums, credits,
-  } = store.getState();
+  } = state.getState();
 
   const search = searches.find(item => item.id === id);
   if (!search) { return null; }
