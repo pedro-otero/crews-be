@@ -1,9 +1,25 @@
 const reduceCredits = require('./credits/merge');
-const getCredits = require('./credits/extract');
 
 const albums = [];
 let searches = [];
 let credits = [];
+
+const roles = require('./roles');
+
+const mappedRole = (role) => {
+  if (roles.composers.includes(role)) {
+    return 'Composer';
+  }
+  if (roles.producers.includes(role)) {
+    return 'Producer';
+  }
+  if (roles.featured.includes(role)) {
+    return 'Featured';
+  }
+  return role;
+};
+
+const splitTrim = (value, separator) => value.split(separator).map(v => v.trim());
 
 module.exports = {
   addAlbum: ({
@@ -17,7 +33,43 @@ module.exports = {
     });
   },
   addCredits: (album, release) => {
-    const newCredits = getCredits(album, release);
+    const { tracks: items } = album;
+    const { tracklist, extraartists: releaseExtraArtists } = release;
+    const translatePosition = position => tracklist.findIndex(t => t.position === position);
+    const inRange = (trackString, separator, position) => {
+      const extremes = splitTrim(trackString, separator);
+      const left = translatePosition(extremes[0]);
+      const p = translatePosition(position);
+      const right = translatePosition(extremes[1]);
+      return (left <= p) && (p <= right);
+    };
+    const newCredits = tracklist.map(({ position, extraartists = [] }) => ({
+      position,
+      extraartists: extraartists.concat(releaseExtraArtists
+        .filter(({ tracks, role }) => !!tracks && !!role)
+        .filter(({ tracks }) => splitTrim(tracks, ',')
+          .reduce((accum, trackString) => accum || (() => {
+            if (trackString.includes('-')) {
+              return inRange(trackString, '-', position);
+            } else if (trackString.includes('to')) {
+              return inRange(trackString, 'to', position);
+            }
+            return splitTrim(trackString, ',').includes(position);
+          })(), false))
+        .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
+    })).map(({ extraartists: credits }, i) => ({
+      id: items[i].id,
+      credits: credits.reduce((trackCredits, { name, role }) => trackCredits
+        .concat(splitTrim(role, ',').map(r => ({
+          name,
+          role: r,
+        }))), []),
+    })).reduce(
+      (accum, { id, credits }) =>
+        accum.concat(credits
+          .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
+      []
+    );
     credits = reduceCredits(credits, newCredits);
   },
   addSearch: (id) => {
