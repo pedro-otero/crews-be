@@ -41,9 +41,9 @@ module.exports = {
       }),
     ].concat(searches.filter(search => search.id !== id));
   },
-  setLastRelease: (id, lastRelease) => {
+  setLastRelease: (id, release) => {
     searches = [
-      Object.assign({}, searches.find(search => search.id === id), { lastRelease }),
+      Object.assign({}, searches.find(search => search.id === id), { lastRelease: release.id }),
     ].concat(searches.filter(search => search.id !== id));
   },
   clearSearch: (id) => {

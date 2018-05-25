@@ -49,7 +49,7 @@ describe('State module', () => {
     });
 
     it('sets last release', () => {
-      state.setLastRelease('S1', 5);
+      state.setLastRelease('S1', { id: 5 });
       assert.equal(state.getState().searches[0].lastRelease, 5);
     });
 
