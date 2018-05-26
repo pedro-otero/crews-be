@@ -83,16 +83,16 @@ module.exports = {
             return splitTrim(trackString, ',').includes(position);
           })(), false))
         .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
-    })).map(({ extraartists: credits }, i) => ({
+    })).map(({ extraartists }, i) => ({
       id: items[i].id,
-      credits: credits.reduce((trackCredits, { name, role }) => trackCredits
+      trackCredits: extraartists.reduce((trackCredits, { name, role }) => trackCredits
         .concat(splitTrim(role, ',').map(r => ({
           name,
           role: r,
         }))), []),
     })).reduce(
-      (accum, { id, credits }) =>
-        accum.concat(credits
+      (accum, { id, trackCredits }) =>
+        accum.concat(trackCredits
           .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
       []
     );
