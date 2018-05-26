@@ -108,30 +108,24 @@ module.exports = () => {
       },
       results,
     }) => {
-      searches = [
-        Object.assign({}, searches.find(search => search.id === id), {
-          lastSearchPage: {
-            page,
-            pages,
-            items,
-            perPage,
-            releases: results.map(result => result.id),
-          },
-        }),
-      ].concat(searches.filter(search => search.id !== id));
+      Object.assign(searches.find(search => search.id === id), {
+        lastSearchPage: {
+          page,
+          pages,
+          items,
+          perPage,
+          releases: results.map(result => result.id),
+        },
+      });
     },
     setLastRelease: (id, release) => {
-      searches = [
-        Object.assign({}, searches.find(search => search.id === id), { lastRelease: release.id }),
-      ].concat(searches.filter(search => search.id !== id));
+      Object.assign(searches.find(search => search.id === id), { lastRelease: release.id });
     },
     clearSearch: (id) => {
-      searches = [
-        Object.assign({}, searches.find(search => search.id === id), {
-          lastRelease: null,
-          lastSearchPage: null,
-        }),
-      ].concat(searches.filter(search => search.id !== id));
+      Object.assign(searches.find(search => search.id === id), {
+        lastRelease: null,
+        lastSearchPage: null,
+      });
     },
     removeSearch: (id) => {
       searches = searches.filter(s => s.id !== id);
