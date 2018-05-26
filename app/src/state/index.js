@@ -45,7 +45,7 @@ module.exports = {
     };
     const newCredits = tracklist.map(({ position, extraartists = [] }) => ({
       position,
-      extraartists: extraartists.concat(releaseExtraArtists
+      extraartists: extraartists.concat((releaseExtraArtists || [])
         .filter(({ tracks, role }) => !!tracks && !!role)
         .filter(({ tracks }) => splitTrim(tracks, ',')
           .reduce((accum, trackString) => accum || (() => {

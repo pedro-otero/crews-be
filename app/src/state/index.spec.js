@@ -53,42 +53,42 @@ describe('State module', () => {
       assert.equal(state.data().searches[0].lastRelease, 5);
     });
 
+    const album = {
+      tracks: [
+        { id: 'T1' },
+        { id: 'T2' },
+        { id: 'T3' },
+        { id: 'T4' },
+        { id: 'T5' },
+        { id: 'T6' },
+        { id: 'T7' },
+        { id: 'T8' },
+        { id: 'T9' },
+        { id: 'T10' },
+        { id: 'T11' },
+        { id: 'T12' },
+        { id: 'T13' },
+        { id: 'T14' },
+        { id: 'T15' },
+        { id: 'T16' },
+        { id: 'T17' },
+        { id: 'T18' },
+        { id: 'T19' },
+        { id: 'T20' },
+        { id: 'T21' },
+        { id: 'T22' },
+        { id: 'T23' },
+        { id: 'T24' },
+        { id: 'T25' },
+        { id: 'T26' },
+      ],
+    };
+
     describe('Credits', () => {
       const exists = (credits, track, name, role) => credits.find(credit =>
         credit.track === track &&
         credit.name === name &&
         credit.role === role);
-
-      const album = {
-        tracks: [
-          { id: 'T1' },
-          { id: 'T2' },
-          { id: 'T3' },
-          { id: 'T4' },
-          { id: 'T5' },
-          { id: 'T6' },
-          { id: 'T7' },
-          { id: 'T8' },
-          { id: 'T9' },
-          { id: 'T10' },
-          { id: 'T11' },
-          { id: 'T12' },
-          { id: 'T13' },
-          { id: 'T14' },
-          { id: 'T15' },
-          { id: 'T16' },
-          { id: 'T17' },
-          { id: 'T18' },
-          { id: 'T19' },
-          { id: 'T20' },
-          { id: 'T21' },
-          { id: 'T22' },
-          { id: 'T23' },
-          { id: 'T24' },
-          { id: 'T25' },
-          { id: 'T26' },
-        ],
-      };
 
       describe('adds credits', () => {
         before(() => {
@@ -393,6 +393,104 @@ describe('State module', () => {
           it('Featured', () => {
             assert(exists(state.data().credits, 'T26', 'P26-3', 'Featured'));
           });
+        });
+      });
+    });
+
+    describe('Credit reducer', () => {
+      describe('adds credits', () => {
+        before(() => {
+          state.addCredits(album, {
+            tracklist: [{
+              id: 'T1',
+              extraartists: [{
+                name: 'x',
+                role: 'y',
+              }],
+            }],
+          });
+        });
+
+        it('test value', () => {
+          assert(state.data().credits.find(c => c.name === 'x' && c.role === 'y'));
+        });
+      });
+
+      describe('avoids duplicate credits', () => {
+        state.addCredits(album, {
+          tracklist: [{
+            id: 'T1',
+            extraartists: [{ name: 'Pe1', role: 'R1' }],
+          }, {
+            id: 'T2',
+            extraartists: [{ name: 'Pé2', role: 'R2' }],
+          }, {
+            id: 'T3',
+            extraartists: [{ name: 'P3', role: 'R3' }],
+          }, {
+            id: 'T4',
+            extraartists: [],
+          }, {
+            id: 'T5',
+            extraartists: [{ name: 'Pé5', role: 'R5' }],
+          }],
+        });
+        state.addCredits(album, {
+          tracklist: [{
+            id: 'T1',
+            extraartists: [{ name: 'Pé1', role: 'R1' }],
+          }, {
+            id: 'T2',
+            extraartists: [{ name: 'Pe2', role: 'R2' }],
+          }, {
+            id: 'T3',
+            extraartists: [{ name: 'P3', role: 'R3' }],
+          }, {
+            id: 'T4',
+            extraartists: [{ name: 'P4', role: 'R4' }, { name: 'P3', role: 'R3' }],
+          }, {
+            id: 'T5',
+            extraartists: [{ name: 'Pé5', role: 'R5' }],
+          }, {
+            id: 'T6',
+            extraartists: [{ name: 'Pe6', role: 'R6' }],
+          }],
+        });
+
+        it('has accented Pe1', () => {
+          assert(state.data().credits.find(c => c.name === 'Pé1' && c.role === 'R1' && c.track === 'T1'));
+        });
+
+        it('has NOT unaccented Pe1', () => {
+          assert(!state.data().credits.find(c => c.name === 'Pe1' && c.role === 'R1' && c.track === 'T1'));
+        });
+
+        it('has accented Pe2', () => {
+          assert(state.data().credits.find(c => c.name === 'Pé2' && c.role === 'R2' && c.track === 'T2'));
+        });
+
+        it('has NOT unaccented Pe2', () => {
+          assert(!state.data().credits.find(c => c.name === 'Pe2' && c.role === 'R2' && c.track === 'T2'));
+        });
+
+        it('adds credits that have no equivalent accented or not', () => {
+          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T3'));
+        });
+
+        it('keeps credits that have no equivalent accented or not', () => {
+          assert(state.data().credits.find(c => c.name === 'P4' && c.role === 'R4' && c.track === 'T4'));
+        });
+
+        it('compares credits by the role when name is the same', () => {
+          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T4'));
+        });
+
+        it('has only one Pé5', () => {
+          assert.equal(state.data().credits.filter(c => c.name === 'Pé5' && c.role === 'R5' && c.track === 'T5').length, 1);
+        });
+
+        it('has only one Pe6', () => {
+          assert.equal(state.data().credits.filter(c => c.name === 'Pe6' && c.role === 'R6' && c.track === 'T6').length, 1);
         });
       });
     });
