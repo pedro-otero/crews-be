@@ -1,4 +1,4 @@
-`crews-be` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the Redux store with such information. It's the backend that supports the `crews` app also available in my Github profile.
+`crews-be` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the state (in `app.locals` with such information. It's the backend that supports the `crews` app also available in my Github profile.
 
 Application keys are needed for both [Spotify][2] and [Discogs][3].
 
@@ -32,7 +32,7 @@ The app accepts the following environment configuration variables:
 
 You'll notice the app responds very quickly to the client with an empty `bestMatch` with 0 progress. That just means the search started. You can keep requesting the album and check how the progress goes, but the console will also inform you about it. Ideally, a web client should poll the endpoint to find out about new data and stop when `progress` is 100. Since the Discogs API is the main limitant here and it's restricted to one request per second, it's not recommended to request the album more than once per second, since there won't be anything new before that.
 
-Once the search finishes the data remains in the Redux store for as long as the app is in memory, so subsequent requests for the album should show all the data found about the album.
+Once the search finishes the data remains in the state for as long as the app is in memory, so subsequent requests for the album should show all the data found about the album.
 
 # Search logic
 
