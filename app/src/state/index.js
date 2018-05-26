@@ -98,9 +98,7 @@ module.exports = () => {
       }, []);
   };
 
-  const addSearch = (id) => {
-    searches.push({ id });
-  };
+  const addSearch = id => searches.push({ id });
 
   const setLastSearchPage = (id, {
     pagination: {
@@ -119,16 +117,15 @@ module.exports = () => {
     });
   };
 
-  const setLastRelease = (id, release) => {
-    Object.assign(searches.find(search => search.id === id), { lastRelease: release.id });
-  };
+  const setLastRelease = (id, release) => Object.assign(
+    searches.find(search => search.id === id),
+    { lastRelease: release.id }
+  );
 
-  const clearSearch = (id) => {
-    Object.assign(searches.find(search => search.id === id), {
-      lastRelease: null,
-      lastSearchPage: null,
-    });
-  };
+  const clearSearch = id => Object.assign(searches.find(search => search.id === id), {
+    lastRelease: null,
+    lastSearchPage: null,
+  });
 
   const removeSearch = (id) => {
     searches = searches.filter(s => s.id !== id);
