@@ -40,10 +40,8 @@ module.exports = () => {
     const { tracklist, extraartists: releaseExtraArtists } = release;
     const translatePosition = position => tracklist.findIndex(t => t.position === position);
     const inRange = (trackString, separator, position) => {
-      const extremes = splitTrim(trackString, separator);
-      const left = translatePosition(extremes[0]);
+      const [left, right] = splitTrim(trackString, separator).map(translatePosition);
       const p = translatePosition(position);
-      const right = translatePosition(extremes[1]);
       return (left <= p) && (p <= right);
     };
     // Extract credits from the release
