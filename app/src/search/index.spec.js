@@ -163,7 +163,6 @@ describe('Search function', () => {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().throws();
       this.logger.error = sinon.stub().callsFake(() => done());
-      state.finish = sinon.stub().callsFake(() => done());
       searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
@@ -177,7 +176,6 @@ describe('Search function', () => {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().resolves({});
       this.logger.error = sinon.stub().callsFake(() => done());
-      state.finish = sinon.stub().callsFake(() => done());
       searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
