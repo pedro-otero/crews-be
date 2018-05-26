@@ -2,7 +2,7 @@ const accents = require('remove-accents');
 
 const hasAccentedName = c => accents.has(c.name);
 
-const reduceCredits = (state = [], credits) => credits
+const merge = (state = [], credits) => credits
   .filter(c => !hasAccentedName(c))
   .concat(state.filter(c => !hasAccentedName(c)))
   .reduce((all, current) => {
@@ -96,7 +96,7 @@ module.exports = {
           .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
       []
     );
-    credits = reduceCredits(credits, newCredits);
+    credits = merge(credits, newCredits);
   },
   addSearch: (id) => {
     searches.push({ id });
