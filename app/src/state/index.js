@@ -21,7 +21,7 @@ const splitTrim = (value, separator) => value.split(separator).map(v => v.trim()
 
 module.exports = () => {
   const albums = [];
-  let searches = [];
+  const searches = [];
   let credits = [];
 
   const addAlbum = ({
@@ -127,9 +127,7 @@ module.exports = () => {
     lastSearchPage: null,
   });
 
-  const removeSearch = (id) => {
-    searches = searches.filter(s => s.id !== id);
-  };
+  const removeSearch = id => searches.splice(searches.findIndex(s => s.id !== id), 1);
 
   return {
     addAlbum,
