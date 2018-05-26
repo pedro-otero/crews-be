@@ -2,30 +2,6 @@ const accents = require('remove-accents');
 
 const hasAccentedName = c => accents.has(c.name);
 
-const merge = (state = [], credits) => credits
-  .filter(c => !hasAccentedName(c))
-  .concat(state.filter(c => !hasAccentedName(c)))
-  .reduce((all, current) => {
-    if (all.find(item =>
-      accents.remove(item.name) === current.name &&
-        item.role === current.role &&
-        item.track === current.track)) {
-      return all;
-    }
-    return all.concat([current]);
-  }, credits
-    .filter(hasAccentedName)
-    .concat(state.filter(hasAccentedName)))
-  .reduce((all, current) => {
-    if (all.find(item =>
-      item.name === current.name &&
-        item.role === current.role &&
-        item.track === current.track)) {
-      return all;
-    }
-    return all.concat([current]);
-  }, []);
-
 const albums = [];
 let searches = [];
 let credits = [];
@@ -96,7 +72,29 @@ module.exports = {
           .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
       []
     );
-    credits = merge(credits, newCredits);
+    credits = newCredits
+      .filter(c => !hasAccentedName(c))
+      .concat(credits.filter(c => !hasAccentedName(c)))
+      .reduce((all, current) => {
+        if (all.find(item =>
+          accents.remove(item.name) === current.name &&
+            item.role === current.role &&
+            item.track === current.track)) {
+          return all;
+        }
+        return all.concat([current]);
+      }, newCredits
+        .filter(hasAccentedName)
+        .concat(credits.filter(hasAccentedName)))
+      .reduce((all, current) => {
+        if (all.find(item =>
+          item.name === current.name &&
+            item.role === current.role &&
+            item.track === current.track)) {
+          return all;
+        }
+        return all.concat([current]);
+      }, []);
   },
   addSearch: (id) => {
     searches.push({ id });
