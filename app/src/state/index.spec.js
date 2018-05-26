@@ -18,7 +18,7 @@ describe('State module', () => {
       id: 1,
       name: 'Album name',
       artist: 'The Artist',
-      tracks: [{ id: 'T1', name: 'Track #1' }],
+      tracks: [{ id: 'T1', name: 'Track #1', credits: [] }],
     });
   });
 

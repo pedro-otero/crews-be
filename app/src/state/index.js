@@ -31,7 +31,7 @@ module.exports = () => {
       id,
       name,
       artist,
-      tracks: items.map(i => ({ id: i.id, name: i.name })),
+      tracks: items.map(i => ({ id: i.id, name: i.name, credits: [] })),
     });
   };
 
