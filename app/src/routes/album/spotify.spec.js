@@ -11,15 +11,13 @@ function setup() {
   app.use('/data/album', (req, res) => {
     res.status(200).send('NEXT CALLED');
   });
-  app.locals.store = {
-    getState: () => ({
+  this.state = {
+    data: () => ({
       albums: [{ id: 'A2' }],
     }),
-  };
-  this.actions = {
     addAlbum: sinon.stub(),
   };
-  app.locals.actions = this.actions;
+  app.locals.state = this.state;
   const getAlbum = id => Promise.resolve({
     A1: { body: { id: 'A1' } },
   }[id]);
@@ -44,7 +42,7 @@ describe('Spotify middleware', () => {
     });
 
     it('adds album to the store', function () {
-      assert.equal(this.actions.addAlbum.getCalls()[0].args[0].id, 'A1');
+      assert.equal(this.state.addAlbum.getCalls()[0].args[0].id, 'A1');
     });
   });
 
@@ -59,7 +57,7 @@ describe('Spotify middleware', () => {
     });
 
     it('does not add album to the store', function () {
-      assert.equal(this.actions.addAlbum.getCalls().length, 0);
+      assert.equal(this.state.addAlbum.getCalls().length, 0);
     });
   });
 
@@ -73,7 +71,7 @@ describe('Spotify middleware', () => {
     });
 
     it('does not add nothing to the store', function () {
-      assert.equal(this.actions.addAlbum.getCalls().length, 0);
+      assert.equal(this.state.addAlbum.getCalls().length, 0);
     });
   });
 
@@ -87,7 +85,7 @@ describe('Spotify middleware', () => {
     });
 
     it('does not add nothing to the store', function () {
-      assert.equal(this.actions.addAlbum.getCalls().length, 0);
+      assert.equal(this.state.addAlbum.getCalls().length, 0);
     });
   });
 });

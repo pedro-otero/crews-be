@@ -3,7 +3,7 @@ const Disconnect = require('disconnect');
 const winston = require('winston');
 const SpotifyWebApi = require('spotify-web-api-node');
 
-const { store, actions } = require('../src/redux/state');
+const createState = require('../src/state');
 const createSearchFunction = require('../src/search');
 const createSpotifyModule = require('../src/api/spotify');
 const Query = require('../src/query');
@@ -58,11 +58,11 @@ const loggerCreator = ({ id, artist, name }) => createLogger({
 
 module.exports = (app) => {
   /* App locals setup */
+  const state = createState();
   Object.assign(app, {
     locals: {
-      store,
-      actions,
-      searchAlbum: createSearchFunction(discogs, loggerCreator),
+      state,
+      searchAlbum: createSearchFunction(discogs, loggerCreator, state),
       Query,
       spotify: createSpotifyModule(SpotifyWebApi),
     },
