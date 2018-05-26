@@ -1,4 +1,4 @@
-`crews-be` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the state (in `app.locals` with such information. It's the backend that supports the `crews` app also available in my Github profile.
+`crews-be` is an Express application that finds Spotify album credits in [Discogs][1]. It exposes one endpoint that, given the album id, requests the album data from [Spotify API][2] and immediately after searches for it in Discogs. As it finds credits for it, it updates the state (in `app.locals`) with such information. It's the backend that supports the `crews` app also available in my Github profile.
 
 Application keys are needed for both [Spotify][2] and [Discogs][3].
 
