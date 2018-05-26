@@ -44,7 +44,13 @@ module.exports = () => {
       const p = translatePosition(position);
       return (left <= p) && (p <= right);
     };
-    // Extract credits from the release
+
+    // EXTRACT CREDITS FROM THE RELEASE
+    // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
+    //    Some releases in Discogs have an "extraartists" array which contains credits of
+    //    individual tracks.
+    //    The following lines map the contents of such array into an structure grouped by
+    //    track, matching the existing one in "tracklist"
     const newCredits = tracklist.map(({ position, extraartists = [] }) => ({
       position,
       extraartists: extraartists.concat((releaseExtraArtists || [])
@@ -59,20 +65,28 @@ module.exports = () => {
             return splitTrim(trackString, ',').includes(position);
           })(), false))
         .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
-    })).map(({ extraartists }, i) => ({
-      id: items[i].id,
-      trackCredits: extraartists.reduce((trackCredits, { name, role }) => trackCredits
-        .concat(splitTrim(role, ',').map(r => ({
-          name,
-          role: r,
-        }))), []),
-    })).reduce(
-      (accum, { id, trackCredits }) =>
-        accum.concat(trackCredits
-          .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
-      []
-    );
-    // Merge newly extracted credits with the ones currently in state
+    }))
+
+    // 2. Split the resulting credits array so there's one entry for every role
+      .map(({ extraartists }, i) => ({
+        id: items[i].id,
+        trackCredits: extraartists.reduce((trackCredits, { name, role }) => trackCredits
+          .concat(splitTrim(role, ',').map(r => ({
+            name,
+            role: r,
+          }))), []),
+      }))
+
+      // 3. Map the full credits of each track to the structure in the state "credits" array,
+      //    mapping special roles when they appear.
+      .reduce(
+        (accum, { id, trackCredits }) =>
+          accum.concat(trackCredits
+            .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
+        []
+      );
+
+    // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
     credits = newCredits
       .filter(c => !hasAccentedName(c))
       .concat(credits.filter(c => !hasAccentedName(c)))
