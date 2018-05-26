@@ -86,12 +86,12 @@ describe('State module', () => {
       ],
     };
 
-    describe('Credits', () => {
-      const exists = (credits, track, name, role) => credits.find(credit =>
-        credit.track === track &&
+    const exists = (track, name, role) => state.data().credits.find(credit =>
+      credit.track === track &&
         credit.name === name &&
         credit.role === role);
 
+    describe('Credits', () => {
       describe('adds credits', () => {
         before(() => {
           const release = {
@@ -215,48 +215,48 @@ describe('State module', () => {
         });
 
         it('extracts single role track credit', () => {
-          assert(exists(state.data().credits, 'T1', 'P1', 'R1'));
+          assert(exists('T1', 'P1', 'R1'));
         });
 
         it('extracts single role track credit', () => {
-          assert(exists(state.data().credits, 'T1', 'P1', 'R1'));
+          assert(exists('T1', 'P1', 'R1'));
         });
 
         describe('extracts multi role track credit', () => {
           it('P2 worked on T2 as R21', () => {
-            assert(exists(state.data().credits, 'T2', 'P2', 'R21'));
+            assert(exists('T2', 'P2', 'R21'));
           });
 
           it('P2 worked on T2 as R22', () => {
-            assert(exists(state.data().credits, 'T2', 'P2', 'R22'));
+            assert(exists('T2', 'P2', 'R22'));
           });
         });
 
         it('extracts single role release credit', () => {
-          assert(exists(state.data().credits, 'T3', 'P3', 'R3'));
+          assert(exists('T3', 'P3', 'R3'));
         });
 
         describe('extracts multi role release credit', () => {
           it('P4 worked on T4 as R41', () => {
-            assert(exists(state.data().credits, 'T4', 'P4', 'R41'));
+            assert(exists('T4', 'P4', 'R41'));
           });
 
           it('P4 worked on T4 as R42', () => {
-            assert(exists(state.data().credits, 'T4', 'P4', 'R42'));
+            assert(exists('T4', 'P4', 'R42'));
           });
         });
 
         describe('extracts hyphen-rage multi track release credit', () => {
           it('P567 worked on T5 as R51', () => {
-            assert(exists(state.data().credits, 'T5', 'P567', 'R51'));
+            assert(exists('T5', 'P567', 'R51'));
           });
 
           it('P567 worked on T6 as R51', () => {
-            assert(exists(state.data().credits, 'T6', 'P567', 'R51'));
+            assert(exists('T6', 'P567', 'R51'));
           });
 
           it('P567 worked on T7 as R51', () => {
-            assert(exists(state.data().credits, 'T7', 'P567', 'R51'));
+            assert(exists('T7', 'P567', 'R51'));
           });
 
           it('No one worked on T8', () => {
@@ -266,29 +266,29 @@ describe('State module', () => {
 
         describe('extracts comma separated multi track release credit', () => {
           it('P910 worked on T9 as R910', () => {
-            assert(exists(state.data().credits, 'T9', 'P910', 'R910'));
+            assert(exists('T9', 'P910', 'R910'));
           });
 
           it('P920 worked on T10 as R910', () => {
-            assert(exists(state.data().credits, 'T10', 'P910', 'R910'));
+            assert(exists('T10', 'P910', 'R910'));
           });
         });
 
         describe('extracts mixed range type multi track release credit', () => {
           it('P111315 worked on T11 as R111315', () => {
-            assert(exists(state.data().credits, 'T11', 'P111315', 'R111315'));
+            assert(exists('T11', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T13 as R111315', () => {
-            assert(exists(state.data().credits, 'T13', 'P111315', 'R111315'));
+            assert(exists('T13', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T14 as R111315', () => {
-            assert(exists(state.data().credits, 'T14', 'P111315', 'R111315'));
+            assert(exists('T14', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T15 as R111315', () => {
-            assert(exists(state.data().credits, 'T15', 'P111315', 'R111315'));
+            assert(exists('T15', 'P111315', 'R111315'));
           });
 
           it('No one worked on T12', () => {
@@ -314,15 +314,15 @@ describe('State module', () => {
 
         describe('extracts literal (with to) range type multi track release credit', () => {
           it('P181920 worked on T18 as R181920', () => {
-            assert(exists(state.data().credits, 'T18', 'P181920', 'R181920'));
+            assert(exists('T18', 'P181920', 'R181920'));
           });
 
           it('P181920 worked on T19 as R181920', () => {
-            assert(exists(state.data().credits, 'T19', 'P181920', 'R181920'));
+            assert(exists('T19', 'P181920', 'R181920'));
           });
 
           it('P181920 worked on T20 as R181920', () => {
-            assert(exists(state.data().credits, 'T20', 'P181920', 'R181920'));
+            assert(exists('T20', 'P181920', 'R181920'));
           });
         });
 
@@ -331,27 +331,27 @@ describe('State module', () => {
         // A1, A2, A3, B1, B2...
         describe('Can work with non numeric positions in release credits', () => {
           it('individually', () => {
-            assert(exists(state.data().credits, 'T21', 'P21', 'R21'));
+            assert(exists('T21', 'P21', 'R21'));
           });
 
           describe('in a range', () => {
             describe('literal', () => {
               it('P2223 worked on T22 as R2223', () => {
-                assert(exists(state.data().credits, 'T22', 'P2223', 'R2223'));
+                assert(exists('T22', 'P2223', 'R2223'));
               });
 
               it('P2223 worked on T23 as R2223', () => {
-                assert(exists(state.data().credits, 'T23', 'P2223', 'R2223'));
+                assert(exists('T23', 'P2223', 'R2223'));
               });
             });
 
             describe('hyphenated', () => {
               it('P2425 worked on T24 as R2425', () => {
-                assert(exists(state.data().credits, 'T24', 'P2425', 'R2425'));
+                assert(exists('T24', 'P2425', 'R2425'));
               });
 
               it('P2425 worked on T25 as R2425', () => {
-                assert(exists(state.data().credits, 'T25', 'P2425', 'R2425'));
+                assert(exists('T25', 'P2425', 'R2425'));
               });
             });
           });
@@ -359,41 +359,41 @@ describe('State module', () => {
 
         describe('Can work with mixed multi ranges and position types', () => {
           it('P1 worked on T19 as R1', () => {
-            assert(exists(state.data().credits, 'T19', 'P1', 'R1'));
+            assert(exists('T19', 'P1', 'R1'));
           });
 
           it('P1 worked on T20 as R1', () => {
-            assert(exists(state.data().credits, 'T20', 'P1', 'R1'));
+            assert(exists('T20', 'P1', 'R1'));
           });
 
           it('P1 worked on T21 as R1', () => {
-            assert(exists(state.data().credits, 'T21', 'P1', 'R1'));
+            assert(exists('T21', 'P1', 'R1'));
           });
 
           it('P1 worked on T23 as R1', () => {
-            assert(exists(state.data().credits, 'T23', 'P1', 'R1'));
+            assert(exists('T23', 'P1', 'R1'));
           });
 
           it('P1 worked on T24 as R1', () => {
-            assert(exists(state.data().credits, 'T24', 'P1', 'R1'));
+            assert(exists('T24', 'P1', 'R1'));
           });
 
           it('P1 worked on T25 as R1', () => {
-            assert(exists(state.data().credits, 'T25', 'P1', 'R1'));
+            assert(exists('T25', 'P1', 'R1'));
           });
         });
 
         describe('Special roles', () => {
           it('Composers', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-1', 'Composer'));
+            assert(exists('T26', 'P26-1', 'Composer'));
           });
 
           it('Producers', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-2', 'Producer'));
+            assert(exists('T26', 'P26-2', 'Producer'));
           });
 
           it('Featured', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-3', 'Featured'));
+            assert(exists('T26', 'P26-3', 'Featured'));
           });
         });
       });
