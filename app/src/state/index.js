@@ -45,6 +45,7 @@ module.exports = {
       const right = translatePosition(extremes[1]);
       return (left <= p) && (p <= right);
     };
+    // Extract credits from the release
     const newCredits = tracklist.map(({ position, extraartists = [] }) => ({
       position,
       extraartists: extraartists.concat((releaseExtraArtists || [])
@@ -72,6 +73,7 @@ module.exports = {
           .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
       []
     );
+    // Merge newly extracted credits with the ones currently in state
     credits = newCredits
       .filter(c => !hasAccentedName(c))
       .concat(credits.filter(c => !hasAccentedName(c)))
