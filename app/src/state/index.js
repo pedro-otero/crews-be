@@ -100,13 +100,18 @@ module.exports = () => {
 
   const addSearch = id => searches.push({ id });
 
+  const modifySearch = (id, withWhat) => Object.assign(
+    searches.find(search => search.id === id),
+    withWhat
+  );
+
   const setLastSearchPage = (id, {
     pagination: {
       page, pages, items, per_page: perPage,
     },
     results,
   }) => {
-    Object.assign(searches.find(search => search.id === id), {
+    modifySearch(id, {
       lastSearchPage: {
         page,
         pages,
@@ -117,12 +122,12 @@ module.exports = () => {
     });
   };
 
-  const setLastRelease = (id, release) => Object.assign(
-    searches.find(search => search.id === id),
+  const setLastRelease = (id, release) => modifySearch(
+    id,
     { lastRelease: release.id }
   );
 
-  const clearSearch = id => Object.assign(searches.find(search => search.id === id), {
+  const clearSearch = id => modifySearch(id, {
     lastRelease: null,
     lastSearchPage: null,
   });
