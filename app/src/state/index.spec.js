@@ -1,8 +1,10 @@
 const assert = require('assert');
 
-const state = require('./index');
+const createState = require('./index');
 
 describe('State module', () => {
+  const state = createState();
+
   it('adds albums', () => {
     state.addAlbum({
       id: 1,
