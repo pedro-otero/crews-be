@@ -5,6 +5,11 @@ const album = require('./album');
 
 describe('State module', () => {
   const state = createState();
+  state.addSearch('S1');
+
+  it('adds searches', () => {
+    assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
+  });
 
   it('adds albums', () => {
     state.addAlbum({
@@ -22,16 +27,7 @@ describe('State module', () => {
       tracks: [{ id: 'T1', name: 'Track #1', credits: [] }],
     });
   });
-
   describe('searches', () => {
-    before(() => {
-      state.addSearch('S1');
-    });
-
-    it('adds', () => {
-      assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
-    });
-
     it('sets last search page', () => {
       state.setLastSearchPage('S1', {
         pagination: {
