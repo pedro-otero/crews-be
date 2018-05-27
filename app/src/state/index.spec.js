@@ -198,7 +198,7 @@ describe('State module', () => {
               }],
             }],
           };
-          state.addCredits(album, release);
+          state.addCredits(album.id, release);
         });
 
         it('extracts single role track credit', () => {
@@ -389,7 +389,7 @@ describe('State module', () => {
     describe('Credit reducer', () => {
       describe('adds credits', () => {
         before(() => {
-          state.addCredits(album, {
+          state.addCredits(album.id, {
             tracklist: [{
               id: 'T1',
               extraartists: [{
@@ -407,7 +407,7 @@ describe('State module', () => {
 
       describe('avoids duplicate credits', () => {
         before(() => {
-          state.addCredits(album, {
+          state.addCredits(album.id, {
             tracklist: [{
               id: 'T1',
               extraartists: [{ name: 'Pe1', role: 'R1' }],
@@ -425,7 +425,7 @@ describe('State module', () => {
               extraartists: [{ name: 'Pé5', role: 'R5' }],
             }],
           });
-          state.addCredits(album, {
+          state.addCredits(album.id, {
             tracklist: [{
               id: 'T1',
               extraartists: [{ name: 'Pé1', role: 'R1' }],

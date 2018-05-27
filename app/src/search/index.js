@@ -31,7 +31,7 @@ module.exports = ({ db, PAUSE_NEEDED_AFTER_429 }, createLogger, state) => (album
     LOGGER.info(MESSAGES.release(release, currentTask.data + 1, lastPage));
     state.setLastRelease(album.id, release);
     if (release.tracklist.length === album.tracks.length) {
-      state.addCredits(album, release);
+      state.addCredits(album.id, release);
     } else {
       LOGGER.debug(MESSAGES.albumMismatch(release));
     }
