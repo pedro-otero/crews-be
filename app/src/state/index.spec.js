@@ -73,10 +73,11 @@ describe('State module', () => {
       assert.equal(state.data().searches[0].lastRelease, 5);
     });
 
-    const exists = (track, name, role) => state.data().credits.find(credit =>
-      credit.track === track &&
-      credit.name === name &&
-      credit.role === role);
+    const exists = (track, name, role) => state.data().albums[0].tracks
+      .find(t => t.id === track).credits
+      .find(credit =>
+        credit.name === name &&
+        credit.role === role);
 
     describe('Credits', () => {
       describe('adds credits', () => {
@@ -198,6 +199,7 @@ describe('State module', () => {
               }],
             }],
           };
+          state.addAlbum(album);
           state.addCredits(album.id, release);
         });
 
@@ -247,7 +249,7 @@ describe('State module', () => {
           });
 
           it('No one worked on T8', () => {
-            assert(!state.data().credits.find(credit => credit.track === 'T8'));
+            assert.equal(state.data().albums[0].tracks[7].credits.length, 0);
           });
         });
 
@@ -279,24 +281,28 @@ describe('State module', () => {
           });
 
           it('No one worked on T12', () => {
-            assert(!state.data().credits.find(credit => credit.track === 'T12'));
+            assert(!state.data().albums[0].tracks.find(t => t.id === 'T12').credits.length);
           });
         });
 
         it('Ignores release extra artists without role nor tracks', () => {
-          assert(!state.data().credits.find(credit => credit.name === 'P16'));
+          assert(!state.data().albums[0].tracks
+            .reduce((all, track) => all.concat(track.credits), [])
+            .find(c => c.name === 'P16'));
         });
 
         it('Ignores release extra artists without tracks', () => {
-          assert(!state.data().credits.find(credit => credit.name === 'P17'));
+          assert(!state.data().albums[0].tracks
+            .reduce((all, track) => all.concat(track.credits), [])
+            .find(c => c.name === 'P17'));
         });
 
         it('No one worked on track 16', () => {
-          assert(!state.data().credits.find(credit => credit.track === 'T16'));
+          assert(!state.data().albums[0].tracks.find(t => t.id === 'T16').credits.length);
         });
 
         it('No one worked on track 17', () => {
-          assert(!state.data().credits.find(credit => credit.track === 'T17'));
+          assert(!state.data().albums[0].tracks.find(t => t.id === 'T17').credits.length);
         });
 
         describe('extracts literal (with to) range type multi track release credit', () => {
@@ -401,7 +407,7 @@ describe('State module', () => {
         });
 
         it('test value', () => {
-          assert(state.data().credits.find(c => c.name === 'x' && c.role === 'y'));
+          assert(exists('T1', 'x', 'y'));
         });
       });
 
@@ -449,39 +455,43 @@ describe('State module', () => {
         });
 
         it('has accented Pe1', () => {
-          assert(state.data().credits.find(c => c.name === 'Pé1' && c.role === 'R1' && c.track === 'T1'));
+          assert(exists('T1', 'Pé1', 'R1'));
         });
 
         it('has NOT unaccented Pe1', () => {
-          assert(!state.data().credits.find(c => c.name === 'Pe1' && c.role === 'R1' && c.track === 'T1'));
+          assert(!exists('T1', 'Pe1', 'R1'));
         });
 
         it('has accented Pe2', () => {
-          assert(state.data().credits.find(c => c.name === 'Pé2' && c.role === 'R2' && c.track === 'T2'));
+          assert(exists('T2', 'Pé2', 'R2'));
         });
 
         it('has NOT unaccented Pe2', () => {
-          assert(!state.data().credits.find(c => c.name === 'Pe2' && c.role === 'R2' && c.track === 'T2'));
+          assert(!exists('T2', 'Pe2', 'R2'));
         });
 
         it('adds credits that have no equivalent accented or not', () => {
-          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T3'));
+          assert(exists('T3', 'P3', 'R3'));
         });
 
         it('keeps credits that have no equivalent accented or not', () => {
-          assert(state.data().credits.find(c => c.name === 'P4' && c.role === 'R4' && c.track === 'T4'));
+          assert(exists('T4', 'P4', 'R4'));
         });
 
         it('compares credits by the role when name is the same', () => {
-          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T4'));
+          assert(exists('T4', 'P3', 'R3'));
         });
 
         it('has only one Pé5', () => {
-          assert.equal(state.data().credits.filter(c => c.name === 'Pé5' && c.role === 'R5' && c.track === 'T5').length, 1);
+          assert.equal(state.data().albums[0].tracks
+            .find(t => t.id === 'T5').credits
+            .filter(c => c.name === 'Pé5' && c.role === 'R5').length, 1);
         });
 
         it('has only one Pe6', () => {
-          assert.equal(state.data().credits.filter(c => c.name === 'Pe6' && c.role === 'R6' && c.track === 'T6').length, 1);
+          assert.equal(state.data().albums[0].tracks
+            .find(t => t.id === 'T6').credits
+            .filter(c => c.name === 'Pe6' && c.role === 'R6').length, 1);
         });
       });
     });
