@@ -1,6 +1,7 @@
 const assert = require('assert');
 
 const createState = require('./index');
+const album = require('./album');
 
 describe('State module', () => {
   const state = createState();
@@ -54,37 +55,6 @@ describe('State module', () => {
       state.setLastRelease('S1', { id: 5 });
       assert.equal(state.data().searches[0].lastRelease, 5);
     });
-
-    const album = {
-      tracks: [
-        { id: 'T1' },
-        { id: 'T2' },
-        { id: 'T3' },
-        { id: 'T4' },
-        { id: 'T5' },
-        { id: 'T6' },
-        { id: 'T7' },
-        { id: 'T8' },
-        { id: 'T9' },
-        { id: 'T10' },
-        { id: 'T11' },
-        { id: 'T12' },
-        { id: 'T13' },
-        { id: 'T14' },
-        { id: 'T15' },
-        { id: 'T16' },
-        { id: 'T17' },
-        { id: 'T18' },
-        { id: 'T19' },
-        { id: 'T20' },
-        { id: 'T21' },
-        { id: 'T22' },
-        { id: 'T23' },
-        { id: 'T24' },
-        { id: 'T25' },
-        { id: 'T26' },
-      ],
-    };
 
     const exists = (track, name, role) => state.data().credits.find(credit =>
       credit.track === track &&
