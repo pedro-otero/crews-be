@@ -12,21 +12,42 @@ describe('State module', () => {
   });
 
   it('adds albums', () => {
-    state.addAlbum({
-      id: 1,
-      name: 'Album name',
-      artists: [{ name: 'The Artist' }],
-      tracks: {
-        items: [{ id: 'T1', name: 'Track #1', x: 'y' }],
-      },
-    });
+    state.addAlbum(album);
     assert.deepEqual(state.data().albums[0], {
-      id: 1,
+      id: 'S1',
       name: 'Album name',
       artist: 'The Artist',
-      tracks: [{ id: 'T1', name: 'Track #1', credits: [] }],
+      tracks: [
+        { id: 'T1', name: 'Track #1', credits: [] },
+        { id: 'T2', name: 'Track #2', credits: [] },
+        { id: 'T3', name: 'Track #3', credits: [] },
+        { id: 'T4', name: 'Track #4', credits: [] },
+        { id: 'T5', name: 'Track #5', credits: [] },
+        { id: 'T6', name: 'Track #6', credits: [] },
+        { id: 'T7', name: 'Track #7', credits: [] },
+        { id: 'T8', name: 'Track #8', credits: [] },
+        { id: 'T9', name: 'Track #9', credits: [] },
+        { id: 'T10', name: 'Track #10', credits: [] },
+        { id: 'T11', name: 'Track #11', credits: [] },
+        { id: 'T12', name: 'Track #12', credits: [] },
+        { id: 'T13', name: 'Track #13', credits: [] },
+        { id: 'T14', name: 'Track #14', credits: [] },
+        { id: 'T15', name: 'Track #15', credits: [] },
+        { id: 'T16', name: 'Track #16', credits: [] },
+        { id: 'T17', name: 'Track #17', credits: [] },
+        { id: 'T18', name: 'Track #18', credits: [] },
+        { id: 'T19', name: 'Track #19', credits: [] },
+        { id: 'T20', name: 'Track #20', credits: [] },
+        { id: 'T21', name: 'Track #21', credits: [] },
+        { id: 'T22', name: 'Track #22', credits: [] },
+        { id: 'T23', name: 'Track #23', credits: [] },
+        { id: 'T24', name: 'Track #24', credits: [] },
+        { id: 'T25', name: 'Track #25', credits: [] },
+        { id: 'T26', name: 'Track #26', credits: [] },
+      ],
     });
   });
+
   describe('searches', () => {
     it('sets last search page', () => {
       state.setLastSearchPage('S1', {
@@ -54,8 +75,8 @@ describe('State module', () => {
 
     const exists = (track, name, role) => state.data().credits.find(credit =>
       credit.track === track &&
-        credit.name === name &&
-        credit.role === role);
+      credit.name === name &&
+      credit.role === role);
 
     describe('Credits', () => {
       describe('adds credits', () => {
@@ -385,44 +406,46 @@ describe('State module', () => {
       });
 
       describe('avoids duplicate credits', () => {
-        state.addCredits(album, {
-          tracklist: [{
-            id: 'T1',
-            extraartists: [{ name: 'Pe1', role: 'R1' }],
-          }, {
-            id: 'T2',
-            extraartists: [{ name: 'Pé2', role: 'R2' }],
-          }, {
-            id: 'T3',
-            extraartists: [{ name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T4',
-            extraartists: [],
-          }, {
-            id: 'T5',
-            extraartists: [{ name: 'Pé5', role: 'R5' }],
-          }],
-        });
-        state.addCredits(album, {
-          tracklist: [{
-            id: 'T1',
-            extraartists: [{ name: 'Pé1', role: 'R1' }],
-          }, {
-            id: 'T2',
-            extraartists: [{ name: 'Pe2', role: 'R2' }],
-          }, {
-            id: 'T3',
-            extraartists: [{ name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T4',
-            extraartists: [{ name: 'P4', role: 'R4' }, { name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T5',
-            extraartists: [{ name: 'Pé5', role: 'R5' }],
-          }, {
-            id: 'T6',
-            extraartists: [{ name: 'Pe6', role: 'R6' }],
-          }],
+        before(() => {
+          state.addCredits(album, {
+            tracklist: [{
+              id: 'T1',
+              extraartists: [{ name: 'Pe1', role: 'R1' }],
+            }, {
+              id: 'T2',
+              extraartists: [{ name: 'Pé2', role: 'R2' }],
+            }, {
+              id: 'T3',
+              extraartists: [{ name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T4',
+              extraartists: [],
+            }, {
+              id: 'T5',
+              extraartists: [{ name: 'Pé5', role: 'R5' }],
+            }],
+          });
+          state.addCredits(album, {
+            tracklist: [{
+              id: 'T1',
+              extraartists: [{ name: 'Pé1', role: 'R1' }],
+            }, {
+              id: 'T2',
+              extraartists: [{ name: 'Pe2', role: 'R2' }],
+            }, {
+              id: 'T3',
+              extraartists: [{ name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T4',
+              extraartists: [{ name: 'P4', role: 'R4' }, { name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T5',
+              extraartists: [{ name: 'Pé5', role: 'R5' }],
+            }, {
+              id: 'T6',
+              extraartists: [{ name: 'Pe6', role: 'R6' }],
+            }],
+          });
         });
 
         it('has accented Pe1', () => {

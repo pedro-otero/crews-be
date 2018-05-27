@@ -36,7 +36,7 @@ module.exports = () => {
   };
 
   const addCredits = (album, release) => {
-    const { tracks: items } = album;
+    const { tracks: items } = albums.find(a => a.id === album.id);
     const { tracklist, extraartists: releaseExtraArtists } = release;
     const translatePosition = position => tracklist.findIndex(t => t.position === position);
     const inRange = (trackString, separator, position) => {

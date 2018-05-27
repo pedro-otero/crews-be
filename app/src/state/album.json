@@ -1,82 +1,118 @@
 {
-  "tracks": [
+  "id": "S1",
+  "name": "Album name",
+  "artists": [
     {
-      "id": "T1"
-    },
-    {
-      "id": "T2"
-    },
-    {
-      "id": "T3"
-    },
-    {
-      "id": "T4"
-    },
-    {
-      "id": "T5"
-    },
-    {
-      "id": "T6"
-    },
-    {
-      "id": "T7"
-    },
-    {
-      "id": "T8"
-    },
-    {
-      "id": "T9"
-    },
-    {
-      "id": "T10"
-    },
-    {
-      "id": "T11"
-    },
-    {
-      "id": "T12"
-    },
-    {
-      "id": "T13"
-    },
-    {
-      "id": "T14"
-    },
-    {
-      "id": "T15"
-    },
-    {
-      "id": "T16"
-    },
-    {
-      "id": "T17"
-    },
-    {
-      "id": "T18"
-    },
-    {
-      "id": "T19"
-    },
-    {
-      "id": "T20"
-    },
-    {
-      "id": "T21"
-    },
-    {
-      "id": "T22"
-    },
-    {
-      "id": "T23"
-    },
-    {
-      "id": "T24"
-    },
-    {
-      "id": "T25"
-    },
-    {
-      "id": "T26"
+      "name": "The Artist"
     }
-  ]
+  ],
+  "tracks": {
+    "items": [
+      {
+        "id": "T1",
+        "name": "Track #1",
+        "someOtherKey": "that is ignored"
+      },
+      {
+        "id": "T2",
+        "name": "Track #2"
+      },
+      {
+        "name": "Track #3",
+        "id": "T3"
+      },
+      {
+        "name": "Track #4",
+        "id": "T4"
+      },
+      {
+        "name": "Track #5",
+        "id": "T5"
+      },
+      {
+        "name": "Track #6",
+        "id": "T6"
+      },
+      {
+        "name": "Track #7",
+        "id": "T7"
+      },
+      {
+        "name": "Track #8",
+        "id": "T8"
+      },
+      {
+        "name": "Track #9",
+        "id": "T9"
+      },
+      {
+        "name": "Track #10",
+        "id": "T10"
+      },
+      {
+        "name": "Track #11",
+        "id": "T11"
+      },
+      {
+        "name": "Track #12",
+        "id": "T12"
+      },
+      {
+        "name": "Track #13",
+        "id": "T13"
+      },
+      {
+        "name": "Track #14",
+        "id": "T14"
+      },
+      {
+        "name": "Track #15",
+        "id": "T15"
+      },
+      {
+        "name": "Track #16",
+        "id": "T16"
+      },
+      {
+        "name": "Track #17",
+        "id": "T17"
+      },
+      {
+        "name": "Track #18",
+        "id": "T18"
+      },
+      {
+        "name": "Track #19",
+        "id": "T19"
+      },
+      {
+        "name": "Track #20",
+        "id": "T20"
+      },
+      {
+        "name": "Track #21",
+        "id": "T21"
+      },
+      {
+        "name": "Track #22",
+        "id": "T22"
+      },
+      {
+        "name": "Track #23",
+        "id": "T23"
+      },
+      {
+        "name": "Track #24",
+        "id": "T24"
+      },
+      {
+        "name": "Track #25",
+        "id": "T25"
+      },
+      {
+        "name": "Track #26",
+        "id": "T26"
+      }
+    ]
+  }
 }
