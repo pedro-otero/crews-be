@@ -22,7 +22,6 @@ const splitTrim = (value, separator) => value.split(separator).map(v => v.trim()
 module.exports = () => {
   const albums = [];
   const searches = [];
-  let credits = [];
 
   const addAlbum = ({
     id, artists: [{ name: artist }], name, tracks: { items },
@@ -31,12 +30,12 @@ module.exports = () => {
       id,
       name,
       artist,
-      tracks: items.map(i => ({ id: i.id, name: i.name })),
+      tracks: items.map(i => ({ id: i.id, name: i.name, credits: [] })),
     });
   };
 
-  const addCredits = (album, release) => {
-    const { tracks: items } = album;
+  const addCredits = (albumId, release) => {
+    const { tracks: items } = albums.find(a => a.id === albumId);
     const { tracklist, extraartists: releaseExtraArtists } = release;
     const translatePosition = position => tracklist.findIndex(t => t.position === position);
     const inRange = (trackString, separator, position) => {
@@ -51,7 +50,7 @@ module.exports = () => {
     //    individual tracks.
     //    The following lines map the contents of such array into an structure grouped by
     //    track, matching the existing one in "tracklist"
-    const newCredits = tracklist.map(({ position, extraartists = [] }) => ({
+    tracklist.map(({ position, extraartists = [] }) => ({
       position,
       extraartists: extraartists.concat((releaseExtraArtists || [])
         .filter(({ tracks, role }) => !!tracks && !!role)
@@ -68,48 +67,39 @@ module.exports = () => {
     }))
 
     // 2. Split the resulting credits array so there's one entry for every role
-      .map(({ extraartists }, i) => ({
-        id: items[i].id,
-        trackCredits: extraartists.reduce((trackCredits, { name, role }) => trackCredits
+      .forEach(({ extraartists }, i) => {
+        const track = items[i];
+        const newCredits = extraartists.reduce((trackCredits, { name, role }) => trackCredits
           .concat(splitTrim(role, ',').map(r => ({
             name,
-            role: r,
-          }))), []),
-      }))
+            role: mappedRole(r),
+          }))), []);
 
-      // 3. Map the full credits of each track to the structure in the state "credits" array,
-      //    mapping special roles when they appear.
-      .reduce(
-        (accum, { id, trackCredits }) =>
-          accum.concat(trackCredits
-            .map(({ name, role }) => ({ track: id, name, role: mappedRole(role) }))),
-        []
-      );
-
-    // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
-    credits = newCredits
-      .filter(c => !hasAccentedName(c))
-      .concat(credits.filter(c => !hasAccentedName(c)))
-      .reduce((all, current) => {
-        if (all.find(item =>
-          accents.remove(item.name) === current.name &&
-            item.role === current.role &&
-            item.track === current.track)) {
-          return all;
-        }
-        return all.concat([current]);
-      }, newCredits
-        .filter(hasAccentedName)
-        .concat(credits.filter(hasAccentedName)))
-      .reduce((all, current) => {
-        if (all.find(item =>
-          item.name === current.name &&
-            item.role === current.role &&
-            item.track === current.track)) {
-          return all;
-        }
-        return all.concat([current]);
-      }, []);
+        // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
+        track.credits = newCredits
+          .filter(c => !hasAccentedName(c))
+          .concat(track.credits.filter(c => !hasAccentedName(c)))
+          .reduce((all, current) => {
+            if (all.find(item =>
+              accents.remove(item.name) === current.name &&
+                item.role === current.role &&
+                item.track === current.track)) {
+              return all;
+            }
+            return all.concat([current]);
+          }, newCredits
+            .filter(hasAccentedName)
+            .concat(track.credits.filter(hasAccentedName)))
+          .reduce((all, current) => {
+            if (all.find(item =>
+              item.name === current.name &&
+                item.role === current.role &&
+                item.track === current.track)) {
+              return all;
+            }
+            return all.concat([current]);
+          }, []);
+      });
   };
 
   const addSearch = id => searches.push({ id });
@@ -158,7 +148,6 @@ module.exports = () => {
     removeSearch,
     data: () => ({
       albums,
-      credits,
       searches,
     }),
   };

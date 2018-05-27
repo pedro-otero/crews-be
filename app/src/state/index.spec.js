@@ -1,36 +1,54 @@
 const assert = require('assert');
 
 const createState = require('./index');
+const album = require('./album');
 
 describe('State module', () => {
   const state = createState();
+  state.addSearch('S1');
+
+  it('adds searches', () => {
+    assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
+  });
 
   it('adds albums', () => {
-    state.addAlbum({
-      id: 1,
-      name: 'Album name',
-      artists: [{ name: 'The Artist' }],
-      tracks: {
-        items: [{ id: 'T1', name: 'Track #1', x: 'y' }],
-      },
-    });
+    state.addAlbum(album);
     assert.deepEqual(state.data().albums[0], {
-      id: 1,
+      id: 'S1',
       name: 'Album name',
       artist: 'The Artist',
-      tracks: [{ id: 'T1', name: 'Track #1' }],
+      tracks: [
+        { id: 'T1', name: 'Track #1', credits: [] },
+        { id: 'T2', name: 'Track #2', credits: [] },
+        { id: 'T3', name: 'Track #3', credits: [] },
+        { id: 'T4', name: 'Track #4', credits: [] },
+        { id: 'T5', name: 'Track #5', credits: [] },
+        { id: 'T6', name: 'Track #6', credits: [] },
+        { id: 'T7', name: 'Track #7', credits: [] },
+        { id: 'T8', name: 'Track #8', credits: [] },
+        { id: 'T9', name: 'Track #9', credits: [] },
+        { id: 'T10', name: 'Track #10', credits: [] },
+        { id: 'T11', name: 'Track #11', credits: [] },
+        { id: 'T12', name: 'Track #12', credits: [] },
+        { id: 'T13', name: 'Track #13', credits: [] },
+        { id: 'T14', name: 'Track #14', credits: [] },
+        { id: 'T15', name: 'Track #15', credits: [] },
+        { id: 'T16', name: 'Track #16', credits: [] },
+        { id: 'T17', name: 'Track #17', credits: [] },
+        { id: 'T18', name: 'Track #18', credits: [] },
+        { id: 'T19', name: 'Track #19', credits: [] },
+        { id: 'T20', name: 'Track #20', credits: [] },
+        { id: 'T21', name: 'Track #21', credits: [] },
+        { id: 'T22', name: 'Track #22', credits: [] },
+        { id: 'T23', name: 'Track #23', credits: [] },
+        { id: 'T24', name: 'Track #24', credits: [] },
+        { id: 'T25', name: 'Track #25', credits: [] },
+        { id: 'T26', name: 'Track #26', credits: [] },
+      ],
     });
   });
 
   describe('searches', () => {
-    before(() => {
-      state.addSearch('S1');
-    });
-
-    it('adds', () => {
-      assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
-    });
-
     it('sets last search page', () => {
       state.setLastSearchPage('S1', {
         pagination: {
@@ -55,43 +73,13 @@ describe('State module', () => {
       assert.equal(state.data().searches[0].lastRelease, 5);
     });
 
-    const album = {
-      tracks: [
-        { id: 'T1' },
-        { id: 'T2' },
-        { id: 'T3' },
-        { id: 'T4' },
-        { id: 'T5' },
-        { id: 'T6' },
-        { id: 'T7' },
-        { id: 'T8' },
-        { id: 'T9' },
-        { id: 'T10' },
-        { id: 'T11' },
-        { id: 'T12' },
-        { id: 'T13' },
-        { id: 'T14' },
-        { id: 'T15' },
-        { id: 'T16' },
-        { id: 'T17' },
-        { id: 'T18' },
-        { id: 'T19' },
-        { id: 'T20' },
-        { id: 'T21' },
-        { id: 'T22' },
-        { id: 'T23' },
-        { id: 'T24' },
-        { id: 'T25' },
-        { id: 'T26' },
-      ],
-    };
-
-    describe('Credits', () => {
-      const exists = (credits, track, name, role) => credits.find(credit =>
-        credit.track === track &&
+    const exists = (track, name, role) => state.data().albums[0].tracks
+      .find(t => t.id === track).credits
+      .find(credit =>
         credit.name === name &&
         credit.role === role);
 
+    describe('Credits', () => {
       describe('adds credits', () => {
         before(() => {
           const release = {
@@ -211,118 +199,123 @@ describe('State module', () => {
               }],
             }],
           };
-          state.addCredits(album, release);
+          state.addAlbum(album);
+          state.addCredits(album.id, release);
         });
 
         it('extracts single role track credit', () => {
-          assert(exists(state.data().credits, 'T1', 'P1', 'R1'));
+          assert(exists('T1', 'P1', 'R1'));
         });
 
         it('extracts single role track credit', () => {
-          assert(exists(state.data().credits, 'T1', 'P1', 'R1'));
+          assert(exists('T1', 'P1', 'R1'));
         });
 
         describe('extracts multi role track credit', () => {
           it('P2 worked on T2 as R21', () => {
-            assert(exists(state.data().credits, 'T2', 'P2', 'R21'));
+            assert(exists('T2', 'P2', 'R21'));
           });
 
           it('P2 worked on T2 as R22', () => {
-            assert(exists(state.data().credits, 'T2', 'P2', 'R22'));
+            assert(exists('T2', 'P2', 'R22'));
           });
         });
 
         it('extracts single role release credit', () => {
-          assert(exists(state.data().credits, 'T3', 'P3', 'R3'));
+          assert(exists('T3', 'P3', 'R3'));
         });
 
         describe('extracts multi role release credit', () => {
           it('P4 worked on T4 as R41', () => {
-            assert(exists(state.data().credits, 'T4', 'P4', 'R41'));
+            assert(exists('T4', 'P4', 'R41'));
           });
 
           it('P4 worked on T4 as R42', () => {
-            assert(exists(state.data().credits, 'T4', 'P4', 'R42'));
+            assert(exists('T4', 'P4', 'R42'));
           });
         });
 
         describe('extracts hyphen-rage multi track release credit', () => {
           it('P567 worked on T5 as R51', () => {
-            assert(exists(state.data().credits, 'T5', 'P567', 'R51'));
+            assert(exists('T5', 'P567', 'R51'));
           });
 
           it('P567 worked on T6 as R51', () => {
-            assert(exists(state.data().credits, 'T6', 'P567', 'R51'));
+            assert(exists('T6', 'P567', 'R51'));
           });
 
           it('P567 worked on T7 as R51', () => {
-            assert(exists(state.data().credits, 'T7', 'P567', 'R51'));
+            assert(exists('T7', 'P567', 'R51'));
           });
 
           it('No one worked on T8', () => {
-            assert(!state.data().credits.find(credit => credit.track === 'T8'));
+            assert.equal(state.data().albums[0].tracks[7].credits.length, 0);
           });
         });
 
         describe('extracts comma separated multi track release credit', () => {
           it('P910 worked on T9 as R910', () => {
-            assert(exists(state.data().credits, 'T9', 'P910', 'R910'));
+            assert(exists('T9', 'P910', 'R910'));
           });
 
           it('P920 worked on T10 as R910', () => {
-            assert(exists(state.data().credits, 'T10', 'P910', 'R910'));
+            assert(exists('T10', 'P910', 'R910'));
           });
         });
 
         describe('extracts mixed range type multi track release credit', () => {
           it('P111315 worked on T11 as R111315', () => {
-            assert(exists(state.data().credits, 'T11', 'P111315', 'R111315'));
+            assert(exists('T11', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T13 as R111315', () => {
-            assert(exists(state.data().credits, 'T13', 'P111315', 'R111315'));
+            assert(exists('T13', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T14 as R111315', () => {
-            assert(exists(state.data().credits, 'T14', 'P111315', 'R111315'));
+            assert(exists('T14', 'P111315', 'R111315'));
           });
 
           it('P111315 worked on T15 as R111315', () => {
-            assert(exists(state.data().credits, 'T15', 'P111315', 'R111315'));
+            assert(exists('T15', 'P111315', 'R111315'));
           });
 
           it('No one worked on T12', () => {
-            assert(!state.data().credits.find(credit => credit.track === 'T12'));
+            assert(!state.data().albums[0].tracks.find(t => t.id === 'T12').credits.length);
           });
         });
 
         it('Ignores release extra artists without role nor tracks', () => {
-          assert(!state.data().credits.find(credit => credit.name === 'P16'));
+          assert(!state.data().albums[0].tracks
+            .reduce((all, track) => all.concat(track.credits), [])
+            .find(c => c.name === 'P16'));
         });
 
         it('Ignores release extra artists without tracks', () => {
-          assert(!state.data().credits.find(credit => credit.name === 'P17'));
+          assert(!state.data().albums[0].tracks
+            .reduce((all, track) => all.concat(track.credits), [])
+            .find(c => c.name === 'P17'));
         });
 
         it('No one worked on track 16', () => {
-          assert(!state.data().credits.find(credit => credit.track === 'T16'));
+          assert(!state.data().albums[0].tracks.find(t => t.id === 'T16').credits.length);
         });
 
         it('No one worked on track 17', () => {
-          assert(!state.data().credits.find(credit => credit.track === 'T17'));
+          assert(!state.data().albums[0].tracks.find(t => t.id === 'T17').credits.length);
         });
 
         describe('extracts literal (with to) range type multi track release credit', () => {
           it('P181920 worked on T18 as R181920', () => {
-            assert(exists(state.data().credits, 'T18', 'P181920', 'R181920'));
+            assert(exists('T18', 'P181920', 'R181920'));
           });
 
           it('P181920 worked on T19 as R181920', () => {
-            assert(exists(state.data().credits, 'T19', 'P181920', 'R181920'));
+            assert(exists('T19', 'P181920', 'R181920'));
           });
 
           it('P181920 worked on T20 as R181920', () => {
-            assert(exists(state.data().credits, 'T20', 'P181920', 'R181920'));
+            assert(exists('T20', 'P181920', 'R181920'));
           });
         });
 
@@ -331,27 +324,27 @@ describe('State module', () => {
         // A1, A2, A3, B1, B2...
         describe('Can work with non numeric positions in release credits', () => {
           it('individually', () => {
-            assert(exists(state.data().credits, 'T21', 'P21', 'R21'));
+            assert(exists('T21', 'P21', 'R21'));
           });
 
           describe('in a range', () => {
             describe('literal', () => {
               it('P2223 worked on T22 as R2223', () => {
-                assert(exists(state.data().credits, 'T22', 'P2223', 'R2223'));
+                assert(exists('T22', 'P2223', 'R2223'));
               });
 
               it('P2223 worked on T23 as R2223', () => {
-                assert(exists(state.data().credits, 'T23', 'P2223', 'R2223'));
+                assert(exists('T23', 'P2223', 'R2223'));
               });
             });
 
             describe('hyphenated', () => {
               it('P2425 worked on T24 as R2425', () => {
-                assert(exists(state.data().credits, 'T24', 'P2425', 'R2425'));
+                assert(exists('T24', 'P2425', 'R2425'));
               });
 
               it('P2425 worked on T25 as R2425', () => {
-                assert(exists(state.data().credits, 'T25', 'P2425', 'R2425'));
+                assert(exists('T25', 'P2425', 'R2425'));
               });
             });
           });
@@ -359,41 +352,41 @@ describe('State module', () => {
 
         describe('Can work with mixed multi ranges and position types', () => {
           it('P1 worked on T19 as R1', () => {
-            assert(exists(state.data().credits, 'T19', 'P1', 'R1'));
+            assert(exists('T19', 'P1', 'R1'));
           });
 
           it('P1 worked on T20 as R1', () => {
-            assert(exists(state.data().credits, 'T20', 'P1', 'R1'));
+            assert(exists('T20', 'P1', 'R1'));
           });
 
           it('P1 worked on T21 as R1', () => {
-            assert(exists(state.data().credits, 'T21', 'P1', 'R1'));
+            assert(exists('T21', 'P1', 'R1'));
           });
 
           it('P1 worked on T23 as R1', () => {
-            assert(exists(state.data().credits, 'T23', 'P1', 'R1'));
+            assert(exists('T23', 'P1', 'R1'));
           });
 
           it('P1 worked on T24 as R1', () => {
-            assert(exists(state.data().credits, 'T24', 'P1', 'R1'));
+            assert(exists('T24', 'P1', 'R1'));
           });
 
           it('P1 worked on T25 as R1', () => {
-            assert(exists(state.data().credits, 'T25', 'P1', 'R1'));
+            assert(exists('T25', 'P1', 'R1'));
           });
         });
 
         describe('Special roles', () => {
           it('Composers', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-1', 'Composer'));
+            assert(exists('T26', 'P26-1', 'Composer'));
           });
 
           it('Producers', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-2', 'Producer'));
+            assert(exists('T26', 'P26-2', 'Producer'));
           });
 
           it('Featured', () => {
-            assert(exists(state.data().credits, 'T26', 'P26-3', 'Featured'));
+            assert(exists('T26', 'P26-3', 'Featured'));
           });
         });
       });
@@ -402,7 +395,7 @@ describe('State module', () => {
     describe('Credit reducer', () => {
       describe('adds credits', () => {
         before(() => {
-          state.addCredits(album, {
+          state.addCredits(album.id, {
             tracklist: [{
               id: 'T1',
               extraartists: [{
@@ -414,85 +407,91 @@ describe('State module', () => {
         });
 
         it('test value', () => {
-          assert(state.data().credits.find(c => c.name === 'x' && c.role === 'y'));
+          assert(exists('T1', 'x', 'y'));
         });
       });
 
       describe('avoids duplicate credits', () => {
-        state.addCredits(album, {
-          tracklist: [{
-            id: 'T1',
-            extraartists: [{ name: 'Pe1', role: 'R1' }],
-          }, {
-            id: 'T2',
-            extraartists: [{ name: 'Pé2', role: 'R2' }],
-          }, {
-            id: 'T3',
-            extraartists: [{ name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T4',
-            extraartists: [],
-          }, {
-            id: 'T5',
-            extraartists: [{ name: 'Pé5', role: 'R5' }],
-          }],
-        });
-        state.addCredits(album, {
-          tracklist: [{
-            id: 'T1',
-            extraartists: [{ name: 'Pé1', role: 'R1' }],
-          }, {
-            id: 'T2',
-            extraartists: [{ name: 'Pe2', role: 'R2' }],
-          }, {
-            id: 'T3',
-            extraartists: [{ name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T4',
-            extraartists: [{ name: 'P4', role: 'R4' }, { name: 'P3', role: 'R3' }],
-          }, {
-            id: 'T5',
-            extraartists: [{ name: 'Pé5', role: 'R5' }],
-          }, {
-            id: 'T6',
-            extraartists: [{ name: 'Pe6', role: 'R6' }],
-          }],
+        before(() => {
+          state.addCredits(album.id, {
+            tracklist: [{
+              id: 'T1',
+              extraartists: [{ name: 'Pe1', role: 'R1' }],
+            }, {
+              id: 'T2',
+              extraartists: [{ name: 'Pé2', role: 'R2' }],
+            }, {
+              id: 'T3',
+              extraartists: [{ name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T4',
+              extraartists: [],
+            }, {
+              id: 'T5',
+              extraartists: [{ name: 'Pé5', role: 'R5' }],
+            }],
+          });
+          state.addCredits(album.id, {
+            tracklist: [{
+              id: 'T1',
+              extraartists: [{ name: 'Pé1', role: 'R1' }],
+            }, {
+              id: 'T2',
+              extraartists: [{ name: 'Pe2', role: 'R2' }],
+            }, {
+              id: 'T3',
+              extraartists: [{ name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T4',
+              extraartists: [{ name: 'P4', role: 'R4' }, { name: 'P3', role: 'R3' }],
+            }, {
+              id: 'T5',
+              extraartists: [{ name: 'Pé5', role: 'R5' }],
+            }, {
+              id: 'T6',
+              extraartists: [{ name: 'Pe6', role: 'R6' }],
+            }],
+          });
         });
 
         it('has accented Pe1', () => {
-          assert(state.data().credits.find(c => c.name === 'Pé1' && c.role === 'R1' && c.track === 'T1'));
+          assert(exists('T1', 'Pé1', 'R1'));
         });
 
         it('has NOT unaccented Pe1', () => {
-          assert(!state.data().credits.find(c => c.name === 'Pe1' && c.role === 'R1' && c.track === 'T1'));
+          assert(!exists('T1', 'Pe1', 'R1'));
         });
 
         it('has accented Pe2', () => {
-          assert(state.data().credits.find(c => c.name === 'Pé2' && c.role === 'R2' && c.track === 'T2'));
+          assert(exists('T2', 'Pé2', 'R2'));
         });
 
         it('has NOT unaccented Pe2', () => {
-          assert(!state.data().credits.find(c => c.name === 'Pe2' && c.role === 'R2' && c.track === 'T2'));
+          assert(!exists('T2', 'Pe2', 'R2'));
         });
 
         it('adds credits that have no equivalent accented or not', () => {
-          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T3'));
+          assert(exists('T3', 'P3', 'R3'));
         });
 
         it('keeps credits that have no equivalent accented or not', () => {
-          assert(state.data().credits.find(c => c.name === 'P4' && c.role === 'R4' && c.track === 'T4'));
+          assert(exists('T4', 'P4', 'R4'));
         });
 
         it('compares credits by the role when name is the same', () => {
-          assert(state.data().credits.find(c => c.name === 'P3' && c.role === 'R3' && c.track === 'T4'));
+          assert(exists('T4', 'P3', 'R3'));
         });
 
         it('has only one Pé5', () => {
-          assert.equal(state.data().credits.filter(c => c.name === 'Pé5' && c.role === 'R5' && c.track === 'T5').length, 1);
+          assert.equal(state.data().albums[0].tracks
+            .find(t => t.id === 'T5').credits
+            .filter(c => c.name === 'Pé5' && c.role === 'R5').length, 1);
         });
 
         it('has only one Pe6', () => {
-          assert.equal(state.data().credits.filter(c => c.name === 'Pe6' && c.role === 'R6' && c.track === 'T6').length, 1);
+          assert.equal(state.data().albums[0].tracks
+            .find(t => t.id === 'T6').credits
+            .filter(c => c.name === 'Pe6' && c.role === 'R6').length, 1);
         });
       });
     });

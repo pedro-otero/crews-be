@@ -2,7 +2,7 @@ const buildAlbum = require('./build');
 
 module.exports = state => function (id) {
   const {
-    searches, albums, credits,
+    searches, albums,
   } = state.data();
 
   const search = searches.find(item => item.id === id);
@@ -27,9 +27,12 @@ module.exports = state => function (id) {
 
   const bestMatch = (() => {
     const { tracks } = album;
-    const albumCredits = credits
-      .filter(credit => tracks.map(track => track.id).includes(credit.track));
-    return buildAlbum(album, albumCredits);
+    const credits = tracks.reduce((all, track) => all.concat(track.credits.map(credit => ({
+      track: track.id,
+      name: credit.name,
+      role: credit.role,
+    }))), []);
+    return buildAlbum(album, credits);
   })();
 
   return { id, progress, bestMatch };
