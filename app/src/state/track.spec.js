@@ -32,14 +32,14 @@ describe('Track object', () => {
 
   it('adds producers', () => {
     tracks(track).addCredit({
-      name: 'P2',
+      name: 'Pe2',
       role: 'Produced By',
     });
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: [],
       credits: {},
     });
@@ -54,7 +54,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: {},
     });
@@ -69,7 +69,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano'] },
     });
@@ -84,7 +84,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
     });
@@ -99,7 +99,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
     });
@@ -107,14 +107,14 @@ describe('Track object', () => {
 
   it('does not duplicate producers', () => {
     tracks(track).addCredit({
-      name: 'P2',
+      name: 'Pe2',
       role: 'Producer',
     });
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
     });
@@ -129,7 +129,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pe1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
     });
@@ -144,7 +144,7 @@ describe('Track object', () => {
       name: 'Title',
       id: 'T1',
       composers: ['Pé1'],
-      producers: ['P2'],
+      producers: ['Pe2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
     });
