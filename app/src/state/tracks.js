@@ -14,8 +14,10 @@ const tracks = (track) => {
     }
   };
   const addProducer = (name) => {
-    if (!track.producers.includes(name)) {
+    if (!accents.has(name) && !track.producers.includes(name)) {
       track.producers.push(name);
+    } else if (accents.has(name) && track.producers.includes(accents.remove(name))) {
+      track.producers.splice(track.producers.findIndex(i => i === accents.remove(name)), 1, name);
     }
   };
   const addFeatured = (name) => {
