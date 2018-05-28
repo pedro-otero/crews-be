@@ -29,4 +29,19 @@ describe('Track object', () => {
       credits: {},
     });
   });
+
+  it('adds producers', () => {
+    tracks(track).addCredit({
+      name: 'P2',
+      role: 'Produced By',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['P1'],
+      producers: ['P2'],
+      featured: [],
+      credits: {},
+    });
+  });
 });
