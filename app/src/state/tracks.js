@@ -9,7 +9,11 @@ const tracks = (track) => {
       track.composers.push(name);
     }
   };
-  const addProducer = name => track.producers.push(name);
+  const addProducer = (name) => {
+    if (!track.producers.includes(name)) {
+      track.producers.push(name);
+    }
+  };
   const addFeatured = name => track.featured.push(name);
   return {
     addCredit: (extraartist) => {

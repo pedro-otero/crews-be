@@ -104,4 +104,19 @@ describe('Track object', () => {
       credits: { P4: ['Piano', 'Drums'] },
     });
   });
+
+  it('does not duplicate producers', () => {
+    tracks(track).addCredit({
+      name: 'P2',
+      role: 'Producer',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['P1'],
+      producers: ['P2'],
+      featured: ['P3'],
+      credits: { P4: ['Piano', 'Drums'] },
+    });
+  });
 });
