@@ -25,10 +25,13 @@ const tracks = (track) => {
         addProducer(name);
       } else if (isFeatured(extraartist)) {
         addFeatured(name);
-      } else if (!(name in track.credits)) {
-        Object.assign(track, { credits: { [name]: [role] } });
+      } else if (!accents.has(name) && !(name in track.credits)) {
+        track.credits[name] = [role];
+      } else if (accents.has(name) && accents.remove(name) in track.credits) {
+        track.credits[name] = track.credits[accents.remove(name)];
+        delete track.credits[accents.remove(name)];
       } else {
-        Object.assign(track, { credits: { [name]: [...track.credits[name], role] } });
+        track.credits[name].push(role);
       }
     },
   };
