@@ -15,6 +15,8 @@ const tracks = (track) => {
         addProducer(extraartist.name);
       } else if (isFeatured(extraartist)) {
         addFeatured(extraartist.name);
+      } else if (!(extraartist.name in track.credits)) {
+        Object.assign(track, { credits: { [extraartist.name]: [extraartist.role] } });
       }
     },
   };
