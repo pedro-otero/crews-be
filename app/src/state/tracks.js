@@ -6,25 +6,16 @@ const tracks = (track) => {
   const isComposer = ({ role }) => roles.composers.includes(role);
   const isProducer = ({ role }) => roles.producers.includes(role);
   const isFeatured = ({ role }) => roles.featured.includes(role);
-  const addComposer = (name) => {
-    if (!accents.has(name) && !track.composers.includes(name)) {
-      track.composers.push(name);
-    } else if (accents.has(name) && track.composers.includes(accents.remove(name))) {
-      track.composers.splice(track.composers.findIndex(i => i === accents.remove(name)), 1, name);
+  const addSpecialRole = (array, name) => {
+    if (!accents.has(name) && !array.includes(name)) {
+      array.push(name);
+    } else if (accents.has(name) && array.includes(accents.remove(name))) {
+      array.splice(array.findIndex(i => i === accents.remove(name)), 1, name);
     }
   };
-  const addProducer = (name) => {
-    if (!accents.has(name) && !track.producers.includes(name)) {
-      track.producers.push(name);
-    } else if (accents.has(name) && track.producers.includes(accents.remove(name))) {
-      track.producers.splice(track.producers.findIndex(i => i === accents.remove(name)), 1, name);
-    }
-  };
-  const addFeatured = (name) => {
-    if (!track.featured.includes(name)) {
-      track.featured.push(name);
-    }
-  };
+  const addComposer = name => addSpecialRole(track.composers, name);
+  const addProducer = name => addSpecialRole(track.producers, name);
+  const addFeatured = name => addSpecialRole(track.featured, name);
   return {
     addCredit: (extraartist) => {
       const { name, role } = extraartist;
