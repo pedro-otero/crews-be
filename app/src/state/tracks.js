@@ -1,24 +1,25 @@
 const roles = require('./roles');
 
 const tracks = (track) => {
-  const isComposer = extraartist => roles.composers.includes(extraartist.role);
-  const isProducer = extraartist => roles.producers.includes(extraartist.role);
-  const isFeatured = extraartist => roles.featured.includes(extraartist.role);
+  const isComposer = ({ role }) => roles.composers.includes(role);
+  const isProducer = ({ role }) => roles.producers.includes(role);
+  const isFeatured = ({ role }) => roles.featured.includes(role);
   const addComposer = name => track.composers.push(name);
   const addProducer = name => track.producers.push(name);
   const addFeatured = name => track.featured.push(name);
   return {
     addCredit: (extraartist) => {
+      const { name, role } = extraartist;
       if (isComposer(extraartist)) {
-        addComposer(extraartist.name);
+        addComposer(name);
       } else if (isProducer(extraartist)) {
-        addProducer(extraartist.name);
+        addProducer(name);
       } else if (isFeatured(extraartist)) {
-        addFeatured(extraartist.name);
-      } else if (!(extraartist.name in track.credits)) {
-        Object.assign(track, { credits: { [extraartist.name]: [extraartist.role] } });
+        addFeatured(name);
+      } else if (!(name in track.credits)) {
+        Object.assign(track, { credits: { [name]: [role] } });
       } else {
-        Object.assign(track, { credits: { [extraartist.name]: [...track.credits[extraartist.name], extraartist.role] } });
+        Object.assign(track, { credits: { [name]: [...track.credits[name], role] } });
       }
     },
   };
