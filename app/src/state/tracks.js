@@ -1,3 +1,5 @@
+const accents = require('remove-accents');
+
 const roles = require('./roles');
 
 const tracks = (track) => {
@@ -5,8 +7,10 @@ const tracks = (track) => {
   const isProducer = ({ role }) => roles.producers.includes(role);
   const isFeatured = ({ role }) => roles.featured.includes(role);
   const addComposer = (name) => {
-    if (!track.composers.includes(name)) {
+    if (!accents.has(name) && !track.composers.includes(name)) {
       track.composers.push(name);
+    } else if (accents.has(name) && track.composers.includes(accents.remove(name))) {
+      track.composers.splice(track.composers.findIndex(i => i === accents.remove(name)), 1, name);
     }
   };
   const addProducer = (name) => {
