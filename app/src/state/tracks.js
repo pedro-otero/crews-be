@@ -14,7 +14,11 @@ const tracks = (track) => {
       track.producers.push(name);
     }
   };
-  const addFeatured = name => track.featured.push(name);
+  const addFeatured = (name) => {
+    if (!track.featured.includes(name)) {
+      track.featured.push(name);
+    }
+  };
   return {
     addCredit: (extraartist) => {
       const { name, role } = extraartist;
