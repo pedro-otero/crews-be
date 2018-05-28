@@ -17,13 +17,13 @@ describe('Track object', () => {
 
   it('adds composers', () => {
     tracks(track).addCredit({
-      name: 'P1',
+      name: 'Pe1',
       role: 'Written-By',
     });
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: [],
       featured: [],
       credits: {},
@@ -38,7 +38,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: [],
       credits: {},
@@ -53,7 +53,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: {},
@@ -68,7 +68,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: { P4: ['Piano'] },
@@ -83,7 +83,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
@@ -92,13 +92,13 @@ describe('Track object', () => {
 
   it('does not duplicate composers', () => {
     tracks(track).addCredit({
-      name: 'P1',
+      name: 'Pe1',
       role: 'Written By',
     });
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
@@ -113,7 +113,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
@@ -128,7 +128,7 @@ describe('Track object', () => {
     assert.deepEqual(track, {
       name: 'Title',
       id: 'T1',
-      composers: ['P1'],
+      composers: ['Pe1'],
       producers: ['P2'],
       featured: ['P3'],
       credits: { P4: ['Piano', 'Drums'] },
