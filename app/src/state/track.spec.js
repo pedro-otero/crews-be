@@ -74,4 +74,19 @@ describe('Track object', () => {
       credits: { P4: ['Piano'] },
     });
   });
+
+  it('adds other credits for existing artists', () => {
+    tracks(track).addCredit({
+      name: 'P4',
+      role: 'Drums',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['P1'],
+      producers: ['P2'],
+      featured: ['P3'],
+      credits: { P4: ['Piano', 'Drums'] },
+    });
+  });
 });
