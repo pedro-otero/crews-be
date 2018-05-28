@@ -62,7 +62,7 @@ describe('Track object', () => {
 
   it('adds other credits', () => {
     tracks(track).addCredit({
-      name: 'P4',
+      name: 'Pe4',
       role: 'Piano',
     });
     assert.deepEqual(track, {
@@ -71,13 +71,13 @@ describe('Track object', () => {
       composers: ['Pe1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano'] },
+      credits: { Pe4: ['Piano'] },
     });
   });
 
   it('adds other credits for existing artists', () => {
     tracks(track).addCredit({
-      name: 'P4',
+      name: 'Pe4',
       role: 'Drums',
     });
     assert.deepEqual(track, {
@@ -86,7 +86,7 @@ describe('Track object', () => {
       composers: ['Pe1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -101,7 +101,7 @@ describe('Track object', () => {
       composers: ['Pe1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -116,7 +116,7 @@ describe('Track object', () => {
       composers: ['Pe1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -131,7 +131,7 @@ describe('Track object', () => {
       composers: ['Pe1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -146,7 +146,7 @@ describe('Track object', () => {
       composers: ['Pé1'],
       producers: ['Pe2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -161,7 +161,7 @@ describe('Track object', () => {
       composers: ['Pé1'],
       producers: ['Pé2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 
@@ -176,7 +176,7 @@ describe('Track object', () => {
       composers: ['Pé1'],
       producers: ['Pé2'],
       featured: ['P3'],
-      credits: { P4: ['Piano', 'Drums'] },
+      credits: { Pe4: ['Piano', 'Drums'] },
     });
   });
 });
