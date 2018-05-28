@@ -4,7 +4,11 @@ const tracks = (track) => {
   const isComposer = ({ role }) => roles.composers.includes(role);
   const isProducer = ({ role }) => roles.producers.includes(role);
   const isFeatured = ({ role }) => roles.featured.includes(role);
-  const addComposer = name => track.composers.push(name);
+  const addComposer = (name) => {
+    if (!track.composers.includes(name)) {
+      track.composers.push(name);
+    }
+  };
   const addProducer = name => track.producers.push(name);
   const addFeatured = name => track.featured.push(name);
   return {
