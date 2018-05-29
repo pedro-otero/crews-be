@@ -26,7 +26,7 @@ const tracks = (track) => {
         addProducer(name);
       } else if (isFeatured(extraartist)) {
         addFeatured(name);
-      } else if (!accents.has(name) && !(name in track.credits)) {
+      } else if (!(name in track.credits) && !(accents.remove(name) in track.credits)) {
         track.credits[name] = [role];
       } else if (accents.has(name) && accents.remove(name) in track.credits) {
         track.credits[name] = track.credits[accents.remove(name)];
