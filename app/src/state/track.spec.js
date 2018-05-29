@@ -216,4 +216,27 @@ describe('Track object', () => {
       },
     });
   });
+
+  it('adds credits to unaccented names', () => {
+    tracks(track).addCredit({
+      name: 'P6',
+      role: 'Other',
+    });
+    tracks(track).addCredit({
+      name: 'P6',
+      role: 'thing',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['Pé1'],
+      producers: ['Pé2'],
+      featured: ['P3'],
+      credits: {
+        Pé4: ['Piano', 'Drums'],
+        Pé5: ['Something', 'else'],
+        P6: ['Other', 'thing'],
+      },
+    });
+  });
 });
