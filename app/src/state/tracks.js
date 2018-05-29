@@ -35,14 +35,8 @@ Track.prototype.addFeatured = function (name) {
   addSpecialRole(this.featured, name);
 };
 
-Track.prototype.addCredit = function ({ name, role }) {
-  if (isComposer(role)) {
-    this.addComposer(name);
-  } else if (isProducer(role)) {
-    this.addProducer(name);
-  } else if (isFeatured(role)) {
-    this.addFeatured(name);
-  } else if (!(name in this.credits) && !(accents.remove(name) in this.credits)) {
+Track.prototype.addCollaborator = function (name, role) {
+  if (!(name in this.credits) && !(accents.remove(name) in this.credits)) {
     this.credits[name] = [role];
   } else if (accents.has(name) && accents.remove(name) in this.credits) {
     this.credits[name] = this.credits[accents.remove(name)];
@@ -52,6 +46,18 @@ Track.prototype.addCredit = function ({ name, role }) {
     delete this.credits[accents.remove(name)];
   } else if (!this.credits[name].includes(role)) {
     this.credits[name].push(role);
+  }
+};
+
+Track.prototype.addCredit = function ({ name, role }) {
+  if (isComposer(role)) {
+    this.addComposer(name);
+  } else if (isProducer(role)) {
+    this.addProducer(name);
+  } else if (isFeatured(role)) {
+    this.addFeatured(name);
+  } else {
+    this.addCollaborator(name, role);
   }
 };
 
