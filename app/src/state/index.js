@@ -4,13 +4,9 @@ module.exports = () => {
   const albums = [];
   const searches = [];
 
-  const addAlbum = (album) => {
-    albums.push(new Album(album));
-  };
+  const addAlbum = album => albums.push(new Album(album));
 
-  const addCredits = (albumId, release) => {
-    albums.find(a => a.id === albumId).merge(release);
-  };
+  const addCredits = (albumId, release) => albums.find(a => a.id === albumId).merge(release);
 
   const addSearch = id => searches.push({ id });
 
@@ -24,17 +20,15 @@ module.exports = () => {
       page, pages, items, per_page: perPage,
     },
     results,
-  }) => {
-    modifySearch(id, {
-      lastSearchPage: {
-        page,
-        pages,
-        items,
-        perPage,
-        releases: results.map(result => result.id),
-      },
-    });
-  };
+  }) => modifySearch(id, {
+    lastSearchPage: {
+      page,
+      pages,
+      items,
+      perPage,
+      releases: results.map(result => result.id),
+    },
+  });
 
   const setLastRelease = (id, release) => modifySearch(
     id,
