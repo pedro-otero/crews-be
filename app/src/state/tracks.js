@@ -36,16 +36,17 @@ Track.prototype.addFeatured = function (name) {
 };
 
 Track.prototype.addCollaborator = function (name, role) {
-  if (!(name in this.credits) && !(accents.remove(name) in this.credits)) {
-    this.credits[name] = [role];
-  } else if (accents.has(name) && accents.remove(name) in this.credits) {
-    this.credits[name] = this.credits[accents.remove(name)];
-    if (!this.credits[name].includes(role)) {
-      this.credits[name].push(role);
+  const { credits } = this;
+  if (!credits[name] && !credits[accents.remove(name)]) {
+    credits[name] = [role];
+  } else if (accents.has(name) && credits[accents.remove(name)]) {
+    credits[name] = credits[accents.remove(name)];
+    if (!credits[name].includes(role)) {
+      credits[name].push(role);
     }
-    delete this.credits[accents.remove(name)];
-  } else if (!this.credits[name].includes(role)) {
-    this.credits[name].push(role);
+    delete credits[accents.remove(name)];
+  } else if (!credits[name].includes(role)) {
+    credits[name].push(role);
   }
 };
 
