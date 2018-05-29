@@ -1,4 +1,4 @@
-const Track = require('./tracks');
+const Track = require('./track');
 const assert = require('assert');
 
 const track = new Track('T1', 'Title');
