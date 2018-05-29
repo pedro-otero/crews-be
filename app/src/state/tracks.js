@@ -37,14 +37,15 @@ Track.prototype.addFeatured = function (name) {
 
 Track.prototype.addCollaborator = function (name, role) {
   const { credits } = this;
-  if (!credits[name] && !credits[accents.remove(name)]) {
+  const unaccented = accents.remove(name);
+  if (!credits[name] && !credits[unaccented]) {
     credits[name] = [role];
-  } else if (accents.has(name) && credits[accents.remove(name)]) {
-    credits[name] = credits[accents.remove(name)];
+  } else if (accents.has(name) && credits[unaccented]) {
+    credits[name] = credits[unaccented];
     if (!credits[name].includes(role)) {
       credits[name].push(role);
     }
-    delete credits[accents.remove(name)];
+    delete credits[unaccented];
   } else if (!credits[name].includes(role)) {
     credits[name].push(role);
   }
