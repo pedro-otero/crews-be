@@ -194,4 +194,26 @@ describe('Track object', () => {
       credits: { Pé4: ['Piano', 'Drums'] },
     });
   });
+
+  it('replaces an existing unaccented credit name for its accented variant, adding new roles to it', () => {
+    tracks(track).addCredit({
+      name: 'Pe5',
+      role: 'Something',
+    });
+    tracks(track).addCredit({
+      name: 'Pé5',
+      role: 'else',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['Pé1'],
+      producers: ['Pé2'],
+      featured: ['P3'],
+      credits: {
+        Pé4: ['Piano', 'Drums'],
+        Pé5: ['Something', 'else'],
+      },
+    });
+  });
 });

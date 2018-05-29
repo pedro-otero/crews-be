@@ -29,6 +29,9 @@ const tracks = (track) => {
         track.credits[name] = [role];
       } else if (accents.has(name) && accents.remove(name) in track.credits) {
         track.credits[name] = track.credits[accents.remove(name)];
+        if (!track.credits[name].includes(role)) {
+          track.credits[name].push(role);
+        }
         delete track.credits[accents.remove(name)];
       } else {
         track.credits[name].push(role);
