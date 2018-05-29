@@ -1,0 +1,215 @@
+{
+  "id": "S1",
+  "name": "Album name",
+  "artist": "The Artist",
+  "tracks": [
+    {
+      "id": "T1",
+      "name": "Track #1",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T2",
+      "name": "Track #2",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T3",
+      "name": "Track #3",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T4",
+      "name": "Track #4",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T5",
+      "name": "Track #5",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T6",
+      "name": "Track #6",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T7",
+      "name": "Track #7",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T8",
+      "name": "Track #8",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T9",
+      "name": "Track #9",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T10",
+      "name": "Track #10",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T11",
+      "name": "Track #11",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T12",
+      "name": "Track #12",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T13",
+      "name": "Track #13",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T14",
+      "name": "Track #14",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T15",
+      "name": "Track #15",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T16",
+      "name": "Track #16",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T17",
+      "name": "Track #17",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T18",
+      "name": "Track #18",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T19",
+      "name": "Track #19",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T20",
+      "name": "Track #20",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T21",
+      "name": "Track #21",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T22",
+      "name": "Track #22",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T23",
+      "name": "Track #23",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T24",
+      "name": "Track #24",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T25",
+      "name": "Track #25",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    },
+    {
+      "id": "T26",
+      "name": "Track #26",
+      "composers": [],
+      "featured": [],
+      "producers": [],
+      "credits": {}
+    }
+  ]
+}
