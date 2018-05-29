@@ -1,105 +1,15 @@
-const accents = require('remove-accents');
-
-const hasAccentedName = c => accents.has(c.name);
-
-const roles = require('./roles');
-
-const mappedRole = (role) => {
-  if (roles.composers.includes(role)) {
-    return 'Composer';
-  }
-  if (roles.producers.includes(role)) {
-    return 'Producer';
-  }
-  if (roles.featured.includes(role)) {
-    return 'Featured';
-  }
-  return role;
-};
-
-const splitTrim = (value, separator) => value.split(separator).map(v => v.trim());
+const Album = require('./album.js');
 
 module.exports = () => {
   const albums = [];
   const searches = [];
 
-  const addAlbum = ({
-    id, artists: [{ name: artist }], name, tracks: { items },
-  }) => {
-    albums.push({
-      id,
-      name,
-      artist,
-      tracks: items.map(i => ({ id: i.id, name: i.name, credits: [] })),
-    });
+  const addAlbum = (album) => {
+    albums.push(new Album(album));
   };
 
   const addCredits = (albumId, release) => {
-    const { tracks: items } = albums.find(a => a.id === albumId);
-    const { tracklist, extraartists: releaseExtraArtists } = release;
-    const translatePosition = position => tracklist.findIndex(t => t.position === position);
-    const inRange = (trackString, separator, position) => {
-      const [left, right] = splitTrim(trackString, separator).map(translatePosition);
-      const p = translatePosition(position);
-      return (left <= p) && (p <= right);
-    };
-
-    // EXTRACT CREDITS FROM THE RELEASE
-    // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
-    //    Some releases in Discogs have an "extraartists" array which contains credits of
-    //    individual tracks.
-    //    The following lines map the contents of such array into an structure grouped by
-    //    track, matching the existing one in "tracklist"
-    tracklist.map(({ position, extraartists = [] }) => ({
-      position,
-      extraartists: extraartists.concat((releaseExtraArtists || [])
-        .filter(({ tracks, role }) => !!tracks && !!role)
-        .filter(({ tracks }) => splitTrim(tracks, ',')
-          .reduce((accum, trackString) => accum || (() => {
-            if (trackString.includes('-')) {
-              return inRange(trackString, '-', position);
-            } else if (trackString.includes('to')) {
-              return inRange(trackString, 'to', position);
-            }
-            return splitTrim(trackString, ',').includes(position);
-          })(), false))
-        .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
-    }))
-
-    // 2. Split the resulting credits array so there's one entry for every role
-      .forEach(({ extraartists }, i) => {
-        const track = items[i];
-        const newCredits = extraartists.reduce((trackCredits, { name, role }) => trackCredits
-          .concat(splitTrim(role, ',').map(r => ({
-            name,
-            role: mappedRole(r),
-          }))), []);
-
-        // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
-        track.credits = newCredits
-          .filter(c => !hasAccentedName(c))
-          .concat(track.credits.filter(c => !hasAccentedName(c)))
-          .reduce((all, current) => {
-            if (all.find(item =>
-              accents.remove(item.name) === current.name &&
-                item.role === current.role &&
-                item.track === current.track)) {
-              return all;
-            }
-            return all.concat([current]);
-          }, newCredits
-            .filter(hasAccentedName)
-            .concat(track.credits.filter(hasAccentedName)))
-          .reduce((all, current) => {
-            if (all.find(item =>
-              item.name === current.name &&
-                item.role === current.role &&
-                item.track === current.track)) {
-              return all;
-            }
-            return all.concat([current]);
-          }, []);
-      });
+    albums.find(a => a.id === albumId).merge(release);
   };
 
   const addSearch = id => searches.push({ id });
