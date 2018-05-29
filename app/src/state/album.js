@@ -14,7 +14,6 @@ const Album = function ({
 };
 
 Album.prototype.merge = function (release) {
-  const { tracks: items } = this;
   const { tracklist, extraartists: releaseExtraArtists } = release;
   const translatePosition = position => tracklist.findIndex(t => t.position === position);
   const inRange = (trackString, separator, position) => {
@@ -47,7 +46,7 @@ Album.prototype.merge = function (release) {
 
   // 2. Split the resulting credits array so there's one entry for every role
     .forEach(({ extraartists }, i) => {
-      const track = items[i];
+      const track = this.tracks[i];
       const newCredits = extraartists.reduce((trackCredits, { name, role }) => trackCredits
         .concat(splitTrim(role, ',').map(r => ({
           name,
