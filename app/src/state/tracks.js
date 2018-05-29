@@ -2,17 +2,18 @@ const accents = require('remove-accents');
 
 const roles = require('./roles');
 
+const isComposer = ({ role }) => roles.composers.includes(role);
+const isProducer = ({ role }) => roles.producers.includes(role);
+const isFeatured = ({ role }) => roles.featured.includes(role);
+const addSpecialRole = (array, name) => {
+  if (!accents.has(name) && !array.map(accents.remove).includes(name)) {
+    array.push(name);
+  } else if (accents.has(name) && array.includes(accents.remove(name))) {
+    array.splice(array.findIndex(i => i === accents.remove(name)), 1, name);
+  }
+};
+
 const tracks = (track) => {
-  const isComposer = ({ role }) => roles.composers.includes(role);
-  const isProducer = ({ role }) => roles.producers.includes(role);
-  const isFeatured = ({ role }) => roles.featured.includes(role);
-  const addSpecialRole = (array, name) => {
-    if (!accents.has(name) && !array.map(accents.remove).includes(name)) {
-      array.push(name);
-    } else if (accents.has(name) && array.includes(accents.remove(name))) {
-      array.splice(array.findIndex(i => i === accents.remove(name)), 1, name);
-    }
-  };
   const addComposer = name => addSpecialRole(track.composers, name);
   const addProducer = name => addSpecialRole(track.producers, name);
   const addFeatured = name => addSpecialRole(track.featured, name);
@@ -33,10 +34,8 @@ const tracks = (track) => {
           track.credits[name].push(role);
         }
         delete track.credits[accents.remove(name)];
-      } else {
-        if (!track.credits[name].includes(role)) {
-          track.credits[name].push(role);
-        }
+      } else if (!track.credits[name].includes(role)) {
+        track.credits[name].push(role);
       }
     },
   };
