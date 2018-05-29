@@ -1,7 +1,7 @@
-const tracks = require('./tracks');
+const Track = require('./tracks');
 const assert = require('assert');
 
-const track = tracks.create('T1', 'Title');
+const track = new Track('T1', 'Title');
 
 describe('Track object', () => {
   it('has initial empty structure', () => {
@@ -16,7 +16,7 @@ describe('Track object', () => {
   });
 
   it('adds composers', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe1',
       role: 'Written-By',
     });
@@ -31,7 +31,7 @@ describe('Track object', () => {
   });
 
   it('adds producers', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe2',
       role: 'Produced By',
     });
@@ -46,7 +46,7 @@ describe('Track object', () => {
   });
 
   it('adds featured artists', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'P3',
       role: 'feat.',
     });
@@ -61,7 +61,7 @@ describe('Track object', () => {
   });
 
   it('adds other credits', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe4',
       role: 'Piano',
     });
@@ -76,7 +76,7 @@ describe('Track object', () => {
   });
 
   it('adds other credits for existing artists', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe4',
       role: 'Drums',
     });
@@ -91,7 +91,7 @@ describe('Track object', () => {
   });
 
   it('does not duplicate composers', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe1',
       role: 'Written By',
     });
@@ -106,7 +106,7 @@ describe('Track object', () => {
   });
 
   it('does not duplicate producers', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe2',
       role: 'Producer',
     });
@@ -121,7 +121,7 @@ describe('Track object', () => {
   });
 
   it('does not duplicate featured artists', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'P3',
       role: 'Featuring',
     });
@@ -136,7 +136,7 @@ describe('Track object', () => {
   });
 
   it('replaces an existing unaccented composer for its accented variant', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pé1',
       role: 'Composed By',
     });
@@ -151,7 +151,7 @@ describe('Track object', () => {
   });
 
   it('replaces an existing unaccented producer for its accented variant', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pé2',
       role: 'Producer',
     });
@@ -166,7 +166,7 @@ describe('Track object', () => {
   });
 
   it('does not replace an existing accented producer for its unaccented variant', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe2',
       role: 'Producer',
     });
@@ -181,7 +181,7 @@ describe('Track object', () => {
   });
 
   it('replaces an existing unaccented credit name for its accented variant, leaving credits list intact', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pé4',
       role: 'Piano',
     });
@@ -196,11 +196,11 @@ describe('Track object', () => {
   });
 
   it('replaces an existing unaccented credit name for its accented variant, adding new roles to it', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pe5',
       role: 'Something',
     });
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'Pé5',
       role: 'else',
     });
@@ -218,11 +218,11 @@ describe('Track object', () => {
   });
 
   it('adds credits to unaccented names', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'P6',
       role: 'Other',
     });
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'P6',
       role: 'thing',
     });
@@ -241,7 +241,7 @@ describe('Track object', () => {
   });
 
   it('does not duplicate credits for a collaborator', () => {
-    tracks(track).addCredit({
+    track.addCredit({
       name: 'P6',
       role: 'thing',
     });

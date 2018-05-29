@@ -5,6 +5,7 @@ const roles = require('./roles');
 const isComposer = ({ role }) => roles.composers.includes(role);
 const isProducer = ({ role }) => roles.producers.includes(role);
 const isFeatured = ({ role }) => roles.featured.includes(role);
+
 const addSpecialRole = (array, name) => {
   if (!accents.has(name) && !array.map(accents.remove).includes(name)) {
     array.push(name);
@@ -13,36 +14,46 @@ const addSpecialRole = (array, name) => {
   }
 };
 
-const tracks = (track) => {
-  const addComposer = name => addSpecialRole(track.composers, name);
-  const addProducer = name => addSpecialRole(track.producers, name);
-  const addFeatured = name => addSpecialRole(track.featured, name);
-  return {
-    addCredit: (extraartist) => {
-      const { name, role } = extraartist;
-      if (isComposer(extraartist)) {
-        addComposer(name);
-      } else if (isProducer(extraartist)) {
-        addProducer(name);
-      } else if (isFeatured(extraartist)) {
-        addFeatured(name);
-      } else if (!(name in track.credits) && !(accents.remove(name) in track.credits)) {
-        track.credits[name] = [role];
-      } else if (accents.has(name) && accents.remove(name) in track.credits) {
-        track.credits[name] = track.credits[accents.remove(name)];
-        if (!track.credits[name].includes(role)) {
-          track.credits[name].push(role);
-        }
-        delete track.credits[accents.remove(name)];
-      } else if (!track.credits[name].includes(role)) {
-        track.credits[name].push(role);
-      }
-    },
-  };
+const Track = function (id, name) {
+  this.id = id;
+  this.name = name;
+  this.composers = [];
+  this.producers = [];
+  this.featured = [];
+  this.credits = {};
 };
 
-tracks.create = (id, name) => ({
-  id, name, composers: [], producers: [], featured: [], credits: {},
-});
+Track.prototype.addComposer = function (name) {
+  addSpecialRole(this.composers, name);
+};
 
-module.exports = tracks;
+Track.prototype.addProducer = function (name) {
+  addSpecialRole(this.producers, name);
+};
+
+Track.prototype.addFeatured = function (name) {
+  addSpecialRole(this.featured, name);
+};
+
+Track.prototype.addCredit = function (extraartist) {
+  const { name, role } = extraartist;
+  if (isComposer(extraartist)) {
+    this.addComposer(name);
+  } else if (isProducer(extraartist)) {
+    this.addProducer(name);
+  } else if (isFeatured(extraartist)) {
+    this.addFeatured(name);
+  } else if (!(name in this.credits) && !(accents.remove(name) in this.credits)) {
+    this.credits[name] = [role];
+  } else if (accents.has(name) && accents.remove(name) in this.credits) {
+    this.credits[name] = this.credits[accents.remove(name)];
+    if (!this.credits[name].includes(role)) {
+      this.credits[name].push(role);
+    }
+    delete this.credits[accents.remove(name)];
+  } else if (!this.credits[name].includes(role)) {
+    this.credits[name].push(role);
+  }
+};
+
+module.exports = Track;
