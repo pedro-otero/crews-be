@@ -34,7 +34,9 @@ const tracks = (track) => {
         }
         delete track.credits[accents.remove(name)];
       } else {
-        track.credits[name].push(role);
+        if (!track.credits[name].includes(role)) {
+          track.credits[name].push(role);
+        }
       }
     },
   };

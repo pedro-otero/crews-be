@@ -239,4 +239,23 @@ describe('Track object', () => {
       },
     });
   });
+
+  it('does not duplicate credits for a collaborator', () => {
+    tracks(track).addCredit({
+      name: 'P6',
+      role: 'thing',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['Pé1'],
+      producers: ['Pé2'],
+      featured: ['P3'],
+      credits: {
+        Pé4: ['Piano', 'Drums'],
+        Pé5: ['Something', 'else'],
+        P6: ['Other', 'thing'],
+      },
+    });
+  });
 });
