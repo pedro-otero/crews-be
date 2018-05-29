@@ -1,11 +1,11 @@
-const Album = require('./album.js');
+const Album = require('./album');
 const Track = require('./track');
 const assert = require('assert');
 const sinon = require('sinon');
 
-const mockAlbum = require('./album.json');
-const mockRelease = require('./release');
-const expectedAlbum = require('./expectedAlbum');
+const mockAlbum = require('./mocks/album');
+const mockRelease = require('./mocks/release');
+const expectedAlbum = require('./mocks/expectedAlbum');
 
 const album = new Album(mockAlbum);
 const addCreditsSpy = sinon.spy(Track.prototype, 'addCredit');

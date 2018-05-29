@@ -1,10 +1,10 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const Album = require('./album.js');
+const Album = require('./album');
 const createState = require('./index');
-const album = require('./album.json');
-const mockRelease = require('./release');
+const album = require('./mocks/album');
+const mockRelease = require('./mocks/release');
 
 describe('State module', () => {
   const state = createState();
