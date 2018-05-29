@@ -2,9 +2,9 @@ const accents = require('remove-accents');
 
 const roles = require('./roles');
 
-const isComposer = ({ role }) => roles.composers.includes(role);
-const isProducer = ({ role }) => roles.producers.includes(role);
-const isFeatured = ({ role }) => roles.featured.includes(role);
+const isComposer = role => roles.composers.includes(role);
+const isProducer = role => roles.producers.includes(role);
+const isFeatured = role => roles.featured.includes(role);
 
 const addSpecialRole = (array, name) => {
   if (!accents.has(name) && !array.map(accents.remove).includes(name)) {
@@ -35,13 +35,12 @@ Track.prototype.addFeatured = function (name) {
   addSpecialRole(this.featured, name);
 };
 
-Track.prototype.addCredit = function (extraartist) {
-  const { name, role } = extraartist;
-  if (isComposer(extraartist)) {
+Track.prototype.addCredit = function ({ name, role }) {
+  if (isComposer(role)) {
     this.addComposer(name);
-  } else if (isProducer(extraartist)) {
+  } else if (isProducer(role)) {
     this.addProducer(name);
-  } else if (isFeatured(extraartist)) {
+  } else if (isFeatured(role)) {
     this.addFeatured(name);
   } else if (!(name in this.credits) && !(accents.remove(name) in this.credits)) {
     this.credits[name] = [role];
