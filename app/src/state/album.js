@@ -42,8 +42,8 @@ Album.prototype.merge = function (release) {
   // 1. Some releases in Discogs have an "extraartists" array which contains credits of
   //    individual tracks.
   //    The following lines map the contents of such array into an structure grouped by
-  //    track, matching the existing one in "tracklist"
-  const parallel = (release.extraartists || [])
+  //    track, matching the existing one in "tracklist" and adding it to each track
+  (release.extraartists || [])
     .filter(({ tracks, role }) => !!tracks && !!role)
     .reduce((all, { name, role, tracks }) => all.concat(splitTrim(tracks, ',')
       .map(t => ({ name, role, tracks: t }))), [])
@@ -52,20 +52,14 @@ Album.prototype.merge = function (release) {
     .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, '-'))
       .map(t => ({ name, role, tracks: t }))), [])
     .reduce(splitRoles, [])
-    .reduce((map, { name, role, tracks }) => {
-      map[tracks].extraartists.push({ name, role });
-      return map;
-    }, positionsMap);
+    .forEach(({ name, role, tracks }) => {
+      this.tracks[positionsMap[tracks].i].addCredit({ name, role });
+    });
 
-  // 2. Merge the release "extraartists" into each corresponding track "extraartists" array.
-  release.tracklist.map(({ position, extraartists = [] }) => ({
-    extraartists: extraartists
-      .reduce(splitRoles, [])
-      .concat(parallel[position].extraartists),
-  }))
-
-  // 3. Iterate tracks to add credits
-    .forEach((t, i) => t.extraartists.forEach(ea => this.tracks[i].addCredit(ea)));
+  // 2. Merge individual track's "extraartists" into each corresponding track of this album.
+  release.tracklist.forEach(({ extraartists = [] }, i) => {
+    extraartists.reduce(splitRoles, []).forEach(ea => this.tracks[i].addCredit(ea));
+  });
 };
 
 module.exports = Album;
