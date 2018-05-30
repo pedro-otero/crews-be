@@ -13,21 +13,24 @@ const Album = function ({
   });
 };
 
-Album.prototype.merge = function (release) {
-  const { tracklist, extraartists: releaseExtraArtists } = release;
-  const translatePosition = position => tracklist.findIndex(t => t.position === position);
-  const inRange = (trackString, separator, position) => {
-    const [left, right] = splitTrim(trackString, separator).map(translatePosition);
-    const p = translatePosition(position);
-    return (left <= p) && (p <= right);
-  };
+const translatePosition = tracklist => position => tracklist
+  .findIndex(t => t.position === position);
 
+const inRange = (tracklist, trackString, separator, position) => {
+  const getIndex = translatePosition(tracklist);
+  const [left, right] = splitTrim(trackString, separator).map(getIndex);
+  const p = getIndex(position);
+  return (left <= p) && (p <= right);
+};
+
+Album.prototype.merge = function (release) {
   // EXTRACT CREDITS FROM THE RELEASE
   // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
   //    Some releases in Discogs have an "extraartists" array which contains credits of
   //    individual tracks.
   //    The following lines map the contents of such array into an structure grouped by
   //    track, matching the existing one in "tracklist"
+  const { tracklist, extraartists: releaseExtraArtists } = release;
   tracklist.map(({ position, extraartists = [] }) => ({
     position,
     extraartists: extraartists.concat((releaseExtraArtists || [])
@@ -35,9 +38,9 @@ Album.prototype.merge = function (release) {
       .filter(({ tracks }) => splitTrim(tracks, ',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            return inRange(trackString, '-', position);
+            return inRange(tracklist, trackString, '-', position);
           } else if (trackString.includes('to')) {
-            return inRange(trackString, 'to', position);
+            return inRange(tracklist, trackString, 'to', position);
           }
           return splitTrim(trackString, ',').includes(position);
         })(), false))
