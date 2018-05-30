@@ -1,7 +1,5 @@
 module.exports = state => function (id) {
-  const {
-    searches, albums,
-  } = state.data();
+  const { searches, albums   } = state;
 
   const search = searches.find(item => item.id === id);
   if (!search) { return null; }

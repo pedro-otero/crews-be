@@ -2,16 +2,16 @@ const assert = require('assert');
 const sinon = require('sinon');
 
 const Album = require('./album');
-const createState = require('./index');
+const State = require('./index');
 const album = require('./mocks/album');
 const mockRelease = require('./mocks/release');
 
 describe('State module', () => {
-  const state = createState();
+  const state = new State();
   state.addSearch('S1');
 
   it('adds searches', () => {
-    assert.deepEqual(state.data().searches, [{ id: 'S1' }]);
+    assert.deepEqual(state.searches, [{ id: 'S1' }]);
   });
 
   it('adds albums', () => {
@@ -31,7 +31,7 @@ describe('State module', () => {
         },
         results: [{ id: 1 }],
       });
-      assert.deepEqual(state.data().searches[0].lastSearchPage, {
+      assert.deepEqual(state.searches[0].lastSearchPage, {
         page: 1,
         pages: 2,
         items: 500,
@@ -42,7 +42,7 @@ describe('State module', () => {
 
     it('sets last release', () => {
       state.setLastRelease('S1', { id: 5 });
-      assert.equal(state.data().searches[0].lastRelease, 5);
+      assert.equal(state.searches[0].lastRelease, 5);
     });
 
     it('adds credits', () => {
@@ -54,7 +54,7 @@ describe('State module', () => {
 
     it('clears search', () => {
       state.clearSearch('S1');
-      assert.deepEqual(state.data().searches[0], {
+      assert.deepEqual(state.searches[0], {
         id: 'S1',
         lastSearchPage: null,
         lastRelease: null,
@@ -63,7 +63,7 @@ describe('State module', () => {
 
     after(() => {
       state.removeSearch('S1');
-      assert.equal(state.data().searches.length, 0);
+      assert.equal(state.searches.length, 0);
     });
   });
 });

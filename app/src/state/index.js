@@ -1,26 +1,34 @@
 const Album = require('./album.js');
 
-module.exports = () => {
-  const albums = [];
-  const searches = [];
+function State() {
+  this.albums = [];
+  this.searches = [];
+}
 
-  const addAlbum = album => albums.push(new Album(album));
+State.prototype.addAlbum = function (album) {
+  this.albums.push(new Album(album));
+};
 
-  const addCredits = (albumId, release) => albums.find(a => a.id === albumId).merge(release);
+State.prototype.addCredits = function (albumId, release) {
+  this.albums.find(a => a.id === albumId).merge(release);
+};
 
-  const addSearch = id => searches.push({ id });
+State.prototype.addSearch = function (id) {
+  this.searches.push({ id });
+};
 
-  const modifySearch = (id, withWhat) => Object.assign(
-    searches.find(search => search.id === id),
-    withWhat
-  );
+const modifySearch = (searches, id, withWhat) => Object.assign(
+  searches.find(search => search.id === id),
+  withWhat
+);
 
-  const setLastSearchPage = (id, {
-    pagination: {
-      page, pages, items, per_page: perPage,
-    },
-    results,
-  }) => modifySearch(id, {
+State.prototype.setLastSearchPage = function (id, {
+  pagination: {
+    page, pages, items, per_page: perPage,
+  },
+  results,
+}) {
+  modifySearch(this.searches, id, {
     lastSearchPage: {
       page,
       pages,
@@ -29,30 +37,29 @@ module.exports = () => {
       releases: results.map(result => result.id),
     },
   });
+};
 
-  const setLastRelease = (id, release) => modifySearch(
+State.prototype.setLastRelease = function (id, release) {
+  modifySearch(
+    this.searches,
     id,
     { lastRelease: release.id }
   );
-
-  const clearSearch = id => modifySearch(id, {
-    lastRelease: null,
-    lastSearchPage: null,
-  });
-
-  const removeSearch = id => searches.splice(searches.findIndex(s => s.id !== id), 1);
-
-  return {
-    addAlbum,
-    addCredits,
-    addSearch,
-    setLastSearchPage,
-    setLastRelease,
-    clearSearch,
-    removeSearch,
-    data: () => ({
-      albums,
-      searches,
-    }),
-  };
 };
+
+State.prototype.clearSearch = function (id) {
+  modifySearch(
+    this.searches,
+    id,
+    {
+      lastRelease: null,
+      lastSearchPage: null,
+    }
+  );
+};
+
+State.prototype.removeSearch = function (id) {
+  this.searches.splice(this.searches.findIndex(s => s.id !== id), 1);
+};
+
+module.exports = State;

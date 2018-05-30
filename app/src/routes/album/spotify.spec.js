@@ -12,9 +12,7 @@ function setup() {
     res.status(200).send('NEXT CALLED');
   });
   this.state = {
-    data: () => ({
-      albums: [{ id: 'A2' }],
-    }),
+    albums: [{ id: 'A2' }],
     addAlbum: sinon.stub(),
   };
   app.locals.state = this.state;
