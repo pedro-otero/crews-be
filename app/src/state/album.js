@@ -47,15 +47,14 @@ Album.prototype.merge = function (release) {
 
   // 2. Split the resulting credits array so there's one entry for every role
     .forEach(({ extraartists }, i) => {
-      const track = this.tracks[i];
-      const newCredits = extraartists.reduce((trackCredits, { name, role }) => trackCredits
+      extraartists.reduce((trackCredits, { name, role }) => trackCredits
         .concat(splitTrim(role, ',').map(r => ({
           name,
           role: r,
-        }))), []);
+        }))), [])
 
-      // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
-      newCredits.forEach(ea => track.addCredit(ea));
+        // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
+        .forEach(ea => this.tracks[i].addCredit(ea));
     });
 };
 
