@@ -6,7 +6,6 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const State = require('../src/state');
 const createSearchFunction = require('../src/search');
 const createSpotifyModule = require('../src/api/spotify');
-const Query = require('../src/query');
 
 // Middleware
 const query = require('../src/routes/album/query');
@@ -63,7 +62,6 @@ module.exports = (app) => {
     locals: {
       state,
       searchAlbum: createSearchFunction(discogs, loggerCreator, state),
-      Query,
       spotify: createSpotifyModule(SpotifyWebApi),
     },
   });
