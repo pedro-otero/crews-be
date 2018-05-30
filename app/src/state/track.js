@@ -7,7 +7,7 @@ const isProducer = role => roles.producers.includes(role);
 const isFeatured = role => roles.featured.includes(role);
 
 const addSpecialRole = (array, name) => {
-  if (!accents.has(name) && !array.map(accents.remove).includes(name)) {
+  if (!array.map(accents.remove).includes(accents.remove(name))) {
     array.push(name);
   } else if (accents.has(name) && array.includes(accents.remove(name))) {
     array.splice(array.findIndex(i => i === accents.remove(name)), 1, name);

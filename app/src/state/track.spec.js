@@ -258,4 +258,23 @@ describe('Track object', () => {
       },
     });
   });
+
+  it('adds new accented composers', () => {
+    track.addCredit({
+      name: 'Pé7',
+      role: 'Written-By',
+    });
+    assert.deepEqual(track, {
+      name: 'Title',
+      id: 'T1',
+      composers: ['Pé1', 'Pé7'],
+      producers: ['Pé2'],
+      featured: ['P3'],
+      credits: {
+        Pé4: ['Piano', 'Drums'],
+        Pé5: ['Something', 'else'],
+        P6: ['Other', 'thing'],
+      },
+    });
+  });
 });
