@@ -65,7 +65,9 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
 
   // 2. Merge individual track's "extraartists" into each corresponding track of this album.
   tracklist.forEach((track, i) => {
-    (track.extraartists || []).reduce(splitRoles, []).forEach(ea => this.tracks[i].addCredit(ea));
+    (track.extraartists || [])
+      .reduce(splitRoles, [])
+      .forEach(extraartist => this.tracks[i].addCredit(extraartist));
   });
 };
 
