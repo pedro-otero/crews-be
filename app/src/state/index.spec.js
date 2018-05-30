@@ -20,45 +20,43 @@ describe('State module', () => {
     assert(albumSpy.calledWithNew);
   });
 
-  describe('searches', () => {
-    it('sets last search page', () => {
-      state.setLastSearchPage('S1', {
-        pagination: {
-          page: 1,
-          pages: 2,
-          items: 500,
-          per_page: 100,
-        },
-        results: [{ id: 1 }],
-      });
-      assert.deepEqual(state.searches[0].lastSearchPage, {
+  it('sets last search page', () => {
+    state.setLastSearchPage('S1', {
+      pagination: {
         page: 1,
         pages: 2,
         items: 500,
-        perPage: 100,
-        releases: [1],
-      });
+        per_page: 100,
+      },
+      results: [{ id: 1 }],
     });
-
-    it('sets last release', () => {
-      state.setLastRelease('S1', { id: 5 });
-      assert.equal(state.searches[0].lastRelease, 5);
+    assert.deepEqual(state.searches[0].lastSearchPage, {
+      page: 1,
+      pages: 2,
+      items: 500,
+      perPage: 100,
+      releases: [1],
     });
+  });
 
-    it('adds credits', () => {
-      state.addAlbum(album);
-      const mergeSpy = sinon.spy(Album.prototype, 'merge');
-      state.addCredits(album.id, mockRelease);
-      assert(mergeSpy.calledOnce);
-    });
+  it('sets last release', () => {
+    state.setLastRelease('S1', { id: 5 });
+    assert.equal(state.searches[0].lastRelease, 5);
+  });
 
-    it('clears search', () => {
-      state.clearSearch('S1');
-      assert.deepEqual(state.searches[0], {
-        id: 'S1',
-        lastSearchPage: null,
-        lastRelease: null,
-      });
+  it('adds credits', () => {
+    state.addAlbum(album);
+    const mergeSpy = sinon.spy(Album.prototype, 'merge');
+    state.addCredits(album.id, mockRelease);
+    assert(mergeSpy.calledOnce);
+  });
+
+  it('clears search', () => {
+    state.clearSearch('S1');
+    assert.deepEqual(state.searches[0], {
+      id: 'S1',
+      lastSearchPage: null,
+      lastRelease: null,
     });
 
     after(() => {
