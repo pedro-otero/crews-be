@@ -124,7 +124,7 @@
       "id": "query-pick-best-match",
       "tracks": [
         {
-          "credits":[],
+          "credits": [],
           "name": "track"
         }
       ]
@@ -133,16 +133,14 @@
       "id": "query-no-match",
       "tracks": [
         {
-          "credits":[],
+          "credits": [],
           "name": "track 1"
         },
         {
-          "credits":[],
+          "credits": [],
           "name": "track 2"
         }
       ]
     }
-  ],
-  "results": [],
-  "releases": []
+  ]
 }
