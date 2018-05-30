@@ -19,6 +19,7 @@ Album.prototype.merge = function (release) {
       [position]: {
         i,
         next: (arr[i + 1] || { position: null }).position,
+        extraartists: [],
       },
     }), {});
 
@@ -43,17 +44,10 @@ Album.prototype.merge = function (release) {
       .map(t => ({ name, role, tracks: t }))), [])
     .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
       .map(r => ({ name, role: r, tracks }))), [])
-    .reduce((arr, { name, role, tracks }) => {
-      const { i } = positionsMap[tracks];
-      if (arr[i]) {
-        arr[i].extraartists.push({ name, role });
-      } else {
-        const track = { extraartists: [] };
-        track.extraartists.push({ name, role });
-        arr[i] = track;
-      }
-      return arr;
-    }, []);
+    .reduce((map, { name, role, tracks }) => {
+      map[tracks].extraartists.push({ name, role });
+      return map;
+    }, positionsMap);
   // EXTRACT CREDITS FROM THE RELEASE
   // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
   //    Some releases in Discogs have an "extraartists" array which contains credits of
@@ -64,7 +58,7 @@ Album.prototype.merge = function (release) {
     extraartists: extraartists
       .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
         .map(r => ({ name, role: r, tracks }))), [])
-      .concat((parallel[positionsMap[position].i] || { extraartists: [] }).extraartists),
+      .concat(parallel[position].extraartists),
   })).forEach((t, i) => t.extraartists.forEach(ea => this.tracks[i].addCredit(ea)));
 };
 
