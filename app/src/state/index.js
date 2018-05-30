@@ -58,6 +58,21 @@ State.prototype.clearSearch = function (id) {
   );
 };
 
+State.prototype.getProgress = function (id) {
+  const { lastSearchPage, lastRelease } = this.searches.find(s => s.id === id);
+  if (!lastSearchPage) {
+    return 0;
+  }
+  const {
+    page, items, perPage, releases,
+  } = lastSearchPage;
+  if (items === 0) {
+    return 100;
+  }
+  const soFar = ((page - 1) * perPage) + (releases.indexOf(lastRelease) + 1);
+  return Math.round((soFar / items) * 100);
+};
+
 State.prototype.removeSearch = function (id) {
   this.searches.splice(this.searches.findIndex(s => s.id !== id), 1);
 };
