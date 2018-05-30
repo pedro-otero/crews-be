@@ -27,8 +27,8 @@ Album.prototype.merge = function (release) {
     if (!p2) {
       return [p1];
     }
-    const next = positionsMap[p1].next;
-    if (!next || positionsMap[p1].i === positionsMap[p2].i) {
+    const { next, i } = positionsMap[p1];
+    if (!next || i === positionsMap[p2].i) {
       return [...arr, p1];
     }
     return [p1, ...splitRange([next, p2], arr)];
