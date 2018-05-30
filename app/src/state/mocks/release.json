@@ -1,0 +1,177 @@
+{
+  "extraartists": [
+    {
+      "tracks": "3",
+      "name": "P3",
+      "role": "R3"
+    },
+    {
+      "tracks": "4",
+      "name": "P4",
+      "role": "R41, R42"
+    },
+    {
+      "tracks": "5-7",
+      "name": "P567",
+      "role": "R51"
+    },
+    {
+      "tracks": "9, 10",
+      "name": "P910",
+      "role": "R910"
+    },
+    {
+      "tracks": "11, 13-15",
+      "name": "P111315",
+      "role": "R111315"
+    },
+    {
+      "name": "P16"
+    },
+    {
+      "name": "P17",
+      "role": "R17"
+    },
+    {
+      "name": "P181920",
+      "role": "R181920",
+      "tracks": "18 to 20"
+    },
+    {
+      "name": "P21",
+      "role": "R21",
+      "tracks": "Pos21"
+    },
+    {
+      "name": "P2223",
+      "role": "R2223",
+      "tracks": "Pos22 to Pos23"
+    },
+    {
+      "name": "P2425",
+      "role": "R2425",
+      "tracks": "Pos24-Pos25"
+    },
+    {
+      "name": "P1",
+      "role": "R1",
+      "tracks": "19 to Pos21, Pos23, Pos24-Pos25"
+    },
+    {
+      "name": "PX",
+      "role": "RX",
+      "tracks": "nonExistentPosition"
+    },
+    {
+      "name": "PX",
+      "role": "RX",
+      "tracks": "nonExistentPosition to anotherNonExistingPosition"
+    }
+  ],
+  "tracklist": [
+    {
+      "position": "1",
+      "extraartists": [
+        {
+          "name": "P1",
+          "role": "R1"
+        }
+      ]
+    },
+    {
+      "position": "2",
+      "extraartists": [
+        {
+          "name": "P2",
+          "role": "R21, R22"
+        }
+      ]
+    },
+    {
+      "position": "3"
+    },
+    {
+      "position": "4"
+    },
+    {
+      "position": "5"
+    },
+    {
+      "position": "6"
+    },
+    {
+      "position": "7"
+    },
+    {
+      "position": "8"
+    },
+    {
+      "position": "9"
+    },
+    {
+      "position": "10"
+    },
+    {
+      "position": "11"
+    },
+    {
+      "position": "12"
+    },
+    {
+      "position": "13"
+    },
+    {
+      "position": "14"
+    },
+    {
+      "position": "15"
+    },
+    {
+      "position": "16"
+    },
+    {
+      "position": "17"
+    },
+    {
+      "position": "18"
+    },
+    {
+      "position": "19"
+    },
+    {
+      "position": "20"
+    },
+    {
+      "position": "Pos21"
+    },
+    {
+      "position": "Pos22"
+    },
+    {
+      "position": "Pos23"
+    },
+    {
+      "position": "Pos24"
+    },
+    {
+      "position": "Pos25"
+    },
+    {
+      "position": "26",
+      "extraartists": [
+        {
+          "name": "P26-1",
+          "role": "Written-By"
+        },
+        {
+          "name": "P26-2",
+          "role": "Produced By"
+        },
+        {
+          "name": "P26-3",
+          "role": "feat."
+        }
+      ]
+    }
+  ]
+}

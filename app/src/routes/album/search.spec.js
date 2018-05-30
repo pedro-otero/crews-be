@@ -13,9 +13,8 @@ describe('Search middleware', () => {
     });
     app.locals.state = {
       addSearch: sinon.stub(),
-      data: () => ({
-        searches: [], albums: [{ id: 1 }],
-      }),
+      searches: [],
+      albums: [{ id: 1 }],
     };
     app.use('/data/album', route);
     app.use('/data/album', (req, res) => {
@@ -34,9 +33,7 @@ describe('Search middleware', () => {
     app.locals.state = {
       searchAlbum: sinon.stub(),
       addSearch: sinon.stub(),
-      data: () => ({
-        searches: [{ id: '1' }],
-      }),
+      searches: [{ id: '1' }],
     };
     app.use('/data/album', route);
     app.use('/data/album', (req, res) => {

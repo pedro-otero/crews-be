@@ -1,154 +1,80 @@
-const accents = require('remove-accents');
+const Album = require('./album.js');
 
-const hasAccentedName = c => accents.has(c.name);
+function State() {
+  this.albums = [];
+  this.searches = [];
+}
 
-const roles = require('./roles');
-
-const mappedRole = (role) => {
-  if (roles.composers.includes(role)) {
-    return 'Composer';
-  }
-  if (roles.producers.includes(role)) {
-    return 'Producer';
-  }
-  if (roles.featured.includes(role)) {
-    return 'Featured';
-  }
-  return role;
+State.prototype.addAlbum = function (album) {
+  this.albums.push(new Album(album));
 };
 
-const splitTrim = (value, separator) => value.split(separator).map(v => v.trim());
+State.prototype.addCredits = function (albumId, release) {
+  this.albums.find(a => a.id === albumId).merge(release);
+};
 
-module.exports = () => {
-  const albums = [];
-  const searches = [];
+State.prototype.addSearch = function (id) {
+  this.searches.push({ id });
+};
 
-  const addAlbum = ({
-    id, artists: [{ name: artist }], name, tracks: { items },
-  }) => {
-    albums.push({
-      id,
-      name,
-      artist,
-      tracks: items.map(i => ({ id: i.id, name: i.name, credits: [] })),
-    });
-  };
+const modifySearch = (searches, id, withWhat) => Object.assign(
+  searches.find(search => search.id === id),
+  withWhat
+);
 
-  const addCredits = (albumId, release) => {
-    const { tracks: items } = albums.find(a => a.id === albumId);
-    const { tracklist, extraartists: releaseExtraArtists } = release;
-    const translatePosition = position => tracklist.findIndex(t => t.position === position);
-    const inRange = (trackString, separator, position) => {
-      const [left, right] = splitTrim(trackString, separator).map(translatePosition);
-      const p = translatePosition(position);
-      return (left <= p) && (p <= right);
-    };
-
-    // EXTRACT CREDITS FROM THE RELEASE
-    // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
-    //    Some releases in Discogs have an "extraartists" array which contains credits of
-    //    individual tracks.
-    //    The following lines map the contents of such array into an structure grouped by
-    //    track, matching the existing one in "tracklist"
-    tracklist.map(({ position, extraartists = [] }) => ({
-      position,
-      extraartists: extraartists.concat((releaseExtraArtists || [])
-        .filter(({ tracks, role }) => !!tracks && !!role)
-        .filter(({ tracks }) => splitTrim(tracks, ',')
-          .reduce((accum, trackString) => accum || (() => {
-            if (trackString.includes('-')) {
-              return inRange(trackString, '-', position);
-            } else if (trackString.includes('to')) {
-              return inRange(trackString, 'to', position);
-            }
-            return splitTrim(trackString, ',').includes(position);
-          })(), false))
-        .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
-    }))
-
-    // 2. Split the resulting credits array so there's one entry for every role
-      .forEach(({ extraartists }, i) => {
-        const track = items[i];
-        const newCredits = extraartists.reduce((trackCredits, { name, role }) => trackCredits
-          .concat(splitTrim(role, ',').map(r => ({
-            name,
-            role: mappedRole(r),
-          }))), []);
-
-        // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
-        track.credits = newCredits
-          .filter(c => !hasAccentedName(c))
-          .concat(track.credits.filter(c => !hasAccentedName(c)))
-          .reduce((all, current) => {
-            if (all.find(item =>
-              accents.remove(item.name) === current.name &&
-                item.role === current.role &&
-                item.track === current.track)) {
-              return all;
-            }
-            return all.concat([current]);
-          }, newCredits
-            .filter(hasAccentedName)
-            .concat(track.credits.filter(hasAccentedName)))
-          .reduce((all, current) => {
-            if (all.find(item =>
-              item.name === current.name &&
-                item.role === current.role &&
-                item.track === current.track)) {
-              return all;
-            }
-            return all.concat([current]);
-          }, []);
-      });
-  };
-
-  const addSearch = id => searches.push({ id });
-
-  const modifySearch = (id, withWhat) => Object.assign(
-    searches.find(search => search.id === id),
-    withWhat
-  );
-
-  const setLastSearchPage = (id, {
-    pagination: {
-      page, pages, items, per_page: perPage,
+State.prototype.setLastSearchPage = function (id, {
+  pagination: {
+    page, pages, items, per_page: perPage,
+  },
+  results,
+}) {
+  modifySearch(this.searches, id, {
+    lastSearchPage: {
+      page,
+      pages,
+      items,
+      perPage,
+      releases: results.map(result => result.id),
     },
-    results,
-  }) => {
-    modifySearch(id, {
-      lastSearchPage: {
-        page,
-        pages,
-        items,
-        perPage,
-        releases: results.map(result => result.id),
-      },
-    });
-  };
+  });
+};
 
-  const setLastRelease = (id, release) => modifySearch(
+State.prototype.setLastRelease = function (id, release) {
+  modifySearch(
+    this.searches,
     id,
     { lastRelease: release.id }
   );
-
-  const clearSearch = id => modifySearch(id, {
-    lastRelease: null,
-    lastSearchPage: null,
-  });
-
-  const removeSearch = id => searches.splice(searches.findIndex(s => s.id !== id), 1);
-
-  return {
-    addAlbum,
-    addCredits,
-    addSearch,
-    setLastSearchPage,
-    setLastRelease,
-    clearSearch,
-    removeSearch,
-    data: () => ({
-      albums,
-      searches,
-    }),
-  };
 };
+
+State.prototype.clearSearch = function (id) {
+  modifySearch(
+    this.searches,
+    id,
+    {
+      lastRelease: null,
+      lastSearchPage: null,
+    }
+  );
+};
+
+State.prototype.getProgress = function (id) {
+  const { lastSearchPage, lastRelease } = this.searches.find(s => s.id === id);
+  if (!lastSearchPage) {
+    return 0;
+  }
+  const {
+    page, items, perPage, releases,
+  } = lastSearchPage;
+  if (items === 0) {
+    return 100;
+  }
+  const soFar = ((page - 1) * perPage) + (releases.indexOf(lastRelease) + 1);
+  return Math.round((soFar / items) * 100);
+};
+
+State.prototype.removeSearch = function (id) {
+  this.searches.splice(this.searches.findIndex(s => s.id !== id), 1);
+};
+
+module.exports = State;

@@ -10,7 +10,7 @@ module.exports = router.get('/:spotifyAlbumId', (req, res, next) => {
     params: { spotifyAlbumId },
   } = req;
 
-  const album = state.data().albums.find(a => a.id === spotifyAlbumId);
+  const album = state.albums.find(a => a.id === spotifyAlbumId);
   if (album) {
     next();
   } else {
