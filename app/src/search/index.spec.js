@@ -185,10 +185,15 @@ describe('Search function', () => {
   });
 
   describe('Discogs search promise rejects', () => {
-    beforeEach(function (done) {
+    before(function (done) {
       Object.assign(this, setup());
       this.discogs.db.search = sinon.stub().rejects(Error('ERROR'));
-      state.clearSearch = sinon.stub().callsFake(() => done());
+      const previousClearSarch = state.clearSearch;
+      this.clearSearchMock = sinon.stub().callsFake(() => {
+        state.clearSearch = previousClearSarch;
+        done();
+      });
+      state.clearSearch = this.clearSearchMock;
       searchAlbum(this.discogs, () => this.logger, state)(album).start();
     });
 
@@ -196,8 +201,8 @@ describe('Search function', () => {
       assert(this.logger.error.calledOnce);
     });
 
-    it('search is cleared', () => {
-      assert(state.clearSearch.calledOnce);
+    it('search is cleared', function () {
+      assert(this.clearSearchMock.calledOnce);
     });
   });
 
