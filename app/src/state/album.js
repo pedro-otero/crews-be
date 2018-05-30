@@ -45,15 +45,19 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
   //    track, matching the existing one in "tracklist" and adding it to each track
   (extraartists || [])
     .filter(({ tracks, role }) => !!tracks && !!role)
+    // Split comma separated multi track extraartists into one per track
     .reduce((all, { name, role, tracks }) => all
       .concat(splitTrim(tracks, ',')
         .map(t => ({ name, role, tracks: t }))), [])
+    // Split literal range multi track extraartists into one per track
     .reduce((all, { name, role, tracks }) => all
       .concat(splitRange(splitTrim(tracks, 'to'))
         .map(t => ({ name, role, tracks: t }))), [])
+    // Split hyphenated range multi track extraartists into one per track
     .reduce((all, { name, role, tracks }) => all
       .concat(splitRange(splitTrim(tracks, '-'))
         .map(t => ({ name, role, tracks: t }))), [])
+    // Split multi role extraartists into one per track
     .reduce(splitRoles, [])
     .forEach(({ name, role, tracks }) => {
       this.tracks[positionsMap[tracks].i].addCredit({ name, role });
