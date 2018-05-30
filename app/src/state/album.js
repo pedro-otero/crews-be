@@ -30,10 +30,9 @@ Album.prototype.merge = function (release) {
   //    individual tracks.
   //    The following lines map the contents of such array into an structure grouped by
   //    track, matching the existing one in "tracklist"
-  const { tracklist, extraartists: releaseExtraArtists } = release;
-  tracklist.map(({ position, extraartists = [] }) => ({
+  release.tracklist.map(({ position, extraartists = [] }, i, tracklist) => ({
     position,
-    extraartists: extraartists.concat((releaseExtraArtists || [])
+    extraartists: extraartists.concat((release.extraartists || [])
       .filter(({ tracks, role }) => !!tracks && !!role)
       .filter(({ tracks }) => splitTrim(tracks, ',')
         .reduce((accum, trackString) => accum || (() => {
