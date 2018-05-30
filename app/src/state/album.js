@@ -13,16 +13,47 @@ const Album = function ({
   });
 };
 
-const inRange = (positionsMap, trackString, separator, position) => {
-  const [left, right] = splitTrim(trackString, separator)
-    .map(i => positionsMap[i]);
-  const p = positionsMap[position];
-  return (left <= p) && (p <= right);
-};
-
 Album.prototype.merge = function (release) {
   const positionsMap = release.tracklist
-    .reduce((all, track, i) => Object.assign(all, { [track.position]: i }), {});
+    .reduce((all, { position }, i, arr) => Object.assign(all, {
+      [position]: {
+        i,
+        next: (arr[i + 1] || { position: null }).position,
+      },
+    }), {});
+
+  const splitRange = ([p1, p2], arr = []) => {
+    if (!p2) {
+      return [p1];
+    }
+    const next = positionsMap[p1].next;
+    if (!next || positionsMap[p1].i === positionsMap[p2].i) {
+      return [...arr, p1];
+    }
+    return [p1, ...splitRange([next, p2], arr)];
+  };
+
+  const parallel = (release.extraartists || [])
+    .filter(({ tracks, role }) => !!tracks && !!role)
+    .reduce((all, { name, role, tracks }) => all.concat(splitTrim(tracks, ',')
+      .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, 'to'))
+      .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, '-'))
+      .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
+      .map(r => ({ name, role: r, tracks }))), [])
+    .reduce((arr, { name, role, tracks }) => {
+      const { i } = positionsMap[tracks];
+      if (arr[i]) {
+        arr[i].extraartists.push({ name, role });
+      } else {
+        const track = { extraartists: [] };
+        track.extraartists.push({ name, role });
+        arr[i] = track;
+      }
+      return arr;
+    }, []);
   // EXTRACT CREDITS FROM THE RELEASE
   // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
   //    Some releases in Discogs have an "extraartists" array which contains credits of
@@ -30,31 +61,11 @@ Album.prototype.merge = function (release) {
   //    The following lines map the contents of such array into an structure grouped by
   //    track, matching the existing one in "tracklist"
   release.tracklist.map(({ position, extraartists = [] }) => ({
-    extraartists: extraartists.concat((release.extraartists || [])
-      .filter(({ tracks, role }) => !!tracks && !!role)
-      .filter(({ tracks }) => splitTrim(tracks, ',')
-        .reduce((accum, trackString) => accum || (() => {
-          if (trackString.includes('-')) {
-            return inRange(positionsMap, trackString, '-', position);
-          } else if (trackString.includes('to')) {
-            return inRange(positionsMap, trackString, 'to', position);
-          }
-          return splitTrim(trackString, ',').includes(position);
-        })(), false))
-      .reduce((accum, { role, name }) => accum.concat([{ role, name }]), [])),
-  }))
-
-  // 2. Split the resulting credits array so there's one entry for every role
-    .forEach(({ extraartists }, i) => {
-      extraartists.reduce((trackCredits, { name, role }) => trackCredits
-        .concat(splitTrim(role, ',').map(r => ({
-          name,
-          role: r,
-        }))), [])
-
-        // MERGE NEWLY EXTRACTED CREDITS WITH THE ONES CURRENTLY IN STATE
-        .forEach(ea => this.tracks[i].addCredit(ea));
-    });
+    extraartists: extraartists
+      .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
+        .map(r => ({ name, role: r, tracks }))), [])
+      .concat((parallel[positionsMap[position].i] || { extraartists: [] }).extraartists),
+  })).forEach((t, i) => t.extraartists.forEach(ea => this.tracks[i].addCredit(ea)));
 };
 
 module.exports = Album;

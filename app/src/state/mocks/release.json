@@ -60,6 +60,7 @@
   ],
   "tracklist": [
     {
+      "position": "1",
       "extraartists": [
         {
           "name": "P1",
@@ -68,6 +69,7 @@
       ]
     },
     {
+      "position": "2",
       "extraartists": [
         {
           "name": "P2",
@@ -158,6 +160,8 @@
         {
           "name": "P26-3",
           "role": "feat."
-    }]
-    }]
+        }
+      ]
+    }
+  ]
 }
