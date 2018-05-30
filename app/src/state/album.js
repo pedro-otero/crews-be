@@ -17,8 +17,8 @@ const splitRoles = (all, { name, role, tracks }) => all
   .concat(splitTrim(role, ',')
     .map(r => ({ name, role: r, tracks })));
 
-Album.prototype.merge = function (release) {
-  const positionsMap = release.tracklist
+Album.prototype.merge = function ({ tracklist, extraartists }) {
+  const positionsMap = tracklist
     .reduce((all, { position }, i, arr) => Object.assign(all, {
       [position]: {
         i,
@@ -43,22 +43,25 @@ Album.prototype.merge = function (release) {
   //    individual tracks.
   //    The following lines map the contents of such array into an structure grouped by
   //    track, matching the existing one in "tracklist" and adding it to each track
-  (release.extraartists || [])
+  (extraartists || [])
     .filter(({ tracks, role }) => !!tracks && !!role)
-    .reduce((all, { name, role, tracks }) => all.concat(splitTrim(tracks, ',')
-      .map(t => ({ name, role, tracks: t }))), [])
-    .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, 'to'))
-      .map(t => ({ name, role, tracks: t }))), [])
-    .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, '-'))
-      .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all
+      .concat(splitTrim(tracks, ',')
+        .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all
+      .concat(splitRange(splitTrim(tracks, 'to'))
+        .map(t => ({ name, role, tracks: t }))), [])
+    .reduce((all, { name, role, tracks }) => all
+      .concat(splitRange(splitTrim(tracks, '-'))
+        .map(t => ({ name, role, tracks: t }))), [])
     .reduce(splitRoles, [])
     .forEach(({ name, role, tracks }) => {
       this.tracks[positionsMap[tracks].i].addCredit({ name, role });
     });
 
   // 2. Merge individual track's "extraartists" into each corresponding track of this album.
-  release.tracklist.forEach(({ extraartists = [] }, i) => {
-    extraartists.reduce(splitRoles, []).forEach(ea => this.tracks[i].addCredit(ea));
+  tracklist.forEach((track, i) => {
+    (track.extraartists || []).reduce(splitRoles, []).forEach(ea => this.tracks[i].addCredit(ea));
   });
 };
 
