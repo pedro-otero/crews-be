@@ -16,14 +16,15 @@ const Album = function ({
 const translatePosition = tracklist => position => tracklist
   .findIndex(t => t.position === position);
 
-const inRange = (tracklist, trackString, separator, position) => {
+const inRange = (tracklist, trackString, separator, p) => {
   const getIndex = translatePosition(tracklist);
   const [left, right] = splitTrim(trackString, separator).map(getIndex);
-  const p = getIndex(position);
   return (left <= p) && (p <= right);
 };
 
 Album.prototype.merge = function (release) {
+  const positionsMap = release.tracklist
+    .reduce((all, track, i) => Object.assign(all, { [track.position]: i }), {});
   // EXTRACT CREDITS FROM THE RELEASE
   // 1. Merge the release "extraartists" into each corresponding track "extraartists" array.
   //    Some releases in Discogs have an "extraartists" array which contains credits of
@@ -36,9 +37,9 @@ Album.prototype.merge = function (release) {
       .filter(({ tracks }) => splitTrim(tracks, ',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            return inRange(tracklist, trackString, '-', position);
+            return inRange(tracklist, trackString, '-', positionsMap[position]);
           } else if (trackString.includes('to')) {
-            return inRange(tracklist, trackString, 'to', position);
+            return inRange(tracklist, trackString, 'to', positionsMap[position]);
           }
           return splitTrim(trackString, ',').includes(position);
         })(), false))
