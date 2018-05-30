@@ -10,7 +10,7 @@ describe('Existing search middleware', () => {
     app.use('/data/album', route);
     app.locals.state = {
       searches: [],
-      albums: [],
+      albums: [{ id: '1' }],
       getProgress: sinon.stub(),
     };
     const request = Request(app);
