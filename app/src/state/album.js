@@ -13,12 +13,10 @@ const Album = function ({
   });
 };
 
-const translatePosition = tracklist => position => tracklist
-  .findIndex(t => t.position === position);
-
-const inRange = (tracklist, trackString, separator, p) => {
-  const getIndex = translatePosition(tracklist);
-  const [left, right] = splitTrim(trackString, separator).map(getIndex);
+const inRange = (positionsMap, trackString, separator, position) => {
+  const [left, right] = splitTrim(trackString, separator)
+    .map(i => positionsMap[i]);
+  const p = positionsMap[position];
   return (left <= p) && (p <= right);
 };
 
@@ -31,15 +29,15 @@ Album.prototype.merge = function (release) {
   //    individual tracks.
   //    The following lines map the contents of such array into an structure grouped by
   //    track, matching the existing one in "tracklist"
-  release.tracklist.map(({ position, extraartists = [] }, i, tracklist) => ({
+  release.tracklist.map(({ position, extraartists = [] }) => ({
     extraartists: extraartists.concat((release.extraartists || [])
       .filter(({ tracks, role }) => !!tracks && !!role)
       .filter(({ tracks }) => splitTrim(tracks, ',')
         .reduce((accum, trackString) => accum || (() => {
           if (trackString.includes('-')) {
-            return inRange(tracklist, trackString, '-', positionsMap[position]);
+            return inRange(positionsMap, trackString, '-', position);
           } else if (trackString.includes('to')) {
-            return inRange(tracklist, trackString, 'to', positionsMap[position]);
+            return inRange(positionsMap, trackString, 'to', position);
           }
           return splitTrim(trackString, ',').includes(position);
         })(), false))
