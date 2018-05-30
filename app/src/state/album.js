@@ -13,6 +13,10 @@ const Album = function ({
   });
 };
 
+const splitRoles = (all, { name, role, tracks }) => all
+  .concat(splitTrim(role, ',')
+    .map(r => ({ name, role: r, tracks })));
+
 Album.prototype.merge = function (release) {
   const positionsMap = release.tracklist
     .reduce((all, { position }, i, arr) => Object.assign(all, {
@@ -47,8 +51,7 @@ Album.prototype.merge = function (release) {
       .map(t => ({ name, role, tracks: t }))), [])
     .reduce((all, { name, role, tracks }) => all.concat(splitRange(splitTrim(tracks, '-'))
       .map(t => ({ name, role, tracks: t }))), [])
-    .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
-      .map(r => ({ name, role: r, tracks }))), [])
+    .reduce(splitRoles, [])
     .reduce((map, { name, role, tracks }) => {
       map[tracks].extraartists.push({ name, role });
       return map;
@@ -57,8 +60,7 @@ Album.prototype.merge = function (release) {
   // 2. Merge the release "extraartists" into each corresponding track "extraartists" array.
   release.tracklist.map(({ position, extraartists = [] }) => ({
     extraartists: extraartists
-      .reduce((all, { name, role, tracks }) => all.concat(splitTrim(role, ',')
-        .map(r => ({ name, role: r, tracks }))), [])
+      .reduce(splitRoles, [])
       .concat(parallel[position].extraartists),
   }))
 
