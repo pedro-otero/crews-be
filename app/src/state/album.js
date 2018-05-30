@@ -27,7 +27,7 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
       },
     }), {});
 
-  const splitRange = ([p1, p2], arr = []) => {
+  const expandRange = ([p1, p2], arr = []) => {
     if (!p2) {
       return [p1];
     }
@@ -35,7 +35,7 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
     if (!next || i === positionsMap[p2].i) {
       return [...arr, p1];
     }
-    return [p1, ...splitRange([next, p2], arr)];
+    return [p1, ...expandRange([next, p2], arr)];
   };
 
   // EXTRACT CREDITS FROM THE RELEASE
@@ -51,11 +51,11 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
         .map(t => ({ name, role, tracks: t }))), [])
     // Split literal range multi track extraartists into one per track
     .reduce((all, { name, role, tracks }) => all
-      .concat(splitRange(splitTrim(tracks, 'to'))
+      .concat(expandRange(splitTrim(tracks, 'to'))
         .map(t => ({ name, role, tracks: t }))), [])
     // Split hyphenated range multi track extraartists into one per track
     .reduce((all, { name, role, tracks }) => all
-      .concat(splitRange(splitTrim(tracks, '-'))
+      .concat(expandRange(splitTrim(tracks, '-'))
         .map(t => ({ name, role, tracks: t }))), [])
     // Split multi role extraartists into one per track
     .reduce(splitRoles, [])
