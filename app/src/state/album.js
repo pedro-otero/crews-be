@@ -31,6 +31,9 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
     if (!p2) {
       return [p1];
     }
+    if (!positionsMap[p1] || !positionsMap[p2]) {
+      return [];
+    }
     const { next, i } = positionsMap[p1];
     if (!next || i === positionsMap[p2].i) {
       return [...arr, p1];
@@ -60,7 +63,9 @@ Album.prototype.merge = function ({ tracklist, extraartists }) {
     // Split multi role extraartists into one per track
     .reduce(splitRoles, [])
     .forEach(({ name, role, tracks }) => {
-      this.tracks[positionsMap[tracks].i].addCredit({ name, role });
+      if (positionsMap[tracks]) {
+        this.tracks[positionsMap[tracks].i].addCredit({ name, role });
+      }
     });
 
   // 2. Merge individual track's "extraartists" into each corresponding track of this album.

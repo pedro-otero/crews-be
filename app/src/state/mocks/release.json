@@ -56,6 +56,16 @@
       "name": "P1",
       "role": "R1",
       "tracks": "19 to Pos21, Pos23, Pos24-Pos25"
+    },
+    {
+      "name": "PX",
+      "role": "RX",
+      "tracks": "nonExistentPosition"
+    },
+    {
+      "name": "PX",
+      "role": "RX",
+      "tracks": "nonExistentPosition to anotherNonExistingPosition"
     }
   ],
   "tracklist": [
